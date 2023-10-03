@@ -11,7 +11,8 @@
   - 通知機器人，nofi寫1
 - 排序: "高價>低價" or "低價>高價"
 - 爬蟲: 去 db 撈資料開始爬，價格低於特定價格時，寫到 db 去
-  - 特定條件
+  - GET(all_items)，然後再一個一個爬
+  - 設定的條件
   - 低於某價格時
     - new_price寫入
     - nofi寫0
@@ -27,7 +28,7 @@
 ## To-Do
 
 - [x] RO request api
-- [ ] Customer(CRUD) api
+- [x] Customer(CRUD) api
 - [ ] 爬蟲
 - [ ] 前端
 - [ ] chat-bot

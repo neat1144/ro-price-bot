@@ -11,6 +11,10 @@ app.use(express.json());
 const apiRo = require("./routes/ro");
 app.use("/", apiRo);
 
+// Customer api
+const apiCustomer = require("./routes/customer")
+app.use("/customer", apiCustomer);
+
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
