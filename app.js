@@ -12,10 +12,15 @@ const apiRo = require("./routes/ro");
 app.use("/", apiRo);
 
 // Customer api
-const apiCustomer = require("./routes/customer")
+const apiCustomer = require("./routes/customer");
 app.use("/customer", apiCustomer);
 
+// Check price is low for every ? seconds
+const { checkPrice } = require("./utils/checkPrice");
+const checkInterval = 5000; // 30 seconds
+setInterval(checkPrice, checkInterval);
 
+// Start the Express server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
