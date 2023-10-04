@@ -5,8 +5,8 @@ const sqlite3 = require("sqlite3").verbose();
 // SQLite database connection
 const db = new sqlite3.Database("mydatabase.db");
 
-// Create the 'items' table
-db.run(`CREATE TABLE IF NOT EXISTS items 
+// Create the 'customers' table
+db.run(`CREATE TABLE IF NOT EXISTS customers 
       (id        INTEGER PRIMARY KEY AUTOINCREMENT, 
        name      TEXT, 
        svr       INTEGER, 
@@ -31,7 +31,7 @@ router.post("/", (req, res) => {
   const { name, svr, type, set_price, new_price, nofi } = req.body;
 
   db.run(
-    "INSERT INTO items (name, svr, type, set_price, new_price, nofi) VALUES (?, ?, ?, ?, 0, 0)",
+    "INSERT INTO customers (name, svr, type, set_price, new_price, nofi) VALUES (?, ?, ?, ?, 0, 0)",
     [name, svr, type, set_price, new_price, nofi],
     function (err) {
       if (err) {
@@ -44,7 +44,7 @@ router.post("/", (req, res) => {
 
 // Get all items
 router.get("/", (req, res) => {
-  db.all("SELECT * FROM items", [], (err, rows) => {
+  db.all("SELECT * FROM customers", [], (err, rows) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
@@ -56,7 +56,7 @@ router.get("/", (req, res) => {
 router.get("/:id", (req, res) => {
   const id = req.params.id;
 
-  db.get("SELECT * FROM items WHERE id = ?", [id], (err, row) => {
+  db.get("SELECT * FROM customers WHERE id = ?", [id], (err, row) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
@@ -70,7 +70,7 @@ router.put("/:id", (req, res) => {
   const { name, svr, type, set_price, new_price, nofi } = req.body;
 
   db.run(
-    "UPDATE items SET name = ?, svr = ?, type = ?, set_price = ?, new_price = ?, nofi = ? WHERE id = ?",
+    "UPDATE customers SET name = ?, svr = ?, type = ?, set_price = ?, new_price = ?, nofi = ? WHERE id = ?",
     [name, svr, type, set_price, new_price, nofi, id],
     function (err) {
       if (err) {
@@ -85,7 +85,7 @@ router.put("/:id", (req, res) => {
 router.delete("/:id", (req, res) => {
   const id = req.params.id;
 
-  db.run("DELETE FROM items WHERE id = ?", [id], function (err) {
+  db.run("DELETE FROM customers WHERE id = ?", [id], function (err) {
     if (err) {
       return res.status(500).json({ error: err.message });
     }

@@ -7,7 +7,7 @@ http://localhost:3000/ro-request?
 txb_KeyWord=自定义关键词&
 div_svr=自定义服务器 
 */
-router.get("/ro-request", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const apiUrl =
       "https://event.gnjoy.com.tw/Ro/RoShopSearch/forAjax_shopDeal";
@@ -17,9 +17,9 @@ router.get("/ro-request", async (req, res) => {
     };
 
     // Get item from url
-    const keyWord = req.query.keyWord;
+    const name = req.query.name;
     const svr = req.query.svr;
-    const storetype = req.query.storetype;
+    const type = req.query.type;
     const sort_desc = req.query.sort_desc;
 
     // console.log(sort_desc);
@@ -27,8 +27,8 @@ router.get("/ro-request", async (req, res) => {
     // "物品名稱", "伺服器", "收購/販售", "價格""
     const requestBody = {
       div_svr: svr, // '2290'
-      div_storetype: storetype, // '0'販售, '1'收購, '2'全部
-      txb_KeyWord: keyWord, // '乙太星塵'
+      div_storetype: type, // '0'販售, '1'收購, '2'全部
+      txb_KeyWord: name, // '乙太星塵'
       sort_desc: sort_desc, // '', 'desc'
       row_start: "1",
       recaptcha: "",
