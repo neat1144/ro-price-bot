@@ -1,12 +1,11 @@
 // const express = require("express");
 import express from "express";
 import apiCustomer from "./routes/customer.js";
-import apiGetItems from "./routes/get-items.js";
-// import { checkPrice } from "./utils/checkPrice.js";
+import apiGetItems from "./routes/items.js";
 import apiChatId from "./routes/chatId.js";
 
 const app = express();
-const port = 3000; // You can choose any port you like
+const port = 3000;
 
 app.use(express.json());
 

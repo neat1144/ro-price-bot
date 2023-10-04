@@ -53,6 +53,13 @@ router.get("/", (req, res) => {
     if (err) {
       return res.status(500).json({ error: "Failed to fetch chat_bot_id" });
     }
+
+    // Check if row is null (no data found)
+    if (!row) {
+      console.error("No data found in the 'chatBot' table.");
+      return res.status(404).json({ error: "No data found" });
+    }
+
     res.json(row);
   });
 });

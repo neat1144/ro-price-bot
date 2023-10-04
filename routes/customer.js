@@ -50,6 +50,12 @@ router.get("/", (req, res) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
+
+    // Check if there are no rows returned
+    if (rows.length === 0) {
+      console.error("No rows found in the 'customers' table.");
+    }
+
     res.json(rows);
   });
 });
@@ -62,6 +68,11 @@ router.get("/:id", (req, res) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
+
+    if (!row) {
+      console.error(`No customer found with ID ${id}`);
+    }
+
     res.json(row);
   });
 });
