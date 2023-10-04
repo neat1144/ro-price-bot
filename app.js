@@ -3,6 +3,7 @@ import express from "express";
 import apiCustomer from "./routes/customer.js";
 import apiGetItems from "./routes/get-items.js";
 // import { checkPrice } from "./utils/checkPrice.js";
+import apiChatId from "./routes/chatId.js";
 
 const app = express();
 const port = 3000; // You can choose any port you like
@@ -14,6 +15,9 @@ app.use("/customer", apiCustomer);
 
 // Get-items api
 app.use("/get-items", apiGetItems);
+
+// Chat-bot id
+app.use("/chat-id", apiChatId);
 
 // Check price is low for every ? seconds
 // checkPrice("");

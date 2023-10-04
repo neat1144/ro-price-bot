@@ -1,4 +1,6 @@
 import axios from "axios";
+import TelegramBot from "node-telegram-bot-api";
+import Mutexify from "mutexify";
 
 // Get customers of api
 export const getCustomers = async () => {
@@ -65,4 +67,50 @@ export const getItemList = async (customer, sort_desc) => {
   } catch (error) {
     console.error(`Error to checking price of "${name}"!`);
   }
+};
+
+export const chat_bot = async (bot, chatId, item, set_price) => {
+  const mutex = Mutexify();
+
+  // Create a bot instance
+  mutex(async (release) => {
+    // Handle '/start' command
+    bot.onText(/\/start/, (msg) => {
+      const chatId = msg.chat.id;
+      const firstName = msg.from.first_name;
+      bot.sendMessage(chatId, `Hello, ${firstName}! Your id is "${chatId}!"`);
+    });
+
+    // Handle text messages
+    // bot.on("text", (msg) => {
+    //   const chatId = msg.chat.id;
+    //   const messageText = msg.text;
+    //   bot.sendMessage(chatId, `You said: ${messageText}`);
+    // });
+    // Handle errors
+    // bot.on("polling_error", (error) => {
+    //   console.error("error: ", error);
+    // });
+
+    // Construct the message
+    const message = `關鍵字: ${item.name}, 現在價格: ${item.item_price}, 設定價格: ${set_price}`;
+
+    // Send notification through chat-bot
+    try {
+      await bot.sendMessage(chatId, message);
+      console.log("Message sent sucessfully!");
+    } catch (error) {
+      console.log("Error sending message with telegram", error);
+    }
+
+    // Release the mutex when done
+    release();
+  });
+};
+
+export const getChatBotId = async () => {
+  const apiUrl = "http://localhost:3000/chat-id";
+  const response = await axios.get(apiUrl);
+
+  return response.data;
 };
