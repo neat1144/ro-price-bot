@@ -3,7 +3,7 @@ import axios from "axios";
 
 const getCustomers = async () => {
   // Get all customers from db
-  url = "http://localhost:3000/customer";
+  url = "http://localhost:3000/customers";
   try {
     // Get response
     const response = await axios.get(url);

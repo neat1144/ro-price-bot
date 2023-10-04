@@ -1,12 +1,16 @@
-const express = require("express");
-const axios = require("axios");
+import express from "express";
+import axios from "axios";
+
 const router = express.Router();
 
 /* 
 http://localhost:3000/ro-request?
-txb_KeyWord=自定义关键词&
-div_svr=自定义服务器 
+name="乙太星塵"&
+svr=2290&
+type=0&
+sort_desc="desc"
 */
+
 router.get("/", async (req, res) => {
   try {
     const apiUrl =
@@ -43,30 +47,18 @@ router.get("/", async (req, res) => {
     // Convert response to new List
     const itemList = [];
     for (const item of responseData.dt) {
-      const { itemID, itemName, itemPrice } = item;
-      itemList.push({ itemID, itemName, itemPrice, svr });
+      const { itemID: id, itemName: name, itemPrice: price } = item;
+      itemList.push({ id, name, price, svr });
     }
     console.log(itemList);
 
     // Send the API response back to the client
     console.log("Get data sucessfull!");
     res.json(itemList);
-    // res.json({ items: itemList });
   } catch (error) {
     console.error("Error making API call:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
-module.exports = router;
-
-// call method
-/* 
-axios.get('http://localhost:3000/make-api-call')
-  .then((response) => {
-    console.log('API Response:', response.data);
-  })
-  .catch((error) => {
-    console.error('Error:', error);
-}); 
-*/
+export default router;

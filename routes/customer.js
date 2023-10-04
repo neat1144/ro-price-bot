@@ -1,12 +1,14 @@
-const express = require("express");
+import express from "express";
+import sqlite3 from "sqlite3";
+
 const router = express.Router();
-const sqlite3 = require("sqlite3").verbose();
+const sqlite3Verbose = sqlite3.verbose();
 
 // SQLite database connection
-const db = new sqlite3.Database("mydatabase.db");
+const db = new sqlite3Verbose.Database("mydatabase.db");
 
 // Create the 'customers' table
-db.run(`CREATE TABLE IF NOT EXISTS customers 
+db.run(`CREATE TABLE IF NOT EXISTS customers
       (id        INTEGER PRIMARY KEY AUTOINCREMENT, 
        name      TEXT, 
        svr       INTEGER, 
@@ -93,4 +95,4 @@ router.delete("/:id", (req, res) => {
   });
 });
 
-module.exports = router;
+export default router;
