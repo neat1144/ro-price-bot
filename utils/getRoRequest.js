@@ -6,9 +6,9 @@ import axios from "axios";
 // const sort_desc = "desc";
 
 // Get the /ro-request route
-async function getRoRequest(name, svr, type, sort_desc) {
+const getRoRequest = async (name, svr, type, sort_desc) => {
   // URL
-  const url = `http://localhost:3000/ro-request?name="${name}"&svr=2290&storetype=${svr}&storetype="${type}"&sort_desc="${sort_desc}`;
+  const url = `http://localhost:3000/ro-request?name="${name}"&svr=${svr}&storetype=${type}&storetype="${type}"&sort_desc="${sort_desc}`;
   console.log(url);
 
   // GET response
@@ -23,6 +23,6 @@ async function getRoRequest(name, svr, type, sort_desc) {
   } catch (error) {
     console.error("Error checking /ro-request:", error);
   }
-}
+};
 
-exports = { getRoRequest };
+export { getRoRequest };

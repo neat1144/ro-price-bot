@@ -1,34 +1,27 @@
-import { getRoRequest } from "./getRoRequest";
+// import { getRoRequest } from "./getRoRequest";
 import axios from "axios";
 
-const getCustomers = async () => {
+const checkPrice = async (sort_desc) => {
+  const customers = [];
   // Get all customers from db
-  url = "http://localhost:3000/customers";
   try {
     // Get response
-    const response = await axios.get(url);
-    const customers = response.data;
-    // Return
-    // console.log(customers);
-    return customers;
+    const response = await axios.get("http://localhost:3000/customers");
+    customers = response.data;
   } catch (error) {
     console.error("Error getting customers", error);
-    return [];
   }
-};
 
-const checkPrice = async (sort_desc) => {
+  // Loop Customers to get items
   try {
-    // Get all customer
-    const customers = await getCustomers();
-
-    // Loop items to get response
     for (const customer of customers) {
-      // Get name, svr, type
-      const { name, svr, type } = customer;
+      // Get name, svr, type from a customer
+      const { name: keyword, svr, type } = customer;
 
-      // Send a request to /ro-request
-      const items = await getRoRequest(name, svr, type, sort_desc);
+      // Send a request to get "items"
+      const itemList = await getRoRequest(keyword, svr, type, sort_desc);
+
+      console.log(itemList);
 
       // Loop through items and perform actions based on itemPrice
       /*     
@@ -51,4 +44,4 @@ const checkPrice = async (sort_desc) => {
   }
 };
 
-exports = { checkPrice };
+// export { checkPrice };

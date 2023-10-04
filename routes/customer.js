@@ -50,7 +50,7 @@ router.get("/", (req, res) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    res.json({ items: rows });
+    res.json(rows);
   });
 });
 
@@ -62,7 +62,7 @@ router.get("/:id", (req, res) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    res.json({ item: row });
+    res.json(row);
   });
 });
 
