@@ -4,10 +4,10 @@ import "./NewCustomerForm.css"; // Import a CSS file for styling
 
 function NewCustomerForm({ onCustomerCreated }) {
   const [newCustomer, setNewCustomer] = useState({
-    name: "",
-    svr: 0,
+    name: "乙太",
+    svr: 2290,
     type: 0, // Initialize type as 0 (販賣) by default
-    set_price: 0,
+    set_price: 100000,
   });
 
   const handleCreate = () => {
@@ -16,10 +16,10 @@ function NewCustomerForm({ onCustomerCreated }) {
       .then(() => {
         onCustomerCreated(); // Notify the parent component that a new customer has been created
         setNewCustomer({
-          name: "",
-          svr: 0,
+          name: "乙太",
+          svr: 2290,
           type: 0,
-          set_price: 0,
+          set_price: 100000,
         });
         console.log("New customer added successfully");
       })
@@ -30,9 +30,9 @@ function NewCustomerForm({ onCustomerCreated }) {
 
   return (
     <div className="new-customer-form">
-      <h2>Add New Customer</h2>
+      <h2> </h2>
       <div>
-        <label>Name:</label>
+        <label>關鍵字:</label>
         <input
           type="text"
           value={newCustomer.name}
@@ -42,7 +42,7 @@ function NewCustomerForm({ onCustomerCreated }) {
         />
       </div>
       <div>
-        <label>Server:</label>
+        <label>伺服器:</label>
         <select
           type="text"
           value={newCustomer.svr}
@@ -57,7 +57,7 @@ function NewCustomerForm({ onCustomerCreated }) {
         </select>
       </div>
       <div>
-        <label>Type:</label>
+        <label>類型:</label>
         <select
           value={newCustomer.type}
           onChange={(e) =>
@@ -69,7 +69,7 @@ function NewCustomerForm({ onCustomerCreated }) {
         </select>
       </div>
       <div>
-        <label>Price:</label>
+        <label>設定價格:</label>
         <input
           type="number"
           value={newCustomer.set_price}

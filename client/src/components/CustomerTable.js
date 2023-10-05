@@ -73,9 +73,9 @@ function CustomerTable() {
         <thead>
           <tr>
             <th>標號</th>
-            <th>名稱</th>
+            <th>關鍵字</th>
             <th>伺服器</th>
-            <th>價格</th>
+            <th>設定價格</th>
             <th>販賣/收購</th>
             <th>操作</th>
           </tr>
@@ -85,7 +85,12 @@ function CustomerTable() {
             <tr key={customer.id}>
               <td>{customer.id}</td>
               <td>{customer.name}</td>
-              <td>{customer.svr}</td>
+              <td>{customer.svr === 2290 ? '巴基利' : 
+                   customer.svr === 3290 ? '查爾斯' : 
+                   customer.svr === 4290 ? '波利'   : 
+                   customer.svr === 0 ? '羅札納(未開放)'   : 
+                   ''}
+              </td>
               <td>{customer.set_price}</td>
               <td>
                 <span
@@ -106,12 +111,12 @@ function CustomerTable() {
                 </span>
               </td>
               <td>
-                <button
+                {/* <button
                   className="edit-button"
                   onClick={() => handleEdit(customer.id)}
                 >
                   Edit
-                </button>
+                </button> */}
                 <button
                   className="delete-button"
                   onClick={() => handleDelete(customer.id)}
