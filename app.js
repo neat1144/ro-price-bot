@@ -1,7 +1,7 @@
 // const express = require("express");
 import express from "express";
 import apiCustomer from "./routes/customer.js";
-import apiGetItems from "./routes/items.js";
+import lowPriceRouter from "./routes/lowPrice.js";
 import apiChatId from "./routes/chatId.js";
 import bodyParser from "body-parser";
 import cors from "cors";
@@ -30,7 +30,7 @@ app.use(cors(corsOptions)); // Use CORS middleware with options
 app.use("/customer", apiCustomer);
 
 // Get-items api
-app.use("/get-items", apiGetItems);
+app.use("/low-price", lowPriceRouter);
 
 // Chat-bot id
 app.use("/chat-id", apiChatId);
