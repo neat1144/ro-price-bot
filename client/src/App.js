@@ -1,9 +1,9 @@
 import React from "react";
 import "./App.css"; // Import your app-specific CSS file if you have one
 import CustomerTable from "./components/CustomerTable"; // Import the CustomerTable component
-import PriceChecker from "./components/PriceChecker";
 import StateButton from "./components/StateButton";
 import ButtonChecking from "./components/ButtonChecking"
+import TGTable from "./components/TGTable"
 
 function App() {
   // Telegram function
@@ -18,20 +18,18 @@ function App() {
   return (
     <div className="App">
       <h1>RO Spider</h1>
-      {/* PriceChecker component */}
-      <PriceChecker isChecking={isChecking} />
       {/* Start/Stop Button (using StateButton component) */}
       <StateButton
         isChecking={isChecking}
         startChecking={startChecking}
         stopChecking={stopChecking}
       />
-      {/* TG Button */}
-      <button className="tg-button" onClick={() => handleTelegram()}>
-        telegram
-      </button>
+      <br />
       {/* CustomerTable component */}
       <CustomerTable />
+      {/* TGTable component */}
+      <br />
+      <TGTable />
     </div>
   );
 }

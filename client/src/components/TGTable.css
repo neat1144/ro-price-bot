@@ -1,0 +1,38 @@
+.tg-table {
+    width: 50%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+    font-family: Arial, sans-serif;
+  }
+  
+  .tg-table th, .tg-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .tg-table th {
+    background-color: #f2f2f2;
+    color: #333;
+  }
+  
+  .tg-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  .tg-table tr:hover {
+    background-color: #ddd;
+  }
+  
+  .tg-table button {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .tg-table button:hover {
+    background-color: #0056b3;
+  }
+  

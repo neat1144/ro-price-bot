@@ -15,12 +15,14 @@ const StateButton = () => {
     setIsChecking(true);
     // Store the state in localStorage when the state changes
     localStorage.setItem('isChecking', JSON.stringify(true));
+    console.log("Start!");
   };
 
   const stopChecking = () => {
     setIsChecking(false);
     // Store the state in localStorage when the state changes
     localStorage.setItem('isChecking', JSON.stringify(false));
+    console.log("Stop!");
   };
 
   return { isChecking, startChecking, stopChecking };
