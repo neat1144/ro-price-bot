@@ -41,8 +41,8 @@ const StateButton = ({ timeoutSeconds }) => {
     console.log("Stop checking!");
 
     // Clear the interval when stopping
-    // clearInterval(priceCheckingIntervalId);
-    priceCheckingIntervalId = null;
+    clearInterval(priceCheckingIntervalId);
+    // priceCheckingIntervalId = null;
   };
 
   const priceChecking = () => {

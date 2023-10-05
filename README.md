@@ -30,6 +30,7 @@
 - [x] RO request api
 - [x] Customer(CRUD) api
 - [x] 爬蟲
-- [ ] 前端
-- [ ] chat-bot
-- [ ] docker
+- [x] 前端
+- [x] chat-bot
+- [ ] fix stop button
+- [x] docker
