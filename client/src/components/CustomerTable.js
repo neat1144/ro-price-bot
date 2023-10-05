@@ -58,6 +58,7 @@ function CustomerTable() {
             <th>關鍵字</th>
             <th>伺服器</th>
             <th>設定價格</th>
+            <th>最低價</th>
             <th>販賣/收購</th>
             <th>操作</th>
           </tr>
@@ -79,6 +80,7 @@ function CustomerTable() {
                   : ""}
               </td>
               <td>{customer.set_price.toLocaleString()}</td>
+              <td>{customer.new_price.toLocaleString()}</td>
               <td>
                 <span
                   style={{

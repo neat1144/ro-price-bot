@@ -5,6 +5,7 @@ import {
   getItemList as getItemListByCustomer,
   chat_bot,
   getChatBotId,
+  updateCustomers,
 } from "../controller/itemsController.js";
 import TelegramBot from "node-telegram-bot-api";
 
@@ -48,6 +49,10 @@ router.get("/", async (req, res) => {
     await sleep(1000);
   }
 
+  // Update new_price to db
+  await updateCustomers(lowPriceCustomers);
+
+  // Response
   res.json(lowPriceCustomers);
 });
 

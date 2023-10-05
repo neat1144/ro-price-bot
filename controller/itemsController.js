@@ -13,6 +13,25 @@ export const getCustomers = async () => {
   }
 };
 
+// Update new price to customer
+export const updateCustomers = async (customerList) => {
+  for (const customer of customerList) {
+    // data
+    const requestBody = customer;
+
+    // PUT method
+    try {
+      const response = await axios.put(
+        `http://localhost:3030/customer/${customer.id}`,
+        requestBody
+      );
+      console.log(`Updating ${customer.name}...`);
+    } catch (error) {
+      console.error("Error to update custoemrs", error);
+    }
+  }
+};
+
 // Sleep function
 export const sleep = (ms) => {
   console.log(`Waitting 1(sec)...`);

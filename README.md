@@ -32,5 +32,5 @@
 - [x] 爬蟲
 - [x] 前端
 - [x] chat-bot
-- [ ] fix stop button
+- [x] fix stop button
 - [x] docker

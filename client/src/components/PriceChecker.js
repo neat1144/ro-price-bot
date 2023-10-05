@@ -3,9 +3,7 @@ import axios from "axios";
 
 const StateButton = ({ timeoutSeconds }) => {
   const [isChecking, setIsChecking] = useState(false);
-
-  // Interval ID for priceChecking
-  let priceCheckingIntervalId = null;
+  const [priceCheckingIntervalId, setPriceCheckingIntervalId] = useState(null);
 
   // Load the previous state from localStorage when the component mounts
   useEffect(() => {
@@ -30,7 +28,8 @@ const StateButton = ({ timeoutSeconds }) => {
     console.log(`Start checking for every ${timeoutSeconds}(sec)!`);
 
     // Call priceChecking every X seconds
-    priceCheckingIntervalId = setInterval(priceChecking, intervalDuration);
+    const intervalId = setInterval(priceChecking, intervalDuration);
+    setPriceCheckingIntervalId(intervalId);
   };
 
   // Stop checking
@@ -40,15 +39,18 @@ const StateButton = ({ timeoutSeconds }) => {
     localStorage.setItem("isChecking", JSON.stringify(false));
     console.log("Stop checking!");
 
-    // Clear the interval when stopping
-    clearInterval(priceCheckingIntervalId);
-    // priceCheckingIntervalId = null;
+    // Clear the interval using the stored interval ID
+    if (priceCheckingIntervalId) {
+      clearInterval(priceCheckingIntervalId);
+      setPriceCheckingIntervalId(null);
+    }
   };
 
-  const priceChecking = () => {
-    console.log("Test timeout!");
-    // const lowPriceList = await callLowPriceItemApi();
-    // await sendMsgByChatBot(lowPriceList);
+  // Combine function!
+  const priceChecking = async () => {
+    // console.log("Test timeout!");
+    const lowPriceList = await callLowPriceItemApi();
+    await sendMsgByChatBot(lowPriceList);
   };
 
   // Call api to get low price item

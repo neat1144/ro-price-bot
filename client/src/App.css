@@ -48,14 +48,14 @@
 
 .timeout-input {
   position: absolute;
-  top: 1%;
-  right: 45%;
+  top: 3%;
+  right: 40%;
   background-color: white;
   padding: 5px; /* Adjust padding */
   border: 1px solid #ccc;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  width: 100px; /* Adjust the width as needed */
+  width: 20%; /* Adjust the width as needed */
 }
 
 .timeout-input input[type="number"] {
