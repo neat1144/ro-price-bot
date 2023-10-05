@@ -1,6 +1,6 @@
 // StateButton.js
-import React from 'react';
-import "./StateButton.css"
+import React from "react";
+import "./StateButton.css";
 
 const StateButton = ({ isChecking, startChecking, stopChecking }) => {
   return (

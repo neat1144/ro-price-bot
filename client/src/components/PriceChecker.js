@@ -1,35 +1,54 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const StateButton = () => {
+const StateButton = ({ timeoutSeconds }) => {
   const [isChecking, setIsChecking] = useState(false);
+
+  // Interval ID for priceChecking
+  let priceCheckingIntervalId = null;
 
   // Load the previous state from localStorage when the component mounts
   useEffect(() => {
+    // Load the previous state from local storage when the component mounts
     const storedState = localStorage.getItem("isChecking");
-    if (storedState) {
-      setIsChecking(JSON.parse(storedState));
+    if (storedState && JSON.parse(storedState)) {
+      // Start checking if it was previously running
+      startChecking();
     }
   }, []);
 
   // Start checking
-  const startChecking = async () => {
+  const startChecking = () => {
     setIsChecking(true);
-    // Store the state in localStorage when the state changes
+    // Store the state in local storage when the state changes
     localStorage.setItem("isChecking", JSON.stringify(true));
 
+    // seconds * 1000 = milliseconds
+    const intervalDuration = timeoutSeconds * 1000;
+
     // Print
-    console.log("Start!");
-    const lowPriceList = await callLowPriceItemApi();
-    await sendMsgByChatBot(lowPriceList);
+    console.log(`Start checking for every ${timeoutSeconds}(sec)!`);
+
+    // Call priceChecking every X seconds
+    priceCheckingIntervalId = setInterval(priceChecking, intervalDuration);
   };
 
   // Stop checking
-  const stopChecking = async () => {
+  const stopChecking = () => {
     setIsChecking(false);
-    // Store the state in localStorage when the state changes
+    // Store the state in local storage when the state changes
     localStorage.setItem("isChecking", JSON.stringify(false));
-    console.log("Stop!");
+    console.log("Stop checking!");
+
+    // Clear the interval when stopping
+    // clearInterval(priceCheckingIntervalId);
+    priceCheckingIntervalId = null;
+  };
+
+  const priceChecking = () => {
+    console.log("Test timeout!");
+    // const lowPriceList = await callLowPriceItemApi();
+    // await sendMsgByChatBot(lowPriceList);
   };
 
   // Call api to get low price item
