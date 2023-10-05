@@ -1,0 +1,51 @@
+/* Style for the Start button */
+.button-start {
+    background-color: #4caf50; /* Green background color */
+    color: white; /* White text color */
+    border: none; /* No border */
+    padding: 10px 20px; /* Padding */
+    margin-right: 10px; /* Margin to separate buttons */
+    cursor: pointer; /* Cursor style */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 16px; /* Font size */
+  }
+  
+  /* Style for the Stop button */
+  .button-stop {
+    background-color: #f44336; /* Red background color */
+    color: white; /* White text color */
+    border: none; /* No border */
+    padding: 10px 20px; /* Padding */
+    cursor: pointer; /* Cursor style */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 16px; /* Font size */
+  }
+  
+  /* Hover effect for buttons */
+  .button-start:hover,
+  .button-stop:hover {
+    opacity: 0.9; /* Reduce opacity on hover for a visual effect */
+  }
+  
+  /* Container for the buttons */
+  .button-container {
+    position: relative; /* Required for absolute positioning of the buttons */
+    width: 100vw; /* Make the container span the entire viewport width */
+    height: 100vh; /* Make the container span the entire viewport height */
+  }
+  
+  /* Style for the Start button */
+  .button-start {
+    /* ... (previous button styles) */
+    position: absolute;
+    top: 20px; /* Adjust the top distance as needed */
+    right: 20px; /* Adjust the right distance as needed */
+  }
+  
+  /* Style for the Stop button */
+  .button-stop {
+    /* ... (previous button styles) */
+    position: absolute;
+    top: 20px; /* Adjust the top distance as needed */
+    right: 20px; /* Adjust the right distance as needed */
+  }

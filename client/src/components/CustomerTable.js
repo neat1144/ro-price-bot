@@ -27,12 +27,6 @@ function CustomerTable() {
     fetchCustomerData(); // Refresh the customer data when a new customer is created
   };
 
-  // Edit cutomer
-  const handleEdit = (customerId) => {
-    // Implement the edit functionality here
-    console.log(`Edit customer with ID ${customerId}`);
-  };
-
   // Delete customer
   const handleDelete = (customerId) => {
     // Make a DELETE request to the API endpoint
@@ -50,29 +44,19 @@ function CustomerTable() {
       });
   };
 
-  // Telegram function
-  const handleTelegram = () => {
-    // Implement the new button functionality here
-    console.log("New button clicked");
-  };
+  // Create a variable to track the serial number
+  let serialNumber = 1;
 
   return (
     <div>
-      <h1>RO Spider</h1>
-
-      {/* Include the NewCustomerForm component */}
+      {/* NewCustomerForm component */}
       <NewCustomerForm onCustomerCreated={handleCustomerCreated} />
-
-      {/* Telegram buttons */}
-      <button className="telegram-button" onClick={() => handleTelegram()}>
-        telegram
-      </button>{" "}
 
       {/* Table */}
       <table className="customer-table">
         <thead>
           <tr>
-            <th>標號</th>
+            <th>序號</th>
             <th>關鍵字</th>
             <th>伺服器</th>
             <th>設定價格</th>
@@ -83,7 +67,7 @@ function CustomerTable() {
         <tbody>
           {customers.map((customer) => (
             <tr key={customer.id}>
-              <td>{customer.id}</td>
+              <td>{serialNumber++}</td>
               <td>{customer.name}</td>
               <td>{customer.svr === 2290 ? '巴基利' : 
                    customer.svr === 3290 ? '查爾斯' : 
@@ -91,7 +75,7 @@ function CustomerTable() {
                    customer.svr === 0 ? '羅札納(未開放)'   : 
                    ''}
               </td>
-              <td>{customer.set_price}</td>
+              <td>{customer.set_price.toLocaleString()}</td>
               <td>
                 <span
                   style={{
