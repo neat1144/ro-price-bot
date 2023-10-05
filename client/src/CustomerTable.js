@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./CustomerTable.css"; // Import a CSS file for styling
+import NewCustomerForm from "./NewCustomerForm"; // Import the new component
 
 function CustomerTable() {
   const [customers, setCustomers] = useState([]);
@@ -9,16 +10,21 @@ function CustomerTable() {
     fetchCustomerData();
   }, []);
 
-  // Function to fetch customer data
+  // Get/Fetch
   const fetchCustomerData = () => {
     axios
-      .get("http://localhost:5000/customer")
+      .get("http://localhost:3030/customer")
       .then((response) => {
         setCustomers(response.data);
       })
       .catch((error) => {
         console.error("Error fetching customer data:", error);
       });
+  };
+
+  // Create
+  const handleCustomerCreated = () => {
+    fetchCustomerData(); // Refresh the customer data when a new customer is created
   };
 
   // Function to edit a customer
@@ -31,7 +37,7 @@ function CustomerTable() {
   const handleDelete = (customerId) => {
     // Make a DELETE request to the API endpoint
     axios
-      .delete(`http://localhost:5000/customer/${customerId}`)
+      .delete(`http://localhost:3030/customer/${customerId}`)
       .then(() => {
         // Remove the deleted customer from the state
         setCustomers(
@@ -59,17 +65,14 @@ function CustomerTable() {
   return (
     <div>
       <h1>RO Spider</h1>
-      <button className="telegram-button" onClick={handleTelegram}>
+      {/* Add Telegram and New buttons */}
+      <button className="telegram-button" onClick={() => handleTelegram()}>
         Telegram
       </button>{" "}
-      {/* Telegram button */}
-      <button className="new-button" onClick={handleNew}>
+      <button className="new-button" onClick={() => handleNew()}>
         New
       </button>{" "}
-      {/* New button */}
       <table className="customer-table">
-        {" "}
-        {/* Add a class for styling */}
         <thead>
           <tr>
             <th>標號</th>
@@ -78,8 +81,6 @@ function CustomerTable() {
             <th>價格</th>
             <th>販賣/收購</th>
             <th>操作</th>
-            {/* <th>Email</th> */}
-            {/* Add more table headers for other fields if needed */}
           </tr>
         </thead>
         <tbody>
@@ -89,7 +90,24 @@ function CustomerTable() {
               <td>{customer.name}</td>
               <td>{customer.svr}</td>
               <td>{customer.set_price}</td>
-              <td>{customer.type}</td>
+              <td>
+                <span
+                  style={{
+                    color:
+                      customer.type === 0
+                        ? "blue"
+                        : customer.type === 1
+                        ? "red"
+                        : "black",
+                  }}
+                >
+                  {customer.type === 0
+                    ? "販賣"
+                    : customer.type === 1
+                    ? "收購"
+                    : ""}
+                </span>
+              </td>
               <td>
                 <button
                   className="edit-button"
@@ -104,11 +122,13 @@ function CustomerTable() {
                   Delete
                 </button>
               </td>
-              {/* Add more table cells for other fields if needed */}
             </tr>
           ))}
         </tbody>
       </table>
+      <br />
+      {/* Include the NewCustomerForm component */}
+      <NewCustomerForm onCustomerCreated={handleCustomerCreated} />
     </div>
   );
 }
