@@ -7,11 +7,11 @@ const StateButton = ({ isChecking, startChecking, stopChecking }) => {
     <div>
       {isChecking ? (
         <button className="button-stop" onClick={stopChecking}>
-          Stop Checking Price
+          Stop
         </button>
       ) : (
         <button className="button-start" onClick={startChecking}>
-          Start Checking Price
+          Start
         </button>
       )}
     </div>

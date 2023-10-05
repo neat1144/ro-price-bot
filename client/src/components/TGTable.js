@@ -3,7 +3,7 @@ import axios from "axios";
 import "./TGTable.css"; // Import your CSS file
 
 function TGTable() {
-  const [data, setData] = useState({ chat_id: "", token: null });
+  // const [data, setData] = useState({ chat_id: "", token: null });
   const [editedData, setEditedData] = useState({ chat_id: "", token: null });
 
   const [showTable, setShowTable] = useState(false);
@@ -19,7 +19,7 @@ function TGTable() {
       .then((response) => {
         // Extract the values from the API response
         const { chat_id, token } = response.data;
-        setData({ chat_id, token });
+        // setData({ chat_id, token });
         setEditedData({ chat_id, token });
       })
       .catch((error) => {
