@@ -5,7 +5,7 @@ import Mutexify from "mutexify";
 // Get customers of api
 export const getCustomers = async () => {
   try {
-    const response = await axios.get("http://localhost:3000/customer");
+    const response = await axios.get("http://localhost:3030/customer");
     const customers = response.data;
     return customers;
   } catch (error) {
@@ -109,7 +109,7 @@ export const chat_bot = async (bot, chatId, item, set_price) => {
 };
 
 export const getChatBotId = async () => {
-  const apiUrl = "http://localhost:3000/chat-id";
+  const apiUrl = "http://localhost:3030/chat-id";
   const response = await axios.get(apiUrl);
 
   return response.data;

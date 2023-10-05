@@ -1,8 +1,8 @@
 import express from "express";
 import {
-  getCustomers,
+  getCustomers as getCustomerList,
   sleep,
-  getItemList,
+  getItemList as getItemListByCustomer,
   chat_bot,
   getChatBotId,
 } from "../controller/itemsController.js";
@@ -15,34 +15,40 @@ router.get("/", async (req, res) => {
   const sort_desc = "";
 
   // Get chat id and token of telegram
-  const { chat_id: chatId, token } = await getChatBotId();
+  // const { chat_id: chatId, token } = await getChatBotId();
 
   // New bot
-  const bot = new TelegramBot(token, { polling: true });
+  // const bot = new TelegramBot(token, { polling: true });
 
   // Get all customers
-  const customers = await getCustomers();
+  const customers = await getCustomerList();
+
+  // Low price lsit
+  const lowPriceCustomers = [];
 
   // Loop customers to get items
   for (const customer of customers) {
     // Get item list of a customer
-    const itemList = await getItemList(customer, sort_desc);
+    const itemList = await getItemListByCustomer(customer, sort_desc);
     // console.log(itemList);
 
     // Set price
-    const { set_price } = customer;
+    const { set_price: setPrice, new_price: newPrice } = customer;
 
-    // If price of item list < set_price
-    // Send nofi by chat-bot
-    for (const item of itemList) {
-      if (item.item_price < set_price) {
-        chat_bot(bot, chatId, item, set_price);
-      }
+    // Price of first dict (because item list is sorted)
+    const firtItemPrice = itemList[0].item_price;
+
+    // If have low price item, Push to list
+    if (setPrice > firtItemPrice) {
+      lowPriceCustomers.push(customer);
+      customer.new_price = firtItemPrice;
     }
 
     // Set timeout
     await sleep(1000);
   }
+
+  res.json(lowPriceCustomers);
 });
 
 export default router;

@@ -11,15 +11,13 @@ function CustomerTable() {
   }, []);
 
   // Get/Fetch customer
-  const fetchCustomerData = () => {
-    axios
-      .get("http://localhost:3030/customer")
-      .then((response) => {
-        setCustomers(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching customer data:", error);
-      });
+  const fetchCustomerData = async () => {
+    try {
+      const response = await axios.get("http://localhost:3030/customer");
+      setCustomers(response.data);
+    } catch (error) {
+      console.error("Error fetching customer data:", error);
+    }
   };
 
   // Create customer
@@ -69,11 +67,16 @@ function CustomerTable() {
             <tr key={customer.id}>
               <td>{serialNumber++}</td>
               <td>{customer.name}</td>
-              <td>{customer.svr === 2290 ? '巴基利' : 
-                   customer.svr === 3290 ? '查爾斯' : 
-                   customer.svr === 4290 ? '波利'   : 
-                   customer.svr === 0 ? '羅札納(未開放)'   : 
-                   ''}
+              <td>
+                {customer.svr === 2290
+                  ? "巴基利"
+                  : customer.svr === 3290
+                  ? "查爾斯"
+                  : customer.svr === 4290
+                  ? "波利"
+                  : customer.svr === 0
+                  ? "羅札納(未開放)"
+                  : ""}
               </td>
               <td>{customer.set_price.toLocaleString()}</td>
               <td>
