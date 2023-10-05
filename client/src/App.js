@@ -2,18 +2,12 @@ import React from "react";
 import "./App.css"; // Import your app-specific CSS file if you have one
 import CustomerTable from "./components/CustomerTable"; // Import the CustomerTable component
 import StateButton from "./components/StateButton";
-import ButtonChecking from "./components/ButtonChecking"
-import TGTable from "./components/TGTable"
+import PriceChecker from "./components/PriceChecker";
+import TGTable from "./components/TGTable";
 
 function App() {
-  // Telegram function
-  const handleTelegram = () => {
-    // Implement the new button functionality here
-    console.log("New button clicked");
-  };
-
   // Get the isChecking, startChecking, and stopChecking from StateButton
-  const { isChecking, startChecking, stopChecking } = ButtonChecking();
+  const { isChecking, startChecking, stopChecking } = PriceChecker();
 
   return (
     <div className="App">
@@ -28,7 +22,6 @@ function App() {
       {/* CustomerTable component */}
       <CustomerTable />
       {/* TGTable component */}
-      <br />
       <TGTable />
     </div>
   );
