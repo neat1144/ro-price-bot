@@ -1,0 +1,15 @@
+version: "3"
+services:
+  frontend:
+    build:
+      context: ./client # Path to the directory containing the React front-end code
+    ports:
+      - "3000:3000" # Map port 3000 in the container to port 3000 on the host
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./ # Path to the directory containing the Node.js/Express back-end code
+    ports:
+      - "5000:5000" # Map port 5000 in the container to port 5000 on the host
