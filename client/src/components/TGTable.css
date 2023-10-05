@@ -1,38 +1,70 @@
+.tg-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 .tg-table {
-    width: 50%;
-    border-collapse: collapse;
-    border: 1px solid #ddd;
-    font-family: Arial, sans-serif;
-  }
-  
-  .tg-table th, .tg-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
-  
-  .tg-table th {
-    background-color: #f2f2f2;
-    color: #333;
-  }
-  
-  .tg-table tr:nth-child(even) {
-    background-color: #f2f2f2;
-  }
-  
-  .tg-table tr:hover {
-    background-color: #ddd;
-  }
-  
-  .tg-table button {
-    padding: 5px 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    cursor: pointer;
-  }
-  
-  .tg-table button:hover {
-    background-color: #0056b3;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center items horizontally */
+  text-align: center; /* Center text horizontally */
+  font-family: Arial, sans-serif;
+  margin-top: 20px;
+}
+
+.tg-button-container {
+  margin-top: 20px; /* Adjust the top margin to your preference */
+}
+
+.tg-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.tg-label {
+  display: block;
+  font-weight: bold;
+}
+
+.tg-data {
+  border: 1px solid #ddd;
+  padding: 8px;
+  flex-grow: 1;
+}
+
+.tg-button {
+  padding: 8px 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.tg-button:hover {
+  background-color: #0056b3;
+}
+
+/* Add a new class for the show button */
+.tg-show-button {
+  padding: 10px 16px;
+  background-color: #bcbcbc;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+/* Style the button on hover */
+.tg-show-button:hover {
+  background-color: #0056b3;
+}
