@@ -6,6 +6,11 @@ function CustomerTable() {
   const [customers, setCustomers] = useState([]);
 
   useEffect(() => {
+    fetchCustomerData();
+  }, []);
+
+  // Function to fetch customer data
+  const fetchCustomerData = () => {
     axios
       .get("http://localhost:5000/customer")
       .then((response) => {
@@ -14,27 +19,38 @@ function CustomerTable() {
       .catch((error) => {
         console.error("Error fetching customer data:", error);
       });
-  }, []);
+  };
 
-  // Placeholder function for editing a customer (you can implement this)
+  // Function to edit a customer
   const handleEdit = (customerId) => {
     // Implement the edit functionality here
     console.log(`Edit customer with ID ${customerId}`);
   };
 
-  // Placeholder function for deleting a customer (you can implement this)
+  // Function to delete a customer
   const handleDelete = (customerId) => {
-    // Implement the delete functionality here
-    console.log(`Delete customer with ID ${customerId}`);
+    // Make a DELETE request to the API endpoint
+    axios
+      .delete(`http://localhost:5000/customer/${customerId}`)
+      .then(() => {
+        // Remove the deleted customer from the state
+        setCustomers(
+          customers.filter((customer) => customer.id !== customerId)
+        );
+        console.log(`Deleted customer with ID ${customerId}`);
+      })
+      .catch((error) => {
+        console.error(`Error deleting customer with ID ${customerId}:`, error);
+      });
   };
 
-  // Placeholder function for the "New" button (as shown in the previous response)
+  // Function to new a customer
   const handleNew = () => {
     // Implement the new button functionality here
     console.log("New button clicked");
   };
 
-  // Placeholder function for the "Telegram" button
+  // Function to edit telegram token
   const handleTelegram = () => {
     // Implement the Telegram button functionality here
     console.log("Telegram button clicked");
