@@ -39,6 +39,7 @@ router.post("/", (req, res) => {
       if (err) {
         return res.status(500).json({ error: err.message });
       }
+      console.log(`Add a new customer ${name}`);
       res.json({ message: `${name} is added`, id: this.lastID });
     }
   );
@@ -56,6 +57,7 @@ router.get("/", (req, res) => {
       console.error("No rows found in the 'customers' table.");
     }
 
+    console.log("Fetching all customers");
     res.json(rows);
   });
 });
@@ -73,6 +75,7 @@ router.get("/:id", (req, res) => {
       console.error(`No customer found with ID ${id}`);
     }
 
+    console.log(`Fetching ID customer ${id}!`);
     res.json(row);
   });
 });
@@ -89,6 +92,7 @@ router.put("/:id", (req, res) => {
       if (err) {
         return res.status(500).json({ error: err.message });
       }
+      console.log(`Updating ID customer ${id}`);
       res.json({ message: `${id} is updated`, changes: this.changes });
     }
   );
@@ -102,6 +106,7 @@ router.delete("/:id", (req, res) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
+    console.log(`Deleting ID customer ${id}`);
     res.json({ message: `${id} is deleted`, changes: this.changes });
   });
 });

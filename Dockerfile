@@ -1,5 +1,5 @@
 # Use an official Node.js runtime as a parent image
-FROM node:18
+FROM node:18.17.1
 
 # Set the working directory in the container
 WORKDIR /app
@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Expose the port the Node.js server will run on
-EXPOSE 5000
+EXPOSE 3030
 
 # Start the Node.js server
-CMD ["npm", "start"]
+CMD ["node", "app.js"]
