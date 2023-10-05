@@ -2,6 +2,12 @@
 
 ## 使用方法
 
+1. 安裝 docker，再跑 `docker-compose up`。
+2. 設定 telegram (chat_id & token)。
+3. 新增要爬蟲的項目。
+4. 設定爬蟲間隔時間（至少要項目的兩倍秒數）。
+5. 啟動爬蟲（右上角按鈕）。
+
 ## 需求
 
 - 輸入: "物品名稱", "伺服器", "收購/販售", "set 價格"
@@ -34,3 +40,4 @@
 - [x] chat-bot
 - [x] fix stop button
 - [x] docker
+- [ ] notify only once
