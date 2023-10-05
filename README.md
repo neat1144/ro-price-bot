@@ -1,4 +1,5 @@
 # RO 物品價格通知機器人
+- url: https://event.gnjoy.com.tw/Ro/RoShopSearch?fbclid=IwAR1xC46Qfmpbv0RzjG2t7LpJp19ZUKNnpBDL0QLKNfAbzScZYgU_Sl9C04Q
 
 ## 使用方法
 
@@ -41,3 +42,8 @@
 - [x] fix stop button
 - [x] docker
 - [x] notify only once
+
+## 伺服器更改
+- call api 去確認伺服器代號，再更改以下的東西！
+  - `client/src/components/CustomerTable.js   (line:71)`
+  - `client/src/components/NewCustomerForm.js (line:53)`
