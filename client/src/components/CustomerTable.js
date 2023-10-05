@@ -10,7 +10,7 @@ function CustomerTable() {
     fetchCustomerData();
   }, []);
 
-  // Get/Fetch
+  // Get/Fetch customer
   const fetchCustomerData = () => {
     axios
       .get("http://localhost:3030/customer")
@@ -22,18 +22,18 @@ function CustomerTable() {
       });
   };
 
-  // Create
+  // Create customer
   const handleCustomerCreated = () => {
     fetchCustomerData(); // Refresh the customer data when a new customer is created
   };
 
-  // Function to edit a customer
+  // Edit cutomer
   const handleEdit = (customerId) => {
     // Implement the edit functionality here
     console.log(`Edit customer with ID ${customerId}`);
   };
 
-  // Function to delete a customer
+  // Delete customer
   const handleDelete = (customerId) => {
     // Make a DELETE request to the API endpoint
     axios
@@ -50,28 +50,25 @@ function CustomerTable() {
       });
   };
 
-  // Function to new a customer
-  const handleNew = () => {
+  // Telegram function
+  const handleTelegram = () => {
     // Implement the new button functionality here
     console.log("New button clicked");
-  };
-
-  // Function to edit telegram token
-  const handleTelegram = () => {
-    // Implement the Telegram button functionality here
-    console.log("Telegram button clicked");
   };
 
   return (
     <div>
       <h1>RO Spider</h1>
-      {/* Add Telegram and New buttons */}
+
+      {/* Include the NewCustomerForm component */}
+      <NewCustomerForm onCustomerCreated={handleCustomerCreated} />
+
+      {/* Telegram buttons */}
       <button className="telegram-button" onClick={() => handleTelegram()}>
-        Telegram
+        telegram
       </button>{" "}
-      <button className="new-button" onClick={() => handleNew()}>
-        New
-      </button>{" "}
+
+      {/* Table */}
       <table className="customer-table">
         <thead>
           <tr>
@@ -126,9 +123,6 @@ function CustomerTable() {
           ))}
         </tbody>
       </table>
-      <br />
-      {/* Include the NewCustomerForm component */}
-      <NewCustomerForm onCustomerCreated={handleCustomerCreated} />
     </div>
   );
 }
