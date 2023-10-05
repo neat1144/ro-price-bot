@@ -41,8 +41,10 @@ router.get("/", async (req, res) => {
 
     // If have low price item, Push to list
     if (setPrice > firtItemPrice) {
-      lowPriceCustomers.push(customer);
-      customer.new_price = firtItemPrice;
+      if (newPrice === 0 || firtItemPrice < newPrice) {
+        lowPriceCustomers.push(customer);
+        customer.new_price = firtItemPrice;
+      }
     }
 
     // Set timeout

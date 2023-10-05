@@ -40,4 +40,4 @@
 - [x] chat-bot
 - [x] fix stop button
 - [x] docker
-- [ ] notify only once
+- [x] notify only once

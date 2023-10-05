@@ -50,7 +50,9 @@ const StateButton = ({ timeoutSeconds }) => {
   const priceChecking = async () => {
     // console.log("Test timeout!");
     const lowPriceList = await callLowPriceItemApi();
-    await sendMsgByChatBot(lowPriceList);
+    if (lowPriceList.length) {
+      await sendMsgByChatBot(lowPriceList);
+    }
   };
 
   // Call api to get low price item
