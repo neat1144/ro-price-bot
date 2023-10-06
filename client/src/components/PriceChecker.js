@@ -5,9 +5,7 @@ import axios from "axios";
 const PriceChecker = () => {
   const [isChecking, setIsChecking] = useState(false);
   const [priceCheckingIntervalId, setPriceCheckingIntervalId] = useState(null);
-  const [timeoutSeconds, setTimeoutSeconds] = useState(null);
-  const initialTimeoutSeconds =
-    parseInt(localStorage.getItem("timeoutSeconds")) || 30;
+  const [timeoutSeconds, setTimeoutSeconds] = useState(10);
 
   // Load the previous state from localStorage when the component mounts
   useEffect(() => {
@@ -16,13 +14,29 @@ const PriceChecker = () => {
     if (storedState && JSON.parse(storedState)) {
       // Start checking if it was previously running
       startChecking();
+    } else {
+      // Stop checking if it was not previously running
+      stopChecking();
     }
 
     // Load the timeoutSeconds from local storage or use a default value
-    const storedTimeoutSeconds =
-      parseInt(localStorage.getItem("timeoutSeconds")) || 30;
-    setTimeoutSeconds(storedTimeoutSeconds);
+    const storedTimeoutSeconds = parseInt(
+      localStorage.getItem("timeoutSeconds")
+    );
+    if (!isNaN(storedTimeoutSeconds)) {
+      setTimeoutSeconds(storedTimeoutSeconds);
+    } else {
+      setTimeoutSeconds(10); // Set a default value if not found in local storage
+    }
   }, []);
+
+  const handleTimeoutChange = (e) => {
+    const newTimeout = parseInt(e.target.value, 10);
+    setTimeoutSeconds(newTimeout);
+
+    // Store the new timeoutSeconds in local storage
+    localStorage.setItem("timeoutSeconds", newTimeout.toString());
+  };
 
   // Start checking
   const startChecking = () => {
@@ -58,11 +72,9 @@ const PriceChecker = () => {
 
   // Combine function!
   const priceChecking = async () => {
-    // console.log("Test timeout!");
-    const lowPriceList = await callLowPriceItemApi();
-    if (lowPriceList.length) {
-      await sendMsgByChatBot(lowPriceList);
-    }
+    console.log(`Test timeout ${timeoutSeconds}(sec)!`);
+    // const lowPriceList = await callLowPriceItemApi();
+    // if (lowPriceList.length) await sendMsgByChatBot(lowPriceList);
   };
 
   // Call api to get low price item
@@ -122,14 +134,6 @@ const PriceChecker = () => {
         console.error("Error sending msg by TG bot");
       }
     }
-  };
-
-  const handleTimeoutChange = (e) => {
-    const newTimeout = parseInt(e.target.value, 10);
-    setTimeoutSeconds(newTimeout);
-
-    // Store the new timeoutSeconds in local storage
-    localStorage.setItem("timeoutSeconds", newTimeout.toString());
   };
 
   return {
