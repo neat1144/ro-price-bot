@@ -7,7 +7,7 @@ function NewCustomerForm({ onCustomerCreated }) {
     name: "乙太",
     svr: 2290,
     type: 0, // Initialize type as 0 (販賣) by default
-    set_price: 100000,
+    set_price: 200000,
   });
 
   const handleCreate = () => {

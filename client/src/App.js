@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import "./App.css"; // Import your app-specific CSS file if you have one
 import CustomerTable from "./components/CustomerTable"; // Import the CustomerTable component
 import StateButton from "./components/StateButton";
@@ -13,7 +13,7 @@ function App() {
     stopChecking,
     timeoutSeconds,
     handleTimeoutChange,
-  } = PriceChecker({});
+  } = PriceChecker();
 
   return (
     <div className="App">

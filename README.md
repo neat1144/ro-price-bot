@@ -1,10 +1,13 @@
 # RO 物品價格通知機器人
+
 - url: https://event.gnjoy.com.tw/Ro/RoShopSearch?fbclid=IwAR1xC46Qfmpbv0RzjG2t7LpJp19ZUKNnpBDL0QLKNfAbzScZYgU_Sl9C04Q
 
 ## 使用方法
 
 1. 安裝 docker，再跑 `docker-compose up`。
 2. 設定 telegram (chat_id & token)。
+   - token: `＠BotFather` -> `/new bot`
+   - chat_id: `@userinfobot` -> start
 3. 新增要爬蟲的項目。
 4. 設定爬蟲間隔時間（至少要項目的兩倍秒數）。
 5. 啟動爬蟲（右上角按鈕）。
@@ -44,6 +47,7 @@
 - [x] notify only once
 
 ## 伺服器更改
+
 - call api 去確認伺服器代號，再更改以下的東西！
   - `client/src/components/CustomerTable.js   (line:71)`
   - `client/src/components/NewCustomerForm.js (line:53)`
