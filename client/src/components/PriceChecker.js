@@ -2,10 +2,12 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 // const StateButton = ({ timeoutSeconds }) => {
-const StateButton = () => {
+const PriceChecker = () => {
   const [isChecking, setIsChecking] = useState(false);
   const [priceCheckingIntervalId, setPriceCheckingIntervalId] = useState(null);
-  const [timeoutSeconds, setTimeoutSeconds] = useState(30);
+  const [timeoutSeconds, setTimeoutSeconds] = useState(null);
+  const initialTimeoutSeconds =
+    parseInt(localStorage.getItem("timeoutSeconds")) || 30;
 
   // Load the previous state from localStorage when the component mounts
   useEffect(() => {
@@ -15,6 +17,11 @@ const StateButton = () => {
       // Start checking if it was previously running
       startChecking();
     }
+
+    // Load the timeoutSeconds from local storage or use a default value
+    const storedTimeoutSeconds =
+      parseInt(localStorage.getItem("timeoutSeconds")) || 30;
+    setTimeoutSeconds(storedTimeoutSeconds);
   }, []);
 
   // Start checking
@@ -120,6 +127,9 @@ const StateButton = () => {
   const handleTimeoutChange = (e) => {
     const newTimeout = parseInt(e.target.value, 10);
     setTimeoutSeconds(newTimeout);
+
+    // Store the new timeoutSeconds in local storage
+    localStorage.setItem("timeoutSeconds", newTimeout.toString());
   };
 
   return {
@@ -131,4 +141,4 @@ const StateButton = () => {
   };
 };
 
-export default StateButton;
+export default PriceChecker;
