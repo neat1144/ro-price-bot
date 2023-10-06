@@ -8,7 +8,7 @@ import { faSync } from "@fortawesome/free-solid-svg-icons";
 function CustomerTable() {
   const [formCustomer, setFormCustomer] = useState({
     id: "",
-    name: "乙太",
+    name: "乙太星塵",
     svr: 2290,
     type: 0, // Initialize type as 0 (販賣) by default
     set_price: 200000,
@@ -43,7 +43,7 @@ function CustomerTable() {
   const resetFormCustomer = () => {
     setFormCustomer({
       id: "",
-      name: "乙太",
+      name: "乙太星塵",
       svr: 2290,
       type: 0,
       set_price: 220000,
@@ -174,7 +174,7 @@ function CustomerTable() {
             <div className="col-md-6 mx-auto">
               <form className="border rounded p-4 shadow">
                 <div className="form-group mb-2">
-                  <label htmlFor="name">Name:</label>
+                  <label htmlFor="name">名稱:</label>
                   <input
                     type="text"
                     className="form-control"
@@ -186,7 +186,7 @@ function CustomerTable() {
                   />
                 </div>
                 <div className="form-group mb-2">
-                  <label htmlFor="svr">Server:</label>
+                  <label htmlFor="svr">伺服器:</label>
                   <select
                     className="form-control"
                     id="svr"
@@ -202,7 +202,7 @@ function CustomerTable() {
                   </select>
                 </div>
                 <div className="form-group mb-2">
-                  <label htmlFor="set_price">Set Price:</label>
+                  <label htmlFor="set_price">設定價格:</label>
                   <input
                     type="text"
                     className="form-control"
@@ -214,7 +214,7 @@ function CustomerTable() {
                   />
                 </div>
                 <div className="form-group mb-2">
-                  <label htmlFor="new_price">New Price:</label>
+                  <label htmlFor="new_price">目前最低價:</label>
                   <input
                     type="text"
                     className="form-control"
@@ -226,7 +226,7 @@ function CustomerTable() {
                   />
                 </div>
                 <div className="form-group mb-2">
-                  <label htmlFor="type">Type:</label>
+                  <label htmlFor="type">販售/收購:</label>
                   <select
                     className="form-control"
                     id="type"
@@ -268,11 +268,11 @@ function CustomerTable() {
           <thead>
             <tr>
               <th>序號</th>
-              <th>關鍵字</th>
+              <th>名稱</th>
               <th>伺服器</th>
               <th>設定價格</th>
-              <th>最低價</th>
-              <th>販賣/收購</th>
+              <th>目前最低價</th>
+              <th>販售/收購</th>
               <th>
                 操作
                 {/* Refresh button with icon */}

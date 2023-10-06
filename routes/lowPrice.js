@@ -37,7 +37,7 @@ router.get("/", async (req, res) => {
     const { set_price: setPrice, new_price: newPrice } = customer;
 
     // Price of first dict (because item list is sorted)
-    if (itemList) {
+    if (itemList.length) {
       const firtItemPrice = itemList[0].item_price;
 
       // If have low price item, Push to list

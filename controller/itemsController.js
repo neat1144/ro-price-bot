@@ -53,7 +53,7 @@ export const getItemList = async (customer, sort_desc) => {
   const requestBody = {
     div_svr: svr.toString(), // '2290'
     div_storetype: type.toString(), // '0'販售, '1'收購, '2'全部
-    txb_KeyWord: name, // '乙太星塵'
+    txb_KeyWord: `\"${name}\"`, // '乙太星塵'
     row_start: "1",
     recaptcha: "",
     sort_by: "itemPrice",
