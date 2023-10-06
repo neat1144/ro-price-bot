@@ -6,23 +6,23 @@ import PriceChecker from "./components/PriceChecker";
 import TGTable from "./components/TGTable";
 
 function App() {
-  const [timeoutSeconds, setTimeoutSeconds] = useState(30); // Initialize with a default value
-
   // Get the isChecking, startChecking, and stopChecking from StateButton
-  const { isChecking, startChecking, stopChecking } = PriceChecker({
+  const {
+    isChecking,
+    startChecking,
+    stopChecking,
     timeoutSeconds,
-  }); // Pass timeoutSeconds as a prop
-
-  const handleTimeoutChange = (e) => {
-    const newTimeout = parseInt(e.target.value, 10);
-    setTimeoutSeconds(newTimeout);
-  };
+    handleTimeoutChange,
+  } = PriceChecker({});
 
   return (
     <div className="App">
+      {/* Header and Title */}
       <div className="header">
         <h1>RO Spider</h1>
       </div>
+
+      {/* Timeout Input */}
       <div className="timeout-input">
         <label>Timeout (seconds): </label>
         <input
@@ -38,7 +38,6 @@ function App() {
         startChecking={startChecking}
         stopChecking={stopChecking}
       />
-      <br />
       {/* CustomerTable component */}
       <CustomerTable />
       {/* TGTable component */}
