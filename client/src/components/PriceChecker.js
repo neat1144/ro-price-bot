@@ -86,6 +86,7 @@ const PriceChecker = () => {
       return response.data;
     } catch (error) {
       console.error("Error calling low-price-check api");
+      return [];
     }
   };
 
