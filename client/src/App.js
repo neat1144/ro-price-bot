@@ -24,7 +24,11 @@ function App() {
 
       {/* Timeout Input */}
       <div className="timeout-input">
-        <label>Timeout (seconds): </label>
+        <label>
+          Timeout(sec)
+          <br />
+          至少要項目的兩倍秒數{" "}
+        </label>
         <input
           type="number"
           value={timeoutSeconds}
