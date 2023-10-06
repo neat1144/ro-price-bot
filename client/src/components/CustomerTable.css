@@ -196,3 +196,57 @@
   /* background-color: #0056b3; */
   color: #004cff;
 }
+
+/* CSS for styling the form */
+.form-container {
+  background-color: #f7f7f7;
+  border: 1px solid #ddd;
+  padding: 20px;
+  margin: 20px;
+}
+
+.form-table {
+  display: table;
+  width: 100%;
+}
+
+.form-row {
+  display: table-row;
+}
+
+.form-label {
+  display: table-cell;
+  width: 20%;
+  padding: 8px;
+  font-weight: bold;
+}
+
+.form-data {
+  display: table-cell;
+  width: 20px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+}
+
+.form-button-container {
+  display: table-cell;
+  padding: 8px;
+  vertical-align: middle;
+}
+
+.form-button {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.form-button:hover {
+  background-color: #0056b3;
+}

@@ -3,25 +3,28 @@ import axios from "axios";
 import "./CustomerTable.css"; // Import a CSS file for styling
 // import NewCustomerForm from "./NewCustomerForm"; // Import the new component
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSync } from "@fortawesome/free-solid-svg-icons";
+import { faL, faSync } from "@fortawesome/free-solid-svg-icons";
 
 function CustomerTable() {
-  const [newCustomer, setNewCustomer] = useState({
+  const [formCustomer, setFormCustomer] = useState({
+    id: "",
     name: "乙太",
     svr: 2290,
     type: 0, // Initialize type as 0 (販賣) by default
     set_price: 200000,
+    low_price: 0,
+    nofi: "",
   });
-  const [customers, setCustomers] = useState([]);
+  const [customerList, setCustomerList] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const [isFormHidden, setIsFormHidden] = useState(true);
-  const [editedCustomer, setEditedCustomer] = useState(null);
+  // const [editedCustomer, setEditedCustomer] = useState(null);
 
   // Get/Fetch customer
   const fetchCustomerData = async () => {
     try {
       const response = await axios.get("http://localhost:3030/customer");
-      setCustomers(response.data);
+      setCustomerList(response.data);
     } catch (error) {
       console.error("Error fetching customer data:", error);
     }
@@ -31,58 +34,86 @@ function CustomerTable() {
   useEffect(() => {
     fetchCustomerData();
     // Set up an interval to refresh the data every 10 seconds
-    const intervalId = setInterval(fetchCustomerData, 1000);
+    const intervalId = setInterval(fetchCustomerData, 3000);
 
     // Clean up the interval when the component unmounts
     return () => clearInterval(intervalId);
   }, []);
 
-  // Create customer
+  // "Reset" form
+  const resetFormCustomer = () => {
+    setFormCustomer({
+      id: "",
+      name: "乙太",
+      svr: 2290,
+      type: 0,
+      set_price: 220000,
+      new_price: 0,
+    });
+  };
+
+  // "Create" customer
   const handleCustomerCreated = () => {
     fetchCustomerData(); // Refresh the customer data when a new customer is created
   };
 
   // Create customer
   const handleCreate = async () => {
+    setIsEdit(false);
     try {
-      await axios.post("http://localhost:3030/customer", newCustomer);
+      await axios.post("http://localhost:3030/customer", formCustomer);
 
       // onCustomerCreated(); // Notify the parent component that a new customer has been created
-      setNewCustomer({
-        name: "乙太",
-        svr: 2290,
-        type: 0,
-        set_price: 100000,
-      });
+      resetFormCustomer();
       console.log("New customer added successfully");
     } catch (error) {
       console.error("Error creating new customer:", error);
     }
   };
 
-  // Enter edit mode
-  const enterEditMode = (customer) => {
+  // "Update" customer
+  // Enter edit button
+  const enterEditButton = (customer) => {
+    console.log(customer);
     setIsEdit(true);
-    setEditedCustomer(customer);
+    if (isFormHidden) setIsFormHidden(!isFormHidden);
+    setFormCustomer({
+      id: customer.id,
+      name: customer.name,
+      svr: customer.svr,
+      type: customer.type,
+      set_price: customer.set_price,
+      new_price: customer.new_price,
+    });
   };
 
-  // Update customer
+  // Handle edit
+  const handleFormEditedData = async (newValue, field) => {
+    setFormCustomer((prevData) => ({
+      ...prevData,
+      [field]: newValue,
+    }));
+  };
+
   const handleEdit = async () => {
     // Make a PUT request to update the customer
     try {
-      const response = await axios.put(
-        `http://localhost:3030/customer/${editedCustomer.id}`,
-        editedCustomer
+      await axios.put(
+        `http://localhost:3030/customer/${formCustomer.id}`,
+        formCustomer
       );
 
       // Refresh the customer data and exit edit mode
       fetchCustomerData();
-      setIsEdit(false);
-      setEditedCustomer(null);
-      console.log(`Updated customer with ID ${editedCustomer.id}`);
+
+      // Rest form
+      resetFormCustomer();
+
+      // Print
+      console.log(`Updated customer with ID ${formCustomer.id}`);
     } catch (error) {
       console.error(
-        `Error updating customer with ID ${editedCustomer.id}:`,
+        `Error updating customer with ID ${formCustomer.id}:`,
         error
       );
     }
@@ -90,25 +121,32 @@ function CustomerTable() {
 
   // Cancel edit mode
   const cancelEdit = () => {
-    setIsEdit(false);
-    setEditedCustomer(null);
+    // setIsEdit(false);
+    // setEditedCustomer(null);
   };
 
-  // Delete customer
+  // "Delete" customer
   const handleDelete = (customerId) => {
     // Make a DELETE request to the API endpoint
     axios
       .delete(`http://localhost:3030/customer/${customerId}`)
       .then(() => {
         // Remove the deleted customer from the state
-        setCustomers(
-          customers.filter((customer) => customer.id !== customerId)
+        setCustomerList(
+          customerList.filter((customer) => customer.id !== customerId)
         );
         console.log(`Deleted customer with ID ${customerId}`);
       })
       .catch((error) => {
         console.error(`Error deleting customer with ID ${customerId}:`, error);
       });
+  };
+
+  // Handle hidden customer form
+  const handleHiddenForm = () => {
+    setIsFormHidden(!isFormHidden);
+    setIsEdit(false);
+    resetFormCustomer();
   };
 
   // Create a variable to track the serial number
@@ -128,71 +166,87 @@ function CustomerTable() {
       ) : (
         <button
           className="hidden-form-button"
-          onClick={() => setIsFormHidden(!isFormHidden)}
+          onClick={() => handleHiddenForm()}
         >
           Hidden
         </button>
       )}
       {/* Create customer button */}
       {!isFormHidden && (
-        <div className="new-customer-form">
-          <h2> </h2>
-          <div>
-            <label>關鍵字:</label>
-            <input
-              type="text"
-              value={newCustomer.name}
-              onChange={(e) =>
-                setNewCustomer({ ...newCustomer, name: e.target.value })
-              }
-            />
+        <div className="form-container">
+          <div className="form-table">
+            <div className="form-row">
+              {/* Name */}
+              <div className="form-label">Name:</div>
+              <div
+                className="form-data"
+                contentEditable={true}
+                onInput={(e) =>
+                  handleFormEditedData(e.target.textContent, "name")
+                }
+              >
+                {formCustomer.name}
+              </div>
+              {/* Server */}
+              <div className="form-label">svr:</div>
+              <div
+                className="form-data"
+                contentEditable={true}
+                onInput={(e) =>
+                  handleFormEditedData(e.target.textContent, "svr")
+                }
+              >
+                {formCustomer.svr}
+              </div>
+              {/* Set Price */}
+              <div className="form-label">set_price:</div>
+              <div
+                className="form-data"
+                contentEditable={true}
+                onInput={(e) =>
+                  handleFormEditedData(e.target.textContent, "set_price")
+                }
+              >
+                {formCustomer.set_price}
+              </div>
+              {/* Low Price */}
+              <div className="form-label">new_price:</div>
+              <div
+                className="form-data"
+                contentEditable={true}
+                onInput={(e) =>
+                  handleFormEditedData(e.target.textContent, "new_price")
+                }
+              >
+                {formCustomer.new_price}
+              </div>
+              {/* Sell or Buy */}
+              <div className="form-label">type:</div>
+              <div
+                className="form-data"
+                contentEditable={true}
+                onInput={(e) =>
+                  handleFormEditedData(e.target.textContent, "type")
+                }
+              >
+                {formCustomer.type}
+              </div>
+              {/* Button */}
+
+              <div className="form-button-container">
+                {/* <div className="form-button" onClick={handleSave}> */}
+                {isEdit ? (
+                  <div className="form-button" onClick={handleEdit}>
+                    Update
+                  </div>
+                ) : (
+                  <div className="form-button" onClick={handleCreate}>
+                    Create
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
-          <div>
-            <label>伺服器:</label>
-            <select
-              type="text"
-              value={newCustomer.svr}
-              onChange={(e) =>
-                setNewCustomer({ ...newCustomer, svr: e.target.value })
-              }
-            >
-              <option value={2290}>巴基利</option>
-              <option value={3290}>查爾斯</option>
-              <option value={4290}>波利</option>
-              <option value={1}>羅札納(未開放)</option>
-            </select>
-          </div>
-          <div>
-            <label>類型:</label>
-            <select
-              value={newCustomer.type}
-              onChange={(e) =>
-                setNewCustomer({
-                  ...newCustomer,
-                  type: parseInt(e.target.value),
-                })
-              }
-            >
-              <option value={0}>販賣</option>
-              <option value={1}>收購</option>
-            </select>
-          </div>
-          <div>
-            <label>設定價格:</label>
-            <input
-              type="number"
-              value={newCustomer.set_price}
-              onChange={(e) =>
-                setNewCustomer({
-                  ...newCustomer,
-                  set_price: parseInt(e.target.value),
-                })
-              }
-            />
-          </div>
-          <button className="create-button" onClick={handleCreate}>
-            Create
-          </button>
         </div>
       )}
       {/* Container for the table and button */}
@@ -216,7 +270,7 @@ function CustomerTable() {
             </tr>
           </thead>
           <tbody>
-            {customers.map((customer) => (
+            {customerList.map((customer) => (
               <tr key={customer.id}>
                 <td>{serialNumber++}</td>
                 <td>{customer.name}</td>
@@ -255,7 +309,7 @@ function CustomerTable() {
                   {/* Edit button */}
                   <button
                     className="edit-button"
-                    onClick={() => enterEditMode(customer)}
+                    onClick={() => enterEditButton(customer)}
                   >
                     Edit
                   </button>
