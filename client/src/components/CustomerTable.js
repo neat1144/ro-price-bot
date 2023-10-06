@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./CustomerTable.css"; // Import a CSS file for styling
-import NewCustomerForm from "./NewCustomerForm"; // Import the new component
+// import NewCustomerForm from "./NewCustomerForm"; // Import the new component
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSync } from "@fortawesome/free-solid-svg-icons";
 
 function CustomerTable() {
+  const [newCustomer, setNewCustomer] = useState({
+    name: "乙太",
+    svr: 2290,
+    type: 0, // Initialize type as 0 (販賣) by default
+    set_price: 200000,
+  });
   const [customers, setCustomers] = useState([]);
+  const [isEdit, setIsEdit] = useState(false);
+  const [editedCustomer, setEditedCustomer] = useState(null);
 
   // Get/Fetch customer
   const fetchCustomerData = async () => {
@@ -18,6 +26,7 @@ function CustomerTable() {
     }
   };
 
+  // useEffect
   useEffect(() => {
     fetchCustomerData();
     // Set up an interval to refresh the data every 10 seconds
@@ -30,6 +39,58 @@ function CustomerTable() {
   // Create customer
   const handleCustomerCreated = () => {
     fetchCustomerData(); // Refresh the customer data when a new customer is created
+  };
+
+  // Create customer
+  const handleCreate = async () => {
+    try {
+      await axios.post("http://localhost:3030/customer", newCustomer);
+
+      // onCustomerCreated(); // Notify the parent component that a new customer has been created
+      setNewCustomer({
+        name: "乙太",
+        svr: 2290,
+        type: 0,
+        set_price: 100000,
+      });
+      console.log("New customer added successfully");
+    } catch (error) {
+      console.error("Error creating new customer:", error);
+    }
+  };
+
+  // Enter edit mode
+  const enterEditMode = (customer) => {
+    setIsEdit(true);
+    setEditedCustomer(customer);
+  };
+
+  // Update customer
+  const handleEdit = async () => {
+    // Make a PUT request to update the customer
+    try {
+      const response = await axios.put(
+        `http://localhost:3030/customer/${editedCustomer.id}`,
+        editedCustomer
+      );
+
+      // Refresh the customer data and exit edit mode
+      fetchCustomerData();
+      setIsEdit(false);
+      setEditedCustomer(null);
+      console.log(`Updated customer with ID ${editedCustomer.id}`);
+    } catch (error) {
+      console.error(
+        `Error updating customer with ID ${editedCustomer.id}:`,
+        error
+      );
+    }
+  };
+
+  // Cancel edit mode
+  const cancelEdit = () => {
+    setIsEdit(false);
+    setEditedCustomer(null);
   };
 
   // Delete customer
@@ -54,8 +115,63 @@ function CustomerTable() {
 
   return (
     <div>
-      {/* NewCustomerForm component */}
-      <NewCustomerForm onCustomerCreated={handleCustomerCreated} />
+      {/* Create customer button */}
+      <div className="new-customer-form">
+        <h2> </h2>
+        <div>
+          <label>關鍵字:</label>
+          <input
+            type="text"
+            value={newCustomer.name}
+            onChange={(e) =>
+              setNewCustomer({ ...newCustomer, name: e.target.value })
+            }
+          />
+        </div>
+        <div>
+          <label>伺服器:</label>
+          <select
+            type="text"
+            value={newCustomer.svr}
+            onChange={(e) =>
+              setNewCustomer({ ...newCustomer, svr: e.target.value })
+            }
+          >
+            <option value={2290}>巴基利</option>
+            <option value={3290}>查爾斯</option>
+            <option value={4290}>波利</option>
+            <option value={1}>羅札納(未開放)</option>
+          </select>
+        </div>
+        <div>
+          <label>類型:</label>
+          <select
+            value={newCustomer.type}
+            onChange={(e) =>
+              setNewCustomer({ ...newCustomer, type: parseInt(e.target.value) })
+            }
+          >
+            <option value={0}>販賣</option>
+            <option value={1}>收購</option>
+          </select>
+        </div>
+        <div>
+          <label>設定價格:</label>
+          <input
+            type="number"
+            value={newCustomer.set_price}
+            onChange={(e) =>
+              setNewCustomer({
+                ...newCustomer,
+                set_price: parseInt(e.target.value),
+              })
+            }
+          />
+        </div>
+        <button className="create-button" onClick={handleCreate}>
+          Create
+        </button>
+      </div>
 
       {/* Container for the table and button */}
       <div className="table-container">
@@ -114,12 +230,14 @@ function CustomerTable() {
                   </span>
                 </td>
                 <td>
-                  {/* <button
-                  className="edit-button"
-                  onClick={() => handleEdit(customer.id)}
-                >
-                  Edit
-                </button> */}
+                  {/* Edit button */}
+                  <button
+                    className="edit-button"
+                    onClick={() => enterEditMode(customer)}
+                  >
+                    Edit
+                  </button>
+                  {/* Delete button */}
                   <button
                     className="delete-button"
                     onClick={() => handleDelete(customer.id)}
