@@ -48,6 +48,9 @@
 - [x] fix stop button
 - [x] docker
 - [x] notify only once
+- [ ] fix robot
+- [ ] timeout form
+- [ ] clean new_price button
 
 ## 伺服器更改
 
