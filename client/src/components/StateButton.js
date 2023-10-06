@@ -4,13 +4,21 @@ import "./StateButton.css";
 
 const StateButton = ({ isChecking, startChecking, stopChecking }) => {
   return (
-    <div>
+    <div className="button-container">
       {isChecking ? (
-        <button className="button-stop" onClick={stopChecking}>
+        <button
+          className="btn btn-danger"
+          // className="btn btn-danger button-start-stop"
+          onClick={stopChecking}
+        >
           Stop
         </button>
       ) : (
-        <button className="button-start" onClick={startChecking}>
+        <button
+          className="btn btn-primary"
+          // className="btn btn-success button-start-stop"
+          onClick={startChecking}
+        >
           Start
         </button>
       )}

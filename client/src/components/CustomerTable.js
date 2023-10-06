@@ -3,7 +3,7 @@ import axios from "axios";
 import "./CustomerTable.css"; // Import a CSS file for styling
 // import NewCustomerForm from "./NewCustomerForm"; // Import the new component
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faL, faSync } from "@fortawesome/free-solid-svg-icons";
+import { faSync } from "@fortawesome/free-solid-svg-icons";
 
 function CustomerTable() {
   const [formCustomer, setFormCustomer] = useState({
@@ -13,7 +13,6 @@ function CustomerTable() {
     type: 0, // Initialize type as 0 (販賣) by default
     set_price: 200000,
     low_price: 0,
-    nofi: "",
   });
   const [customerList, setCustomerList] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
@@ -34,7 +33,7 @@ function CustomerTable() {
   useEffect(() => {
     fetchCustomerData();
     // Set up an interval to refresh the data every 10 seconds
-    const intervalId = setInterval(fetchCustomerData, 3000);
+    const intervalId = setInterval(fetchCustomerData, 10 * 1000);
 
     // Clean up the interval when the component unmounts
     return () => clearInterval(intervalId);
@@ -156,95 +155,108 @@ function CustomerTable() {
     <div>
       {" "}
       {/* Add button */}
-      {isFormHidden ? (
-        <button
-          className="add-form-button"
-          onClick={() => setIsFormHidden(!isFormHidden)}
-        >
-          Add
-        </button>
-      ) : (
-        <button
-          className="hidden-form-button"
-          onClick={() => handleHiddenForm()}
-        >
-          Hidden
-        </button>
-      )}
+      <div className="form-show-button">
+        {isFormHidden ? (
+          <button
+            className="btn btn-primary"
+            onClick={() => setIsFormHidden(!isFormHidden)}
+          >
+            Add
+          </button>
+        ) : (
+          ""
+        )}{" "}
+      </div>
       {/* Create customer button */}
       {!isFormHidden && (
-        <div className="form-container">
-          <div className="form-table">
-            <div className="form-row">
-              {/* Name */}
-              <div className="form-label">Name:</div>
-              <div
-                className="form-data"
-                contentEditable={true}
-                onInput={(e) =>
-                  handleFormEditedData(e.target.textContent, "name")
-                }
-              >
-                {formCustomer.name}
-              </div>
-              {/* Server */}
-              <div className="form-label">svr:</div>
-              <div
-                className="form-data"
-                contentEditable={true}
-                onInput={(e) =>
-                  handleFormEditedData(e.target.textContent, "svr")
-                }
-              >
-                {formCustomer.svr}
-              </div>
-              {/* Set Price */}
-              <div className="form-label">set_price:</div>
-              <div
-                className="form-data"
-                contentEditable={true}
-                onInput={(e) =>
-                  handleFormEditedData(e.target.textContent, "set_price")
-                }
-              >
-                {formCustomer.set_price}
-              </div>
-              {/* Low Price */}
-              <div className="form-label">new_price:</div>
-              <div
-                className="form-data"
-                contentEditable={true}
-                onInput={(e) =>
-                  handleFormEditedData(e.target.textContent, "new_price")
-                }
-              >
-                {formCustomer.new_price}
-              </div>
-              {/* Sell or Buy */}
-              <div className="form-label">type:</div>
-              <div
-                className="form-data"
-                contentEditable={true}
-                onInput={(e) =>
-                  handleFormEditedData(e.target.textContent, "type")
-                }
-              >
-                {formCustomer.type}
-              </div>
-              {/* Button */}
-
-              <div className="form-button-container">
-                {/* <div className="form-button" onClick={handleSave}> */}
-                {isEdit ? (
-                  <div className="form-button" onClick={handleEdit}>
-                    Update
-                  </div>
-                ) : (
-                  <div className="form-button" onClick={handleCreate}>
-                    Create
-                  </div>
-                )}
-              </div>
+        <div className="container mt-4">
+          <div className="row">
+            <div className="col-md-6 mx-auto">
+              <form className="border rounded p-4 shadow">
+                <div className="form-group mb-2">
+                  <label htmlFor="name">Name:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="name"
+                    value={formCustomer.name}
+                    onChange={(e) =>
+                      handleFormEditedData(e.target.value, "name")
+                    }
+                  />
+                </div>
+                <div className="form-group mb-2">
+                  <label htmlFor="svr">Server:</label>
+                  <select
+                    className="form-control"
+                    id="svr"
+                    value={formCustomer.svr}
+                    onChange={(e) =>
+                      handleFormEditedData(e.target.value, "svr")
+                    }
+                  >
+                    <option value="2290">巴基利</option>
+                    <option value="3290">查爾斯</option>
+                    <option value="4290">波利</option>
+                    <option value="9999">羅札納(未開放)</option>
+                  </select>
+                </div>
+                <div className="form-group mb-2">
+                  <label htmlFor="set_price">Set Price:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="set_price"
+                    value={formCustomer.set_price}
+                    onChange={(e) =>
+                      handleFormEditedData(e.target.value, "set_price")
+                    }
+                  />
+                </div>
+                <div className="form-group mb-2">
+                  <label htmlFor="new_price">New Price:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="new_price"
+                    value={formCustomer.new_price}
+                    onChange={(e) =>
+                      handleFormEditedData(e.target.value, "new_price")
+                    }
+                  />
+                </div>
+                <div className="form-group mb-2">
+                  <label htmlFor="type">Type:</label>
+                  <select
+                    className="form-control"
+                    id="type"
+                    value={formCustomer.type}
+                    onChange={(e) =>
+                      handleFormEditedData(e.target.value, "type")
+                    }
+                  >
+                    <option value="0">販售</option>
+                    <option value="1">收購</option>
+                  </select>
+                </div>
+                <div className="form-group mb-2">
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => handleHiddenForm()}
+                  >
+                    Cancel
+                  </button>
+                  {isEdit ? (
+                    <button className="btn btn-warning" onClick={handleEdit}>
+                      Update
+                    </button>
+                  ) : (
+                    <button className="btn btn-primary" onClick={handleCreate}>
+                      Create
+                    </button>
+                  )}
+                </div>
+              </form>
             </div>
           </div>
         </div>
@@ -262,7 +274,8 @@ function CustomerTable() {
               <th>最低價</th>
               <th>販賣/收購</th>
               <th>
-                操作 {/* Refresh button with icon */}
+                操作
+                {/* Refresh button with icon */}
                 <button className="refresh-button" onClick={fetchCustomerData}>
                   <FontAwesomeIcon icon={faSync} />
                 </button>
@@ -299,7 +312,7 @@ function CustomerTable() {
                     }}
                   >
                     {customer.type === 0
-                      ? "販賣"
+                      ? "販售"
                       : customer.type === 1
                       ? "收購"
                       : ""}
@@ -308,14 +321,14 @@ function CustomerTable() {
                 <td>
                   {/* Edit button */}
                   <button
-                    className="edit-button"
+                    className="btn btn-success"
                     onClick={() => enterEditButton(customer)}
                   >
                     Edit
                   </button>
                   {/* Delete button */}
                   <button
-                    className="delete-button"
+                    className="btn btn-danger"
                     onClick={() => handleDelete(customer.id)}
                   >
                     Delete

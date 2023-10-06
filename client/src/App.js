@@ -4,6 +4,7 @@ import CustomerTable from "./components/CustomerTable"; // Import the CustomerTa
 import StateButton from "./components/StateButton";
 import PriceChecker from "./components/PriceChecker";
 import TGTable from "./components/TGTable";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
   // Get the isChecking, startChecking, and stopChecking from StateButton
@@ -18,12 +19,12 @@ function App() {
   return (
     <div className="App">
       {/* Header and Title */}
-      <div className="header">
+      <div className="header-cus header">
         <h1>RO Spider</h1>
       </div>
 
       {/* Timeout Input */}
-      <div className="timeout-input">
+      {/* <div className="timeout-input">
         <label>
           Timeout(sec)
           <br />
@@ -34,7 +35,7 @@ function App() {
           value={timeoutSeconds}
           onChange={handleTimeoutChange}
         />
-      </div>
+      </div> */}
 
       {/* Start/Stop Button (using StateButton component) */}
       <StateButton
