@@ -8,10 +8,6 @@ import { faSync } from "@fortawesome/free-solid-svg-icons";
 function CustomerTable() {
   const [customers, setCustomers] = useState([]);
 
-  useEffect(() => {
-    fetchCustomerData();
-  }, []);
-
   // Get/Fetch customer
   const fetchCustomerData = async () => {
     try {
@@ -21,6 +17,15 @@ function CustomerTable() {
       console.error("Error fetching customer data:", error);
     }
   };
+
+  useEffect(() => {
+    fetchCustomerData();
+    // Set up an interval to refresh the data every 10 seconds
+    const intervalId = setInterval(fetchCustomerData, 1000);
+
+    // Clean up the interval when the component unmounts
+    return () => clearInterval(intervalId);
+  }, []);
 
   // Create customer
   const handleCustomerCreated = () => {
@@ -54,11 +59,6 @@ function CustomerTable() {
 
       {/* Container for the table and button */}
       <div className="table-container">
-        {/* Refresh button with icon */}
-        <button className="refresh-button" onClick={fetchCustomerData}>
-          <FontAwesomeIcon icon={faSync} />
-        </button>
-
         {/* Table */}
         <table className="customer-table">
           <thead>
@@ -69,7 +69,12 @@ function CustomerTable() {
               <th>設定價格</th>
               <th>最低價</th>
               <th>販賣/收購</th>
-              <th>操作</th>
+              <th>
+                操作 {/* Refresh button with icon */}
+                <button className="refresh-button" onClick={fetchCustomerData}>
+                  <FontAwesomeIcon icon={faSync} />
+                </button>
+              </th>
             </tr>
           </thead>
           <tbody>
