@@ -14,6 +14,7 @@ function CustomerTable() {
   });
   const [customers, setCustomers] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
+  const [isFormHidden, setIsFormHidden] = useState(true);
   const [editedCustomer, setEditedCustomer] = useState(null);
 
   // Get/Fetch customer
@@ -115,64 +116,85 @@ function CustomerTable() {
 
   return (
     <div>
-      {/* Create customer button */}
-      <div className="new-customer-form">
-        <h2> </h2>
-        <div>
-          <label>關鍵字:</label>
-          <input
-            type="text"
-            value={newCustomer.name}
-            onChange={(e) =>
-              setNewCustomer({ ...newCustomer, name: e.target.value })
-            }
-          />
-        </div>
-        <div>
-          <label>伺服器:</label>
-          <select
-            type="text"
-            value={newCustomer.svr}
-            onChange={(e) =>
-              setNewCustomer({ ...newCustomer, svr: e.target.value })
-            }
-          >
-            <option value={2290}>巴基利</option>
-            <option value={3290}>查爾斯</option>
-            <option value={4290}>波利</option>
-            <option value={1}>羅札納(未開放)</option>
-          </select>
-        </div>
-        <div>
-          <label>類型:</label>
-          <select
-            value={newCustomer.type}
-            onChange={(e) =>
-              setNewCustomer({ ...newCustomer, type: parseInt(e.target.value) })
-            }
-          >
-            <option value={0}>販賣</option>
-            <option value={1}>收購</option>
-          </select>
-        </div>
-        <div>
-          <label>設定價格:</label>
-          <input
-            type="number"
-            value={newCustomer.set_price}
-            onChange={(e) =>
-              setNewCustomer({
-                ...newCustomer,
-                set_price: parseInt(e.target.value),
-              })
-            }
-          />
-        </div>
-        <button className="create-button" onClick={handleCreate}>
-          Create
+      {" "}
+      {/* Add button */}
+      {isFormHidden ? (
+        <button
+          className="add-form-button"
+          onClick={() => setIsFormHidden(!isFormHidden)}
+        >
+          Add
         </button>
-      </div>
-
+      ) : (
+        <button
+          className="hidden-form-button"
+          onClick={() => setIsFormHidden(!isFormHidden)}
+        >
+          Hidden
+        </button>
+      )}
+      {/* Create customer button */}
+      {!isFormHidden && (
+        <div className="new-customer-form">
+          <h2> </h2>
+          <div>
+            <label>關鍵字:</label>
+            <input
+              type="text"
+              value={newCustomer.name}
+              onChange={(e) =>
+                setNewCustomer({ ...newCustomer, name: e.target.value })
+              }
+            />
+          </div>
+          <div>
+            <label>伺服器:</label>
+            <select
+              type="text"
+              value={newCustomer.svr}
+              onChange={(e) =>
+                setNewCustomer({ ...newCustomer, svr: e.target.value })
+              }
+            >
+              <option value={2290}>巴基利</option>
+              <option value={3290}>查爾斯</option>
+              <option value={4290}>波利</option>
+              <option value={1}>羅札納(未開放)</option>
+            </select>
+          </div>
+          <div>
+            <label>類型:</label>
+            <select
+              value={newCustomer.type}
+              onChange={(e) =>
+                setNewCustomer({
+                  ...newCustomer,
+                  type: parseInt(e.target.value),
+                })
+              }
+            >
+              <option value={0}>販賣</option>
+              <option value={1}>收購</option>
+            </select>
+          </div>
+          <div>
+            <label>設定價格:</label>
+            <input
+              type="number"
+              value={newCustomer.set_price}
+              onChange={(e) =>
+                setNewCustomer({
+                  ...newCustomer,
+                  set_price: parseInt(e.target.value),
+                })
+              }
+            />
+          </div>
+          <button className="create-button" onClick={handleCreate}>
+            Create
+          </button>
+        </div>
+      )}
       {/* Container for the table and button */}
       <div className="table-container">
         {/* Table */}
