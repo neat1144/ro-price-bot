@@ -35,14 +35,14 @@ const PriceChecker = () => {
       }
 
       // Load the timeoutSeconds from local storage or use a default value
-      // const storedTimeoutSeconds = parseInt(
-      //   localStorage.getItem("timeoutSeconds")
-      // );
-      // if (!isNaN(storedTimeoutSeconds)) {
-      //   setTimeoutSeconds(storedTimeoutSeconds);
-      // } else {
-      //   setTimeoutSeconds(10); // Set a default value if not found in local storage
-      // }
+      const storedTimeoutSeconds = parseInt(
+        localStorage.getItem("timeoutSeconds")
+      );
+      if (!isNaN(storedTimeoutSeconds)) {
+        setTimeoutSeconds(storedTimeoutSeconds);
+      } else {
+        setTimeoutSeconds(10); // Set a default value if not found in local storage
+      }
     }, // eslint-disable-next-line
     []
   );

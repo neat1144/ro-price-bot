@@ -22,20 +22,15 @@ function App() {
       <div className="header-cus header">
         <h1>RO Spider</h1>
       </div>
-
       {/* Timeout Input */}
-      {/* <div className="timeout-input">
-        <label>
-          Timeout(sec)
-          <br />
-          至少要項目的兩倍秒數{" "}
-        </label>
+      <div className="timeout-input">
+        <label>Timeout(sec): </label>
         <input
           type="number"
           value={timeoutSeconds}
           onChange={handleTimeoutChange}
         />
-      </div> */}
+      </div>
 
       {/* Start/Stop Button (using StateButton component) */}
       <StateButton

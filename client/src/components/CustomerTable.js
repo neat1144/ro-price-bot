@@ -53,9 +53,9 @@ function CustomerTable() {
   };
 
   // "Create" customer
-  const handleCustomerCreated = () => {
-    fetchCustomerData(); // Refresh the customer data when a new customer is created
-  };
+  // const handleCustomerCreated = () => {
+  //   fetchCustomerData(); // Refresh the customer data when a new customer is created
+  // };
 
   // Create customer
   const handleCreate = async () => {

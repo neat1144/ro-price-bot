@@ -32,6 +32,11 @@
 - 間隔查詢: 可以自定義每次爬蟲的間隔（從 db 撈）
 - 通知機器人: telegram，低於特定價格時通知
 - 伺服器合併: 新增 or 合併
+- 介面:
+  - 關鍵字: 預設空白
+  - 伺服器: 預設波利
+  - 類型: 預設販售
+  - 設定價格: 預設空白
 
 ## DB
 
@@ -49,8 +54,9 @@
 - [x] docker
 - [x] notify only once
 - [x] fix robot
-- [ ] timeout form
+- [x] timeout form
 - [x] clean new_price button
+- [ ] clean form of customer
 
 ## 伺服器更改
 
