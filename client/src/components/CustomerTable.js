@@ -320,8 +320,16 @@ function CustomerTable() {
                     ? "羅札納 (未開放)"
                     : ""}
                 </td>
-                <td>{customer.set_price.toLocaleString()}</td>
-                <td>{customer.new_price.toLocaleString()}</td>
+                <td>
+                  {customer.set_price
+                    ? customer.set_price.toLocaleString()
+                    : "0"}
+                </td>
+                <td>
+                  {customer.new_price
+                    ? customer.new_price.toLocaleString()
+                    : "0"}
+                </td>
                 <td>
                   <span
                     style={{

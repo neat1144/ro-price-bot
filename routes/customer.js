@@ -32,9 +32,13 @@ db.run(`CREATE TABLE IF NOT EXISTS customers
 router.post("/", (req, res) => {
   const { name, svr, type, set_price, new_price, nofi } = req.body;
 
+  // Check if 'nofi' is present in the request body
+  // If not, set it to 0
+  const finalNofi = nofi !== undefined ? nofi : 0;
+
   db.run(
-    "INSERT INTO customers (name, svr, type, set_price, new_price, nofi) VALUES (?, ?, ?, ?, 0, 0)",
-    [name, svr, type, set_price, new_price, nofi],
+    "INSERT INTO customers (name, svr, type, set_price, new_price, nofi) VALUES (?, ?, ?, ?, ?, ?)",
+    [name, svr, type, set_price, new_price, finalNofi], // Use finalNofi here
     function (err) {
       if (err) {
         return res.status(500).json({ error: err.message });
