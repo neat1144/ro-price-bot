@@ -13,6 +13,7 @@ function CustomerTable() {
     type: 0, // Initialize type as 0 (販賣) by default
     set_price: 200000,
     low_price: 0,
+    nofi: "",
   });
   const [customerList, setCustomerList] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
@@ -49,6 +50,7 @@ function CustomerTable() {
       type: 0,
       set_price: 220000,
       new_price: 0,
+      nofi: "",
     });
   };
 
@@ -82,6 +84,7 @@ function CustomerTable() {
       type: customer.type,
       set_price: customer.set_price,
       new_price: "0",
+      nofi: "",
     });
     setIsRest(false);
   };
@@ -105,6 +108,7 @@ function CustomerTable() {
       type: customer.type,
       set_price: customer.set_price,
       new_price: customer.new_price,
+      nofi: customer.nofi,
     });
   };
 
@@ -295,6 +299,7 @@ function CustomerTable() {
               <th>設定價格</th>
               <th>目前最低價</th>
               <th>販售/收購</th>
+              <th>已通知</th>
               <th>
                 操作
                 {/* Refresh button with icon */}
@@ -348,6 +353,8 @@ function CustomerTable() {
                       : ""}
                   </span>
                 </td>
+                <td>{customer.nofi === "" ? "none" : customer.nofi}</td>
+
                 <td>
                   {/* Reset new_price button */}
                   {isRest ? (

@@ -15,7 +15,7 @@ db.run(`CREATE TABLE IF NOT EXISTS customers
        type      INTEGER, 
        set_price REAL, 
        new_price REAL, 
-       nofi      INTEGER)`);
+       nofi      TEXT)`);
 
 /* example JSON
 {
@@ -34,7 +34,7 @@ router.post("/", (req, res) => {
 
   // Check if 'nofi' is present in the request body
   // If not, set it to 0
-  const finalNofi = nofi !== undefined ? nofi : 0;
+  const finalNofi = nofi !== undefined ? nofi : "";
 
   db.run(
     "INSERT INTO customers (name, svr, type, set_price, new_price, nofi) VALUES (?, ?, ?, ?, ?, ?)",

@@ -1,6 +1,4 @@
 import axios from "axios";
-import TelegramBot from "node-telegram-bot-api";
-import Mutexify from "mutexify";
 
 // Get customers of api
 export const getCustomers = async () => {
@@ -76,6 +74,8 @@ export const getItemList = async (customer, sort_desc) => {
         itemPrice: item_price,
         storetype: type,
       } = item;
+
+      // Push
       itemList.push({ id, name, store, item_price, svr, type });
     }
     // console.log(itemList);
@@ -106,8 +106,9 @@ export const sendMsgByChatBot = async (itemList) => {
     const messageText = `
 關鍵字: ${name}
 設定價格: ${setPrice.toLocaleString("en-US")} 
-目前${chnType}: ${newPrice.toLocaleString("en-US")}
 伺服器: ${svr}`;
+
+    // 目前${chnType}: ${newPrice.toLocaleString("en-US")}
 
     // Send request by telegram api
     try {
@@ -119,7 +120,11 @@ export const sendMsgByChatBot = async (itemList) => {
       // Print suc-msg
       console.log("Message sent successfully:", response.data);
     } catch (error) {
-      console.error("Error sending msg by TG bot");
+      const errorMsg = `Error sending msg by TG bot.
+Token:${token}
+chatId:${chatId}
+      `;
+      console.error(errorMsg);
     }
   }
 };
@@ -132,4 +137,23 @@ export const fetchBotId = async () => {
   } catch (error) {
     console.error("Error fetching bot data:", error);
   }
+};
+
+// Get time
+export const getDateTime = () => {
+  // Create a new Date object to represent the current date and time
+  const currentTime = new Date();
+
+  // Get the current date components (month and day)
+  const month = String(currentTime.getMonth() + 1).padStart(2, "0"); // Add 1 to the month because it's zero-based
+  const day = String(currentTime.getDate()).padStart(2, "0");
+
+  // Get the current time components (hours and minutes)
+  const hours = String(currentTime.getHours()).padStart(2, "0");
+  const minutes = String(currentTime.getMinutes()).padStart(2, "0");
+
+  // Format the date and time as a string (e.g., "MM/DD HH:mm")
+  const formattedTime = `${month}/${day}(${hours}:${minutes})`;
+
+  return formattedTime;
 };

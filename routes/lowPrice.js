@@ -5,6 +5,7 @@ import {
   getItemList as getItemListByCustomer,
   updateCustomers,
   sendMsgByChatBot,
+  getDateTime,
 } from "../controller/itemsController.js";
 import TelegramBot from "node-telegram-bot-api";
 
@@ -17,6 +18,7 @@ router.get("/", async (req, res) => {
 
   // Get all customers
   const customers = await getCustomerList();
+  console.log(customers);
 
   // Low price lsit
   const lowPriceCustomers = [];
@@ -26,7 +28,7 @@ router.get("/", async (req, res) => {
     for (const customer of customers) {
       // Get item list of a customer
       const itemList = await getItemListByCustomer(customer, sort_desc);
-      // console.log(itemList);
+      console.log(itemList);
 
       // Set price
       const { set_price: setPrice, new_price: newPrice } = customer;
@@ -34,15 +36,18 @@ router.get("/", async (req, res) => {
       // Price of first dict (because item list is sorted)
       // if itemList exist
       if (itemList.length) {
-        const firtItemPrice = itemList[0].item_price;
+        // Lowest Price of customer
+        const lowestPrice = itemList[0].item_price;
 
         // If have low price item, Push to list
         // item price < set price
         // item price < new price
-        if (setPrice > firtItemPrice) {
-          if (newPrice === 0 || firtItemPrice < newPrice) {
+        if (setPrice > lowestPrice) {
+          if (newPrice === null || newPrice === 0 || lowestPrice < newPrice) {
+            // Push to new list
             lowPriceCustomers.push(customer);
-            customer.new_price = firtItemPrice;
+            customer.new_price = lowestPrice;
+            customer.nofi = getDateTime();
           }
         }
       }
