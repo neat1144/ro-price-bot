@@ -57,7 +57,7 @@ router.get("/", (req, res) => {
       console.error("No rows found in the 'customers' table.");
     }
 
-    console.log("Fetching all customers");
+    // console.log("Fetching all customers");
     res.json(rows);
   });
 });

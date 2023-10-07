@@ -21,7 +21,7 @@ export const updateCustomers = async (customerList) => {
 
     // PUT method
     try {
-      const response = await axios.put(
+      await axios.put(
         `http://localhost:3030/customer/${customer.id}`,
         requestBody
       );
@@ -88,48 +88,47 @@ export const getItemList = async (customer, sort_desc) => {
   }
 };
 
-export const chat_bot = async (bot, chatId, item, set_price) => {
-  const mutex = Mutexify();
+export const sendMsgByChatBot = async (itemList) => {
+  // Get token and id
+  const { chat_id: chatId, token } = await fetchBotId();
 
-  // Create a bot instance
-  mutex(async (release) => {
-    // Handle '/start' command
-    bot.onText(/\/start/, (msg) => {
-      const chatId = msg.chat.id;
-      const firstName = msg.from.first_name;
-      bot.sendMessage(chatId, `Hello, ${firstName}! Your id is "${chatId}!"`);
-    });
+  // Api Information
+  const tgUrl = `https://api.telegram.org/bot${token}/sendMessage`;
 
-    // Handle text messages
-    // bot.on("text", (msg) => {
-    //   const chatId = msg.chat.id;
-    //   const messageText = msg.text;
-    //   bot.sendMessage(chatId, `You said: ${messageText}`);
-    // });
-    // Handle errors
-    // bot.on("polling_error", (error) => {
-    //   console.error("error: ", error);
-    // });
+  // Loop item list to send msg
+  console.log("Sending message...");
+  for (const item of itemList) {
+    const { name, set_price: setPrice, new_price: newPrice, type } = item;
 
-    // Construct the message
-    const message = `關鍵字: ${item.name}, 現在價格: ${item.item_price}, 設定價格: ${set_price}`;
+    const chnType = type === 0 ? "販賣" : type === 1 ? "收購" : "未知";
 
-    // Send notification through chat-bot
+    // Msg by sended
+    const messageText = `
+關鍵字: ${name}
+設定價格: ${setPrice.toLocaleString("en-US")} 
+目前${chnType}: ${newPrice.toLocaleString("en-US")}`;
+
+    // Send request by telegram api
     try {
-      await bot.sendMessage(chatId, message);
-      console.log("Message sent sucessfully!");
-    } catch (error) {
-      console.log("Error sending message with telegram", error);
-    }
+      const response = await axios.post(tgUrl, {
+        chat_id: chatId,
+        text: messageText,
+      });
 
-    // Release the mutex when done
-    release();
-  });
+      // Print suc-msg
+      console.log("Message sent successfully:", response.data);
+    } catch (error) {
+      console.error("Error sending msg by TG bot");
+    }
+  }
 };
 
-export const getChatBotId = async () => {
-  const apiUrl = "http://localhost:3030/chat-id";
-  const response = await axios.get(apiUrl);
-
-  return response.data;
+export const fetchBotId = async () => {
+  try {
+    const response = await axios.get("http://localhost:3030/chat-id");
+    // setBotId({ chat_id, token });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching bot data:", error);
+  }
 };

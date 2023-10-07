@@ -3,32 +3,49 @@ import axios from "axios";
 
 // const StateButton = ({ timeoutSeconds }) => {
 const PriceChecker = () => {
-  const [isChecking, setIsChecking] = useState(false);
+  const [storedStateCode, setStoredStateCode] = useState(false);
   const [priceCheckingIntervalId, setPriceCheckingIntervalId] = useState(null);
-  const [timeoutSeconds, setTimeoutSeconds] = useState(null);
+  const [timeoutSeconds, setTimeoutSeconds] = useState(10);
+  // const [botStateCode, setBotStateCode] = useState(0);
+
+  // const getBotState = async () => {
+  //   console.log(`${timeoutSeconds}(sec)!`);
+  //   // const lowPriceList = await callLowPriceItemApi();
+  //   // if (lowPriceList.length) await sendMsgByChatBot(lowPriceList);
+
+  //   // Check bot is start or stop
+  //   const response = await axios.get("http://localhost:3030/bot-state");
+  //   const { bot_is_start: botIsStart } = response.data;
+  //   // setBotStateCode(botIsStart);
+  //   const chnBotCode = botIsStart === 1 ? "Working" : "Dead";
+  //   console.log(`Bot is "${chnBotCode}" from init`);
+  // };
 
   // Load the previous state from localStorage when the component mounts
-  useEffect(() => {
-    // Load the previous state from local storage when the component mounts
-    // const storedState = localStorage.getItem("isChecking");
-    // if (storedState && JSON.parse(storedState)) {
-    //   // Start checking if it was previously running
-    //   startChecking();
-    // } else {
-    //   // Stop checking if it was not previously running
-    //   stopChecking();
-    // }
+  useEffect(
+    () => {
+      // Load the previous state from local storage when the component mounts
+      const storedState = localStorage.getItem("isChecking");
+      if (storedState && JSON.parse(storedState)) {
+        // Start checking if it was previously running
+        startChecking();
+      } else {
+        // Stop checking if it was not previously running
+        stopChecking();
+      }
 
-    // Load the timeoutSeconds from local storage or use a default value
-    const storedTimeoutSeconds = parseInt(
-      localStorage.getItem("timeoutSeconds")
-    );
-    if (!isNaN(storedTimeoutSeconds)) {
-      setTimeoutSeconds(storedTimeoutSeconds);
-    } else {
-      setTimeoutSeconds(10); // Set a default value if not found in local storage
-    }
-  }, []);
+      // Load the timeoutSeconds from local storage or use a default value
+      // const storedTimeoutSeconds = parseInt(
+      //   localStorage.getItem("timeoutSeconds")
+      // );
+      // if (!isNaN(storedTimeoutSeconds)) {
+      //   setTimeoutSeconds(storedTimeoutSeconds);
+      // } else {
+      //   setTimeoutSeconds(10); // Set a default value if not found in local storage
+      // }
+    }, // eslint-disable-next-line
+    []
+  );
 
   const handleTimeoutChange = (e) => {
     const newTimeout = parseInt(e.target.value, 10);
@@ -38,12 +55,18 @@ const PriceChecker = () => {
     localStorage.setItem("timeoutSeconds", newTimeout.toString());
   };
 
-  // Start checking
-  const startChecking = () => {
-    setIsChecking(true);
+  // Start button and change state code
+  const startChecking = async () => {
+    setStoredStateCode(true);
     // Store the state in local storage when the state changes
     localStorage.setItem("isChecking", JSON.stringify(true));
 
+    // Call api change botState set 1 (backend)
+    await changeBotState(1);
+
+    console.log("Price chcker bot start!");
+    // Bot is start
+    // Call Price Checking with timeout
     // seconds * 1000 = milliseconds
     const intervalDuration = timeoutSeconds * 1000;
 
@@ -56,13 +79,17 @@ const PriceChecker = () => {
     setPriceCheckingIntervalId(intervalId);
   };
 
-  // Stop checking
-  const stopChecking = () => {
-    setIsChecking(false);
+  // Stop button and change state code
+  const stopChecking = async () => {
+    setStoredStateCode(false);
     // Store the state in local storage when the state changes
     localStorage.setItem("isChecking", JSON.stringify(false));
     console.log("Stop checking!");
 
+    // Call api change botState set 0 (backend)
+    await changeBotState(0);
+
+    // Bot is stop
     // Clear the interval using the stored interval ID
     if (priceCheckingIntervalId) {
       clearInterval(priceCheckingIntervalId);
@@ -70,75 +97,83 @@ const PriceChecker = () => {
     }
   };
 
-  // Combine function!
+  // Bot State API
+  const changeBotState = async (stateCode) => {
+    const botStateUrl = "http://localhost:3030/bot-state";
+
+    // Post request
+    try {
+      await axios.post(botStateUrl, {
+        bot_is_start: stateCode,
+        timeout_sec: timeoutSeconds,
+      });
+
+      // Print suc-msg
+      const chnBotCode = stateCode === 1 ? "Start" : "Stop";
+      console.log(`Change bot code to "${chnBotCode}"`);
+    } catch (error) {
+      console.error("Error to set/change Bot State!");
+    }
+  };
+
+  // Price Checking function!
   const priceChecking = async () => {
+    // Print
     console.log(`${timeoutSeconds}(sec)!`);
-    const lowPriceList = await callLowPriceItemApi();
-    if (lowPriceList.length) await sendMsgByChatBot(lowPriceList);
+    // Send low-price bot api
+    await axios.get("http://localhost:3030/low-price");
   };
 
-  // Call api to get low price item
-  const callLowPriceItemApi = async () => {
-    try {
-      console.log("Calling low-price-check api");
-      const response = await axios.get("http://localhost:3030/low-price");
-      console.log("Calling sucessfull！");
-      return response.data;
-    } catch (error) {
-      console.error("Error calling low-price-check api");
-      return [];
-    }
-  };
-
+  // NOT USE (BOT)
   // Get chat bot id/token
-  const fetchBotId = async () => {
-    try {
-      const response = await axios.get("http://localhost:3030/chat-id");
-      // setBotId({ chat_id, token });
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching bot data:", error);
-    }
-  };
+  // const fetchBotId = async () => {
+  //   try {
+  //     const response = await axios.get("http://localhost:3030/chat-id");
+  //     // setBotId({ chat_id, token });
+  //     return response.data;
+  //   } catch (error) {
+  //     console.error("Error fetching bot data:", error);
+  //   }
+  // };
 
   // Send msg by bot
-  const sendMsgByChatBot = async (itemList) => {
-    // Get token and id
-    const { chat_id: chatId, token } = await fetchBotId();
+  //   const sendMsgByChatBot = async (itemList) => {
+  //     // Get token and id
+  //     const { chat_id: chatId, token } = await fetchBotId();
 
-    // Api Information
-    const tgUrl = `https://api.telegram.org/bot${token}/sendMessage`;
+  //     // Api Information
+  //     const tgUrl = `https://api.telegram.org/bot${token}/sendMessage`;
 
-    // Loop item list to send msg
-    console.log("Sending message...");
-    for (const item of itemList) {
-      const { name, set_price: setPrice, new_price: newPrice, type } = item;
+  //     // Loop item list to send msg
+  //     console.log("Sending message...");
+  //     for (const item of itemList) {
+  //       const { name, set_price: setPrice, new_price: newPrice, type } = item;
 
-      const chnType = type === 0 ? "販賣" : type === 1 ? "收購" : "未知";
+  //       const chnType = type === 0 ? "販賣" : type === 1 ? "收購" : "未知";
 
-      // Msg by sended
-      const messageText = `
-關鍵字: ${name}
-設定價格: ${setPrice.toLocaleString("en-US")} 
-目前${chnType}: ${newPrice.toLocaleString("en-US")}`;
+  //       // Msg by sended
+  //       const messageText = `
+  // 關鍵字: ${name}
+  // 設定價格: ${setPrice.toLocaleString("en-US")}
+  // 目前${chnType}: ${newPrice.toLocaleString("en-US")}`;
 
-      // Send request by telegram api
-      try {
-        const response = await axios.post(tgUrl, {
-          chat_id: chatId,
-          text: messageText,
-        });
+  //       // Send request by telegram api
+  //       try {
+  //         const response = await axios.post(tgUrl, {
+  //           chat_id: chatId,
+  //           text: messageText,
+  //         });
 
-        // Print suc-msg
-        console.log("Message sent successfully:", response.data);
-      } catch (error) {
-        console.error("Error sending msg by TG bot");
-      }
-    }
-  };
+  //         // Print suc-msg
+  //         console.log("Message sent successfully:", response.data);
+  //       } catch (error) {
+  //         console.error("Error sending msg by TG bot");
+  //       }
+  //     }
+  // };
 
   return {
-    isChecking,
+    isChecking: storedStateCode,
     startChecking,
     stopChecking,
     timeoutSeconds,

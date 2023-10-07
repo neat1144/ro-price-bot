@@ -119,10 +119,10 @@ function CustomerTable() {
   };
 
   // Cancel edit mode
-  const cancelEdit = () => {
-    // setIsEdit(false);
-    // setEditedCustomer(null);
-  };
+  // const cancelEdit = () => {
+  //   // setIsEdit(false);
+  //   // setEditedCustomer(null);
+  // };
 
   // "Delete" customer
   const handleDelete = (customerId) => {

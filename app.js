@@ -3,8 +3,10 @@ import express from "express";
 import apiCustomer from "./routes/customer.js";
 import lowPriceRouter from "./routes/lowPrice.js";
 import apiChatId from "./routes/chatId.js";
+import botStateRouter from "./routes/botState.js";
 import bodyParser from "body-parser";
 import cors from "cors";
+import axios from "axios";
 
 const app = express();
 const port = process.env.PORT || 3030;
@@ -35,8 +37,31 @@ app.use("/low-price", lowPriceRouter);
 // Chat-bot id
 app.use("/chat-id", apiChatId);
 
-// Check price is low for every ? seconds
-// checkPrice("");
+// Bot State
+app.use("/bot-state", botStateRouter);
+
+// Price checker and Bot nofi
+// const priceCheckerBot = async () => {
+//   // Check bot state
+//   const response = await axios.get("http://localhost:3030/bot-state");
+//   const { bot_is_start: botIsStart, timeout_sec: timeoutSeconds } =
+//     response.data;
+
+//   if (botIsStart === 1) {
+//     // Send request to low-price bot
+//     await axios.get("http://localhost:3030/low-price");
+
+//     // Get timeout
+
+//     console.log(`Timeout ${timeoutSeconds}(sec)`);
+//   }
+// };
+// priceCheckerBot();
+
+// timeoutS = 3 * 1000;
+
+// // Set timeout
+// const interval = setInterval(priceCheckerBot, timeoutS);
 
 // Start the Express server
 app.listen(port, () => {
