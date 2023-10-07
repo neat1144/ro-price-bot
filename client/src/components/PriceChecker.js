@@ -74,6 +74,7 @@ const PriceChecker = () => {
     console.log(`Start checking for every ${timeoutSeconds}(sec)!`);
 
     // Call priceChecking every X seconds
+    priceChecking();
     const intervalId = setInterval(priceChecking, intervalDuration);
     // const intervalId = setInterval(priceChecking, 2000);
     setPriceCheckingIntervalId(intervalId);

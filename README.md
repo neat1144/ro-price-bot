@@ -50,7 +50,7 @@
 - [x] notify only once
 - [x] fix robot
 - [ ] timeout form
-- [ ] clean new_price button
+- [x] clean new_price button
 
 ## 伺服器更改
 

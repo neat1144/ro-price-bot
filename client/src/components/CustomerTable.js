@@ -18,6 +18,7 @@ function CustomerTable() {
   const [isEdit, setIsEdit] = useState(false);
   const [isFormHidden, setIsFormHidden] = useState(true);
   // const [editedCustomer, setEditedCustomer] = useState(null);
+  const [isRest, setIsRest] = useState(true);
 
   // Get/Fetch customer
   const fetchCustomerData = async () => {
@@ -33,7 +34,7 @@ function CustomerTable() {
   useEffect(() => {
     fetchCustomerData();
     // Set up an interval to refresh the data every 10 seconds
-    const intervalId = setInterval(fetchCustomerData, 10 * 1000);
+    const intervalId = setInterval(fetchCustomerData, 2 * 1000);
 
     // Clean up the interval when the component unmounts
     return () => clearInterval(intervalId);
@@ -70,6 +71,27 @@ function CustomerTable() {
     }
   };
 
+  // "Clean" Handle clean new_price
+  const resetButton = (customer) => {
+    console.log(customer.id);
+    // Set formCustomer
+    setFormCustomer({
+      id: customer.id,
+      name: customer.name,
+      svr: customer.svr,
+      type: customer.type,
+      set_price: customer.set_price,
+      new_price: "0",
+    });
+    setIsRest(false);
+  };
+
+  const handleResetButton = () => {
+    console.log(formCustomer.id);
+    handleEdit();
+    setIsRest(true);
+  };
+
   // "Update" customer
   // Enter edit button
   const enterEditButton = (customer) => {
@@ -102,17 +124,17 @@ function CustomerTable() {
         formCustomer
       );
 
+      // Print
+      console.log(`Updated customer with ID ${formCustomer.name}`);
+
       // Refresh the customer data and exit edit mode
       fetchCustomerData();
 
       // Rest form
       resetFormCustomer();
-
-      // Print
-      console.log(`Updated customer with ID ${formCustomer.id}`);
     } catch (error) {
       console.error(
-        `Error updating customer with ID ${formCustomer.id}:`,
+        `Error updating customer with ID ${formCustomer.name}:`,
         error
       );
     }
@@ -319,6 +341,26 @@ function CustomerTable() {
                   </span>
                 </td>
                 <td>
+                  {/* Reset new_price button */}
+                  {isRest ? (
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => {
+                        resetButton(customer);
+                      }}
+                    >
+                      Reset
+                    </button>
+                  ) : (
+                    <button
+                      className="btn btn-warning"
+                      onClick={() => {
+                        handleResetButton();
+                      }}
+                    >
+                      OK?
+                    </button>
+                  )}
                   {/* Edit button */}
                   <button
                     className="btn btn-success"
