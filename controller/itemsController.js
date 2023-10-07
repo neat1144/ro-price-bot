@@ -32,7 +32,7 @@ export const updateCustomers = async (customerList) => {
 
 // Sleep function
 export const sleep = (ms) => {
-  console.log(`Waitting 1(sec)...`);
+  // console.log(`Waitting 1(sec)...`);
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
@@ -81,7 +81,7 @@ export const getItemList = async (customer, sort_desc) => {
     // console.log(itemList);
 
     // Return data
-    console.log(`Sucessfull to checking price of "${name}"!`);
+    console.log(`Checking price for "${name}"`);
     return itemList;
   } catch (error) {
     console.error(`Error to checking price of "${name}"!`);
@@ -105,10 +105,9 @@ export const sendMsgByChatBot = async (itemList) => {
     // Msg by sended
     const messageText = `
 關鍵字: ${name}
-設定價格: ${setPrice.toLocaleString("en-US")} 
+原本設定價格: ${setPrice.toLocaleString("en-US")} 
+目前${chnType}價格: ${newPrice.toLocaleString("en-US")}
 伺服器: ${svr}`;
-
-    // 目前${chnType}: ${newPrice.toLocaleString("en-US")}
 
     // Send request by telegram api
     try {
@@ -118,7 +117,8 @@ export const sendMsgByChatBot = async (itemList) => {
       });
 
       // Print suc-msg
-      console.log("Message sent successfully:", response.data);
+      console.log("\nMessage sent successfully!", messageText);
+      console.log("\n");
     } catch (error) {
       const errorMsg = `Error sending msg by TG bot.
 Token:${token}

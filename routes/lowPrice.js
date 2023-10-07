@@ -18,7 +18,7 @@ router.get("/", async (req, res) => {
 
   // Get all customers
   const customers = await getCustomerList();
-  console.log(customers);
+  // console.log(customers);
 
   // Low price lsit
   const lowPriceCustomers = [];
@@ -28,7 +28,7 @@ router.get("/", async (req, res) => {
     for (const customer of customers) {
       // Get item list of a customer
       const itemList = await getItemListByCustomer(customer, sort_desc);
-      console.log(itemList);
+      // console.log(itemList);
 
       // Set price
       const { set_price: setPrice, new_price: newPrice } = customer;
