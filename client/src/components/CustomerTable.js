@@ -217,10 +217,10 @@ function CustomerTable() {
                       handleFormEditedData(e.target.value, "svr")
                     }
                   >
-                    <option value="2290">巴基利</option>
-                    <option value="3290">查爾斯</option>
-                    <option value="4290">波利</option>
-                    <option value="9999">羅札納(未開放)</option>
+                    <option value="2290">巴基利 (2290)</option>
+                    <option value="3290">查爾斯 (3290)</option>
+                    <option value="4290">波利 (4290)</option>
+                    <option value="9999">羅札納 (未開放)</option>
                   </select>
                 </div>
                 <div className="form-group mb-2">
@@ -311,13 +311,13 @@ function CustomerTable() {
                 <td>{customer.name}</td>
                 <td>
                   {customer.svr === 2290
-                    ? "巴基利"
+                    ? "巴基利 (2290)"
                     : customer.svr === 3290
-                    ? "查爾斯"
+                    ? "查爾斯 (3290)"
                     : customer.svr === 4290
-                    ? "波利"
+                    ? "波利 (4290)"
                     : customer.svr === 0
-                    ? "羅札納(未開放)"
+                    ? "羅札納 (未開放)"
                     : ""}
                 </td>
                 <td>{customer.set_price.toLocaleString()}</td>

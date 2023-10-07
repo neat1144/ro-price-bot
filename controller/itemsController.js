@@ -98,7 +98,7 @@ export const sendMsgByChatBot = async (itemList) => {
   // Loop item list to send msg
   console.log("Sending message...");
   for (const item of itemList) {
-    const { name, set_price: setPrice, new_price: newPrice, type } = item;
+    const { name, set_price: setPrice, new_price: newPrice, type, svr } = item;
 
     const chnType = type === 0 ? "販賣" : type === 1 ? "收購" : "未知";
 
@@ -106,7 +106,8 @@ export const sendMsgByChatBot = async (itemList) => {
     const messageText = `
 關鍵字: ${name}
 設定價格: ${setPrice.toLocaleString("en-US")} 
-目前${chnType}: ${newPrice.toLocaleString("en-US")}`;
+目前${chnType}: ${newPrice.toLocaleString("en-US")}
+伺服器: ${svr}`;
 
     // Send request by telegram api
     try {
