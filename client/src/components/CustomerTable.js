@@ -5,6 +5,8 @@ import "./CustomerTable.css"; // Import a CSS file for styling
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSync } from "@fortawesome/free-solid-svg-icons";
 
+import notificationSound from "./notification.mp3";
+
 function CustomerTable() {
   const [formCustomer, setFormCustomer] = useState({
     id: "",
@@ -12,14 +14,17 @@ function CustomerTable() {
     svr: 2290,
     type: 0, // Initialize type as 0 (販賣) by default
     set_price: 200000,
-    low_price: 0,
+    new_price: 0,
     time: "",
   });
   const [customerList, setCustomerList] = useState([]);
-  const [isEdit, setIsEdit] = useState(false);
+  const [isUpdateButton, setIsUpdateButton] = useState(false);
   const [isFormHidden, setIsFormHidden] = useState(true);
   // const [editedCustomer, setEditedCustomer] = useState(null);
-  const [isRest, setIsRest] = useState(true);
+  const [isResetButton, setIsResetButton] = useState(true);
+  // For nitify
+  const notificationAudio = new Audio(notificationSound);
+  const [notifiedCustomers, setNotifiedCustomers] = useState([]);
 
   // Get/Fetch customer
   const fetchCustomerData = async () => {
@@ -41,8 +46,45 @@ function CustomerTable() {
     return () => clearInterval(intervalId);
   }, []);
 
-  // "Reset" form
-  const resetFormCustomer = () => {
+  // Automatically play the sound when is_notify is 0
+  useEffect(() => {
+    // Filter customers with is_notify === 0 who haven't been notified
+    const customersToNotify = customerList.filter(
+      (customer) =>
+        customer.is_notify === 0 && !notifiedCustomers.includes(customer.id)
+    );
+
+    // Play the notification sound for each customer with is_notify === 0
+    customersToNotify.forEach((customer) => {
+      // Play sound
+      notificationAudio.play();
+
+      // Update is_notify for customer
+      changeNotifyState(customer);
+    });
+  }, [customerList, notificationAudio, notifiedCustomers]);
+
+  // Reset is_notify
+  const changeNotifyState = async (customer) => {
+    try {
+      // Call api
+      await axios.put(`http://localhost:3030/customer/${customer.id}`, {
+        ...customer,
+        is_notify: 1,
+      });
+
+      // Update the list of notified customers in state
+      setNotifiedCustomers((prevNotifiedCustomers) => [
+        ...prevNotifiedCustomers,
+        customer.id,
+      ]);
+    } catch (error) {
+      console.error(`Error updating customer with ID ${customer.id}:`, error);
+    }
+  };
+
+  // "Init" form
+  const initFormCustomer = () => {
     setFormCustomer({
       id: "",
       name: "乙太星塵",
@@ -61,19 +103,19 @@ function CustomerTable() {
 
   // Create customer
   const handleCreate = async () => {
-    setIsEdit(false);
+    setIsUpdateButton(false);
     try {
       await axios.post("http://localhost:3030/customer", formCustomer);
 
       // onCustomerCreated(); // Notify the parent component that a new customer has been created
-      resetFormCustomer();
+      initFormCustomer();
       console.log("New customer added successfully");
     } catch (error) {
       console.error("Error creating new customer:", error);
     }
   };
 
-  // "Clean" Handle clean new_price
+  // "Clean" Handle clean new_price and is_notify
   const resetButton = (customer) => {
     console.log(customer.id);
     // Set formCustomer
@@ -86,21 +128,24 @@ function CustomerTable() {
       new_price: "0",
       time: "",
     });
-    setIsRest(false);
+    setIsResetButton(false);
   };
 
   const handleResetButton = () => {
-    console.log(formCustomer.id);
-    handleEdit();
-    setIsRest(true);
+    handlePutMethod();
+    setIsResetButton(true);
   };
 
   // "Update" customer
   // Enter edit button
-  const enterEditButton = (customer) => {
-    console.log(customer);
-    setIsEdit(true);
+  const editButton = (customer) => {
+    // Set button
+    setIsUpdateButton(true);
+
+    // Show form
     if (isFormHidden) setIsFormHidden(!isFormHidden);
+
+    // Get value
     setFormCustomer({
       id: customer.id,
       name: customer.name,
@@ -113,14 +158,14 @@ function CustomerTable() {
   };
 
   // Handle edit
-  const handleFormEditedData = async (newValue, field) => {
+  const handleFormData = async (newValue, field) => {
     setFormCustomer((prevData) => ({
       ...prevData,
       [field]: newValue,
     }));
   };
 
-  const handleEdit = async () => {
+  const handlePutMethod = async () => {
     // Make a PUT request to update the customer
     try {
       await axios.put(
@@ -135,7 +180,7 @@ function CustomerTable() {
       fetchCustomerData();
 
       // Rest form
-      resetFormCustomer();
+      initFormCustomer();
     } catch (error) {
       console.error(
         `Error updating customer with ID ${formCustomer.name}:`,
@@ -170,8 +215,8 @@ function CustomerTable() {
   // Handle hidden customer form
   const handleHiddenForm = () => {
     setIsFormHidden(!isFormHidden);
-    setIsEdit(false);
-    resetFormCustomer();
+    setIsUpdateButton(false);
+    initFormCustomer();
   };
 
   // Create a variable to track the serial number
@@ -202,6 +247,7 @@ function CustomerTable() {
           <div className="row">
             <div className="col-md-6 mx-auto">
               <form className="border rounded p-4 shadow">
+                {/* Name */}
                 <div className="form-group mb-2">
                   <label htmlFor="name">名稱:</label>
                   <input
@@ -209,20 +255,17 @@ function CustomerTable() {
                     className="form-control"
                     id="name"
                     value={formCustomer.name}
-                    onChange={(e) =>
-                      handleFormEditedData(e.target.value, "name")
-                    }
+                    onChange={(e) => handleFormData(e.target.value, "name")}
                   />
                 </div>
+                {/* Server */}
                 <div className="form-group mb-2">
                   <label htmlFor="svr">伺服器:</label>
                   <select
                     className="form-control"
                     id="svr"
                     value={formCustomer.svr}
-                    onChange={(e) =>
-                      handleFormEditedData(e.target.value, "svr")
-                    }
+                    onChange={(e) => handleFormData(e.target.value, "svr")}
                   >
                     <option value="2290">巴基利 (2290)</option>
                     <option value="3290">查爾斯 (3290)</option>
@@ -230,6 +273,7 @@ function CustomerTable() {
                     <option value="9999">羅札納 (未開放)</option>
                   </select>
                 </div>
+                {/* Set Price */}
                 <div className="form-group mb-2">
                   <label htmlFor="set_price">設定價格:</label>
                   <input
@@ -238,10 +282,11 @@ function CustomerTable() {
                     id="set_price"
                     value={formCustomer.set_price}
                     onChange={(e) =>
-                      handleFormEditedData(e.target.value, "set_price")
+                      handleFormData(e.target.value, "set_price")
                     }
                   />
                 </div>
+                {/* New Price */}
                 <div className="form-group mb-2">
                   <label htmlFor="new_price">目前最低價:</label>
                   <input
@@ -250,19 +295,18 @@ function CustomerTable() {
                     id="new_price"
                     value={formCustomer.new_price}
                     onChange={(e) =>
-                      handleFormEditedData(e.target.value, "new_price")
+                      handleFormData(e.target.value, "new_price")
                     }
                   />
                 </div>
+                {/* Type */}
                 <div className="form-group mb-2">
                   <label htmlFor="type">販售/收購:</label>
                   <select
                     className="form-control"
                     id="type"
                     value={formCustomer.type}
-                    onChange={(e) =>
-                      handleFormEditedData(e.target.value, "type")
-                    }
+                    onChange={(e) => handleFormData(e.target.value, "type")}
                   >
                     <option value="0">販售</option>
                     <option value="1">收購</option>
@@ -275,8 +319,11 @@ function CustomerTable() {
                   >
                     Cancel
                   </button>
-                  {isEdit ? (
-                    <button className="btn btn-warning" onClick={handleEdit}>
+                  {isUpdateButton ? (
+                    <button
+                      className="btn btn-warning"
+                      onClick={handlePutMethod}
+                    >
                       Update
                     </button>
                   ) : (
@@ -302,7 +349,7 @@ function CustomerTable() {
               <th>設定價格</th>
               <th>目前最低價</th>
               <th>販售/收購</th>
-              <th>已通知</th>
+              <th>通知時間</th>
               <th>
                 操作
                 {/* Refresh button with icon */}
@@ -315,8 +362,11 @@ function CustomerTable() {
           <tbody>
             {customerList.map((customer) => (
               <tr key={customer.id}>
+                {/* Serial Num */}
                 <td>{serialNumber++}</td>
+                {/* Name */}
                 <td>{customer.name}</td>
+                {/* Server */}
                 <td>
                   {customer.svr === 2290
                     ? "巴基利 (2290)"
@@ -328,16 +378,19 @@ function CustomerTable() {
                     ? "羅札納 (未開放)"
                     : ""}
                 </td>
+                {/* Set Price */}
                 <td>
                   {customer.set_price
                     ? customer.set_price.toLocaleString()
                     : "0"}
                 </td>
+                {/* New Price */}
                 <td>
                   {customer.new_price
                     ? customer.new_price.toLocaleString()
                     : "0"}
                 </td>
+                {/* Type */}
                 <td>
                   <span
                     style={{
@@ -356,11 +409,15 @@ function CustomerTable() {
                       : ""}
                   </span>
                 </td>
-                <td>{customer.time === "" ? "none" : customer.time}</td>
+                {/* Time */}
+                <td>
+                  {customer.time === 0 ? "none" : customer.time}
+                  {/* {customer.is_notify} */}
+                </td>
 
                 <td>
                   {/* Reset new_price button */}
-                  {isRest ? (
+                  {isResetButton ? (
                     <button
                       className="btn btn-secondary"
                       onClick={() => {
@@ -382,7 +439,7 @@ function CustomerTable() {
                   {/* Edit button */}
                   <button
                     className="btn btn-success"
-                    onClick={() => enterEditButton(customer)}
+                    onClick={() => editButton(customer)}
                   >
                     Edit
                   </button>

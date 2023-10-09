@@ -36,10 +36,12 @@ router.post("/", (req, res) => {
   // Check if 'time' is present in the request body
   // If not, set it to 0
   const finaltime = time !== undefined ? time : "";
+  const isNofi = is_notify !== undefined ? is_notify : 1;
+  const newPrice = is_notify !== undefined ? new_price : 0;
 
   db.run(
     "INSERT INTO customers (name, svr, type, set_price, new_price, is_notify, time) VALUES (?, ?, ?, ?, ?, ?, ?)",
-    [name, svr, type, set_price, new_price, is_notify, finaltime], // Use finaltime here
+    [name, svr, type, set_price, newPrice, isNofi, finaltime], // Use finaltime here
     function (err) {
       if (err) {
         return res.status(500).json({ error: err.message });
@@ -91,11 +93,14 @@ router.put("/:id", (req, res) => {
   const id = req.params.id;
   const { name, svr, type, set_price, new_price, is_notify, time } = req.body;
 
+  // If not, set it to 0
   const finaltime = time !== undefined ? time : "";
+  const isNofi = is_notify !== undefined ? is_notify : 1;
+  const newPrice = is_notify !== undefined ? new_price : 0;
 
   db.run(
     "UPDATE customers SET name = ?, svr = ?, type = ?, set_price = ?, new_price = ?, is_notify = ?, time = ? WHERE id = ?",
-    [name, svr, type, set_price, new_price, is_notify, finaltime, id],
+    [name, svr, type, set_price, newPrice, isNofi, finaltime, id],
     function (err) {
       if (err) {
         console.error(`Error updating ID ${id}: ${err.message}`);

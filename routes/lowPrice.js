@@ -48,6 +48,9 @@ router.get("/", async (req, res) => {
             lowPriceCustomers.push(customer);
             customer.new_price = lowestPrice;
             customer.time = getDateTime();
+
+            // Set is_notify
+            customer.is_notify = 0;
           }
         }
       }
