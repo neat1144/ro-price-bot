@@ -230,7 +230,7 @@ function CustomerTable() {
                 <div className="form-group mb-2">
                   <label htmlFor="set_price">設定價格:</label>
                   <input
-                    type="text"
+                    type="number"
                     className="form-control"
                     id="set_price"
                     value={formCustomer.set_price}
@@ -242,7 +242,7 @@ function CustomerTable() {
                 <div className="form-group mb-2">
                   <label htmlFor="new_price">目前最低價:</label>
                   <input
-                    type="text"
+                    type="number"
                     className="form-control"
                     id="new_price"
                     value={formCustomer.new_price}

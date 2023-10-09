@@ -53,13 +53,14 @@ router.post("/", (req, res) => {
 router.get("/", (req, res) => {
   db.all("SELECT * FROM customers", [], (err, rows) => {
     if (err) {
+      console.error("Error to get customers");
       return res.status(500).json({ error: err.message });
     }
 
     // Check if there are no rows returned
-    if (rows.length === 0) {
-      console.error("No rows found in the 'customers' table.");
-    }
+    // if (rows.length === 0) {
+    //   console.error("No rows found in the 'customers' table.");
+    // }
 
     // console.log("Fetching all customers");
     res.json(rows);
@@ -75,9 +76,9 @@ router.get("/:id", (req, res) => {
       return res.status(500).json({ error: err.message });
     }
 
-    if (!row) {
-      console.error(`No customer found with ID ${id}`);
-    }
+    // if (!row) {
+    //   console.error(`No customer found with ID ${id}`);
+    // }
 
     console.log(`Fetching ID customer ${id}!`);
     res.json(row);
@@ -96,7 +97,7 @@ router.put("/:id", (req, res) => {
       if (err) {
         return res.status(500).json({ error: err.message });
       }
-      console.log(`Updating ID customer ${id}`);
+      // console.log(`Updating ID customer ${id}`);
       res.json({ message: `${id} is updated`, changes: this.changes });
     }
   );
@@ -110,7 +111,7 @@ router.delete("/:id", (req, res) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    console.log(`Deleting ID customer ${id}`);
+    console.log(`Deleting customer`);
     res.json({ message: `${id} is deleted`, changes: this.changes });
   });
 });

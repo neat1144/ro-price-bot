@@ -35,7 +35,7 @@ router.get("/", async (req, res) => {
 
       // Price of first dict (because item list is sorted)
       // if itemList exist
-      if (itemList.length) {
+      if (itemList && itemList.length) {
         // Lowest Price of customer
         const lowestPrice = itemList[0].item_price;
 
@@ -56,7 +56,7 @@ router.get("/", async (req, res) => {
     }
   }
 
-  if (lowPriceCustomers.length) {
+  if (lowPriceCustomers && lowPriceCustomers.length) {
     // Send msg by chat bot
     await sendMsgByChatBot(lowPriceCustomers);
 

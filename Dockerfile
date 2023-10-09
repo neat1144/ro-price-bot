@@ -1,6 +1,9 @@
 # Use an official Node.js runtime as a parent image
 FROM node:18.17.1
 
+# Set the timezone to Asia/Taipei
+ENV TZ=Asia/Taipei
+
 # Set the working directory in the container
 WORKDIR /app
 

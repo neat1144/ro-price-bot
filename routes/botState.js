@@ -13,13 +13,13 @@ db.serialize(() => {
     CREATE TABLE IF NOT EXISTS botState (
       id INTEGER PRIMARY KEY,
       bot_is_start INTEGER,
-      timeout_sec INTEGER
+      is_nofi INTEGER
     )
   `);
 
   db.get("SELECT * FROM botState", (err, row) => {
     if (!row) {
-      db.run("INSERT INTO botState (bot_is_start, timeout_sec) VALUES (?, ?)", [
+      db.run("INSERT INTO botState (bot_is_start, is_nofi) VALUES (?, ?)", [
         "0",
         "10",
       ]);
@@ -30,19 +30,26 @@ db.serialize(() => {
 // /bot-state
 // Insert or update the single botState row
 router.post("/", (req, res) => {
-  const { bot_is_start, timeout_sec } = req.body;
+  const { bot_is_start, is_nofi: is_nofi } = req.body;
 
   db.run(
-    "INSERT OR REPLACE INTO botState (id, bot_is_start, timeout_sec) VALUES (?, ?, ?)",
-    [1, bot_is_start, timeout_sec],
+    "INSERT OR REPLACE INTO botState (id, bot_is_start, is_nofi) VALUES (?, ?, ?)",
+    [1, bot_is_start, is_nofi],
     (err) => {
+      // Error
       if (err) {
         return res
           .status(500)
-          .json({ error: "Failed to create/update bot_is_start, timeout_sec" });
+          .json({ error: "Failed to create/update bot_is_start, is_nofi" });
       }
+
+      // Sucessful
+      // Log
+      const chnState = bot_is_start === 0 ? "Stop" : "Start";
+      console.log(`Bot is ${chnState}`);
+      // Response
       res.status(201).json({
-        message: `created/updated bot_is_start:${bot_is_start}, timeout: ${timeout_sec}`,
+        message: `created/updated bot_is_start:${bot_is_start}, timeout: ${is_nofi}`,
       });
     }
   );
@@ -54,7 +61,7 @@ router.get("/", (req, res) => {
     if (err) {
       return res
         .status(500)
-        .json({ error: "Failed to fetch bot_is_start and timeout_sec" });
+        .json({ error: "Failed to fetch bot_is_start and is_nofi" });
     }
 
     // Check if row is null (no data found)

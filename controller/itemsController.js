@@ -23,7 +23,7 @@ export const updateCustomers = async (customerList) => {
         `http://localhost:3030/customer/${customer.id}`,
         requestBody
       );
-      console.log(`Updating ${customer.name}...`);
+      // console.log(`${customer.name} is updated`);
     } catch (error) {
       console.error("Error to update custoemrs", error);
     }
@@ -81,7 +81,7 @@ export const getItemList = async (customer, sort_desc) => {
     // console.log(itemList);
 
     // Return data
-    console.log(`Checking price for "${name}"`);
+    // console.log(`Checking price for "${name}"`);
     return itemList;
   } catch (error) {
     console.error(`Error to checking price of "${name}"!`);
@@ -104,10 +104,15 @@ export const sendMsgByChatBot = async (itemList) => {
 
     // Msg by sended
     const messageText = `
-關鍵字: ${name}
+時間: ${getDateTime()}
+名稱: ${name}
 原本設定價格: ${setPrice.toLocaleString("en-US")} 
 目前${chnType}價格: ${newPrice.toLocaleString("en-US")}
 伺服器: ${svr}`;
+
+    // Log msg
+    console.log(messageText);
+    // console.log();
 
     // Send request by telegram api
     try {
@@ -115,10 +120,6 @@ export const sendMsgByChatBot = async (itemList) => {
         chat_id: chatId,
         text: messageText,
       });
-
-      // Print suc-msg
-      console.log("\nMessage sent successfully!", messageText);
-      console.log("\n");
     } catch (error) {
       const errorMsg = `Error sending msg by TG bot.
 Token:${token}
@@ -127,6 +128,7 @@ chatId:${chatId}
       console.error(errorMsg);
     }
   }
+  console.log();
 };
 
 export const fetchBotId = async () => {
