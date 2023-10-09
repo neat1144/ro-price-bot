@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import "./CustomerTable.css"; // Import a CSS file for styling
 // import NewCustomerForm from "./NewCustomerForm"; // Import the new component
@@ -23,8 +23,9 @@ function CustomerTable() {
   // const [editedCustomer, setEditedCustomer] = useState(null);
   const [isResetButton, setIsResetButton] = useState(true);
   // For nitify
-  const notificationAudio = new Audio(notificationSound);
   const [notifiedCustomers, setNotifiedCustomers] = useState([]);
+
+  const notificationAudio = useMemo(() => new Audio(notificationSound), []);
 
   // Function to fetch customer data
   const fetchCustomerData = async () => {
@@ -55,11 +56,44 @@ function CustomerTable() {
       notificationAudio.play();
 
       // Update is_notify for customer
-      changeNotifyState(customer);
+      resetNotifyState(customer);
     });
   };
 
   useEffect(() => {
+    // Function to fetch customer data
+    const fetchCustomerData = async () => {
+      try {
+        // Get list of customers
+        const response = await axios.get("http://localhost:3030/customer");
+
+        // Set Customer (for table)
+        setCustomerList(response.data);
+
+        // Check is_notify
+        checkNotifications();
+      } catch (error) {
+        console.error("Error fetching customer data:", error);
+      }
+    };
+
+    // Function to check for notifications and play sound
+    const checkNotifications = () => {
+      // Filter customers with is_notify === 0 who haven't been notified
+      const customersToNotify = customerList.filter(
+        (customer) => customer.is_notify === 0
+      );
+
+      // Play the notification sound for each customer with is_notify === 0
+      customersToNotify.forEach((customer) => {
+        // Play sound
+        notificationAudio.play();
+
+        // Update is_notify for customer
+        resetNotifyState(customer);
+      });
+    };
+
     // Fetch initial customer data
     fetchCustomerData();
     // checkNotifications();
@@ -78,7 +112,7 @@ function CustomerTable() {
   }, [customerList, notificationAudio, notifiedCustomers]);
 
   // Reset is_notify
-  const changeNotifyState = async (customer) => {
+  const resetNotifyState = async (customer) => {
     try {
       // Call api
       await axios.put(`http://localhost:3030/customer/${customer.id}`, {
