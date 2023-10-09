@@ -96,7 +96,8 @@ router.put("/:id", (req, res) => {
   // If not, set it to 0
   const finaltime = time !== undefined ? time : "";
   const isNofi = is_notify !== undefined ? is_notify : 1;
-  const newPrice = is_notify !== undefined ? new_price : 0;
+  // const newPrice = is_notify !== undefined ? new_price : 0;
+  const newPrice = new_price;
 
   db.run(
     "UPDATE customers SET name = ?, svr = ?, type = ?, set_price = ?, new_price = ?, is_notify = ?, time = ? WHERE id = ?",

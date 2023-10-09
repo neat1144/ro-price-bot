@@ -286,6 +286,7 @@ function CustomerTable() {
                     <option value="9999">羅札納 (未開放)</option>
                   </select>
                 </div>
+
                 {/* Set Price */}
                 <div className="form-group mb-2">
                   <label htmlFor="set_price">設定價格:</label>
@@ -299,6 +300,7 @@ function CustomerTable() {
                     }
                   />
                 </div>
+
                 {/* New Price */}
                 <div className="form-group mb-2">
                   <label htmlFor="new_price">目前最低價:</label>
@@ -312,6 +314,7 @@ function CustomerTable() {
                     }
                   />
                 </div>
+
                 {/* Type */}
                 <div className="form-group mb-2">
                   <label htmlFor="type">販售/收購:</label>
