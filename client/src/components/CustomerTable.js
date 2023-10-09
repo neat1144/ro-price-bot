@@ -26,32 +26,27 @@ function CustomerTable() {
   const notificationAudio = new Audio(notificationSound);
   const [notifiedCustomers, setNotifiedCustomers] = useState([]);
 
-  // Get/Fetch customer
+  // Function to fetch customer data
   const fetchCustomerData = async () => {
     try {
+      // Get list of customers
       const response = await axios.get("http://localhost:3030/customer");
+
+      // Set Customer (for table)
       setCustomerList(response.data);
+
+      // Check is_notify
+      checkNotifications();
     } catch (error) {
       console.error("Error fetching customer data:", error);
     }
   };
 
-  // useEffect
-  useEffect(() => {
-    fetchCustomerData();
-    // Set up an interval to refresh the data every 10 seconds
-    const intervalId = setInterval(fetchCustomerData, 2 * 1000);
-
-    // Clean up the interval when the component unmounts
-    return () => clearInterval(intervalId);
-  }, []);
-
-  // Automatically play the sound when is_notify is 0
-  useEffect(() => {
+  // Function to check for notifications and play sound
+  const checkNotifications = () => {
     // Filter customers with is_notify === 0 who haven't been notified
     const customersToNotify = customerList.filter(
-      (customer) =>
-        customer.is_notify === 0 && !notifiedCustomers.includes(customer.id)
+      (customer) => customer.is_notify === 0
     );
 
     // Play the notification sound for each customer with is_notify === 0
@@ -62,6 +57,24 @@ function CustomerTable() {
       // Update is_notify for customer
       changeNotifyState(customer);
     });
+  };
+
+  useEffect(() => {
+    // Fetch initial customer data
+    fetchCustomerData();
+    // checkNotifications();
+
+    // Set up an interval to refresh the data every 10 seconds
+    const dataRefreshInterval = setInterval(fetchCustomerData, 2 * 1000);
+
+    // Set up an interval to check for notifications every 2 seconds
+    // const notificationCheckInterval = setInterval(checkNotifications, 2 * 1000);
+
+    // Clean up intervals when the component unmounts
+    return () => {
+      clearInterval(dataRefreshInterval);
+      // clearInterval(notificationCheckInterval);
+    };
   }, [customerList, notificationAudio, notifiedCustomers]);
 
   // Reset is_notify
