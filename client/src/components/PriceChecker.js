@@ -74,9 +74,9 @@ const PriceChecker = () => {
     console.log(`Start checking for every ${timeoutSeconds}(sec)!`);
 
     // Call priceChecking every X seconds
-    priceChecking();
-    const intervalId = setInterval(priceChecking, intervalDuration);
-    // const intervalId = setInterval(priceChecking, 2000);
+    priceCheckingApi();
+    const intervalId = setInterval(priceCheckingApi, intervalDuration);
+    // const intervalId = setInterval(priceCheckingApi, 2000);
     setPriceCheckingIntervalId(intervalId);
   };
 
@@ -118,7 +118,7 @@ const PriceChecker = () => {
   };
 
   // Price Checking function!
-  const priceChecking = async () => {
+  const priceCheckingApi = async () => {
     // Print
     console.log(`${timeoutSeconds}(sec)!`);
     // Send low-price bot api

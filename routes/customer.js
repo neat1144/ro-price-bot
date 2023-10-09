@@ -14,8 +14,9 @@ db.run(`CREATE TABLE IF NOT EXISTS customers
        svr       INTEGER, 
        type      INTEGER, 
        set_price REAL, 
-       new_price REAL, 
-       nofi      TEXT)`);
+       new_price REAL,
+       is_notify REAL,
+       time      TEXT)`);
 
 /* example JSON
 {
@@ -24,21 +25,21 @@ db.run(`CREATE TABLE IF NOT EXISTS customers
   "type": 2,
   "set_price": 50,
   "new_price": 40,
-  "nofi": 2
+  "time": 2
 }
 */
 
 // Create a new item
 router.post("/", (req, res) => {
-  const { name, svr, type, set_price, new_price, nofi } = req.body;
+  const { name, svr, type, set_price, new_price, is_notify, time } = req.body;
 
-  // Check if 'nofi' is present in the request body
+  // Check if 'time' is present in the request body
   // If not, set it to 0
-  const finalNofi = nofi !== undefined ? nofi : "";
+  const finaltime = time !== undefined ? time : "";
 
   db.run(
-    "INSERT INTO customers (name, svr, type, set_price, new_price, nofi) VALUES (?, ?, ?, ?, ?, ?)",
-    [name, svr, type, set_price, new_price, finalNofi], // Use finalNofi here
+    "INSERT INTO customers (name, svr, type, set_price, new_price, is_notify, time) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    [name, svr, type, set_price, new_price, is_notify, finaltime], // Use finaltime here
     function (err) {
       if (err) {
         return res.status(500).json({ error: err.message });
@@ -88,16 +89,25 @@ router.get("/:id", (req, res) => {
 // Update an item by ID
 router.put("/:id", (req, res) => {
   const id = req.params.id;
-  const { name, svr, type, set_price, new_price, nofi } = req.body;
+  const { name, svr, type, set_price, new_price, is_notify, time } = req.body;
+
+  const finaltime = time !== undefined ? time : "";
 
   db.run(
-    "UPDATE customers SET name = ?, svr = ?, type = ?, set_price = ?, new_price = ?, nofi = ? WHERE id = ?",
-    [name, svr, type, set_price, new_price, nofi, id],
+    "UPDATE customers SET name = ?, svr = ?, type = ?, set_price = ?, new_price = ?, is_notify = ?, time = ? WHERE id = ?",
+    [name, svr, type, set_price, new_price, is_notify, finaltime, id],
     function (err) {
       if (err) {
+        console.error(`Error updating ID ${id}: ${err.message}`);
         return res.status(500).json({ error: err.message });
       }
-      // console.log(`Updating ID customer ${id}`);
+      if (this.changes === 0) {
+        console.warn(`No customer with ID ${id} found for updating.`);
+        return res
+          .status(404)
+          .json({ error: `No customer with ID ${id} found for updating.` });
+      }
+      console.log(`Updating ID customer ${id}`);
       res.json({ message: `${id} is updated`, changes: this.changes });
     }
   );

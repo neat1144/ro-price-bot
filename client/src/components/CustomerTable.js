@@ -13,7 +13,7 @@ function CustomerTable() {
     type: 0, // Initialize type as 0 (販賣) by default
     set_price: 200000,
     low_price: 0,
-    nofi: "",
+    time: "",
   });
   const [customerList, setCustomerList] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
@@ -50,7 +50,7 @@ function CustomerTable() {
       type: 0,
       set_price: 220000,
       new_price: 0,
-      nofi: "",
+      time: "",
     });
   };
 
@@ -84,7 +84,7 @@ function CustomerTable() {
       type: customer.type,
       set_price: customer.set_price,
       new_price: "0",
-      nofi: "",
+      time: "",
     });
     setIsRest(false);
   };
@@ -108,7 +108,7 @@ function CustomerTable() {
       type: customer.type,
       set_price: customer.set_price,
       new_price: customer.new_price,
-      nofi: customer.nofi,
+      time: customer.time,
     });
   };
 
@@ -176,6 +176,9 @@ function CustomerTable() {
 
   // Create a variable to track the serial number
   let serialNumber = 1;
+
+  // Nofi when is_notify of customer === 1
+  // then notify and set to 1
 
   return (
     <div>
@@ -353,7 +356,7 @@ function CustomerTable() {
                       : ""}
                   </span>
                 </td>
-                <td>{customer.nofi === "" ? "none" : customer.nofi}</td>
+                <td>{customer.time === "" ? "none" : customer.time}</td>
 
                 <td>
                   {/* Reset new_price button */}

@@ -47,7 +47,7 @@ router.get("/", async (req, res) => {
             // Push to new list
             lowPriceCustomers.push(customer);
             customer.new_price = lowestPrice;
-            customer.nofi = getDateTime();
+            customer.time = getDateTime();
           }
         }
       }
