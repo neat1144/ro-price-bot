@@ -96,7 +96,7 @@ export const sendMsgByChatBot = async (itemList) => {
   const tgUrl = `https://api.telegram.org/bot${token}/sendMessage`;
 
   // Loop item list to send msg
-  console.log("Sending message...");
+  // console.log("Sending message...");
   for (const item of itemList) {
     const { name, set_price: setPrice, new_price: newPrice, type, svr } = item;
 
