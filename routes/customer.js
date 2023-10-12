@@ -52,6 +52,18 @@ router.post("/", (req, res) => {
   );
 });
 
+// Count all customers
+router.get("/count", (req, res) => {
+  db.get("SELECT COUNT(*) as count FROM customers", [], (err, row) => {
+    if (err) {
+      console.error("Error to get customers");
+      return res.status(500).json({ error: err.message });
+    }
+
+    res.json({ count: row.count });
+  });
+});
+
 // Get all items
 router.get("/", (req, res) => {
   db.all("SELECT * FROM customers", [], (err, rows) => {
@@ -87,6 +99,8 @@ router.get("/:id", (req, res) => {
     res.json(row);
   });
 });
+
+
 
 // Update an item by ID
 router.put("/:id", (req, res) => {
