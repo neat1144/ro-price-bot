@@ -1,0 +1,9 @@
+software: https://sqlitebrowser.org/dl/
+
+
+INSERT INTO customers (name, svr, type, set_price, new_price, is_notify, time)
+VALUES
+    ('Alice', 2, 1, 150.00, 155.25, 0, '2023-10-14 15:45:00'),
+    ('Bob',   3, 0, 120.50, 130.75, 1, '2023-10-14 16:15:00'),
+    ('Eve',   1, 0, 80.25,   85.50, 1, '2023-10-14 17:30:00')
+;
