@@ -1,20 +1,20 @@
 import React from "react";
 import "./App.css"; // Import your app-specific CSS file if you have one
 import CustomerTable from "./components/CustomerTable"; // Import the CustomerTable component
-import StateButton from "./components/StateButton";
+// import StateButton from "./components/StateButton";
 import PriceChecker from "./components/PriceChecker";
 import TGTable from "./components/TGTable";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Timeout from "./components/Timeout";
 
 function App() {
   // Get the isChecking, startChecking, and stopChecking from StateButton
-  const {
-    isChecking,
-    startChecking,
-    stopChecking,
-    timeoutSeconds,
-    handleTimeoutChange,
-  } = PriceChecker();
+  // const {
+  //   // Start/Stop
+  //   isStartChecking,
+  //   startChecking,
+  //   stopChecking,
+  // } = PriceChecker();
 
   return (
     <div className="App">
@@ -22,22 +22,17 @@ function App() {
       <div className="header-cus header">
         <h1>RO Spider</h1>
       </div>
+
       {/* Timeout Input */}
-      <div className="timeout-input">
-        <label>Timeout(sec): </label>
-        <input
-          type="number"
-          value={timeoutSeconds}
-          onChange={handleTimeoutChange}
-        />
-      </div>
+      <Timeout />
 
       {/* Start/Stop Button (using StateButton component) */}
-      <StateButton
-        isChecking={isChecking}
+      {/* <StateButton
+        isStartChecking={isStartChecking}
         startChecking={startChecking}
         stopChecking={stopChecking}
-      />
+      /> */}
+      <PriceChecker />
       {/* CustomerTable component */}
       <CustomerTable />
       {/* TGTable component */}

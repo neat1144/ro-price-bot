@@ -5,6 +5,7 @@ import lowPriceRouter from "./routes/lowPrice.js";
 import apiChatId from "./routes/chatId.js";
 import botStateRouter from "./routes/botState.js";
 import bodyParser from "body-parser";
+import timeoutRouter from "./routes/timeout.js";
 import cors from "cors";
 import axios from "axios";
 
@@ -39,6 +40,9 @@ app.use("/chat-id", apiChatId);
 
 // Bot State
 app.use("/bot-state", botStateRouter);
+
+// Timeout
+app.use("/timeout", timeoutRouter);
 
 // Price checker and Bot nofi
 // const priceCheckerBot = async () => {

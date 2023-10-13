@@ -1,63 +1,29 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import "./StateButton.css";
 
-// const StateButton = ({ timeoutSeconds }) => {
-const PriceChecker = () => {
-  const [storedStateCode, setStoredStateCode] = useState(false);
+// const StateButton = ({ inputTimeout }) => {
+const PriceChecker = (inputTimeout) => {
+  const [isStartChecking, setIsStartChecking] = useState(false);
   const [priceCheckingIntervalId, setPriceCheckingIntervalId] = useState(null);
-  const [timeoutSeconds, setTimeoutSeconds] = useState(10);
-  // const [botStateCode, setBotStateCode] = useState(0);
-
-  // const getBotState = async () => {
-  //   console.log(`${timeoutSeconds}(sec)!`);
-  //   // const lowPriceList = await callLowPriceItemApi();
-  //   // if (lowPriceList.length) await sendMsgByChatBot(lowPriceList);
-
-  //   // Check bot is start or stop
-  //   const response = await axios.get("http://localhost:3030/bot-state");
-  //   const { bot_is_start: botIsStart } = response.data;
-  //   // setBotStateCode(botIsStart);
-  //   const chnBotCode = botIsStart === 1 ? "Working" : "Dead";
-  //   console.log(`Bot is "${chnBotCode}" from init`);
-  // };
+  // const [timeoutSeconds, setTimeoutSeconds] = useState(250);
 
   // Load the previous state from localStorage when the component mounts
-  useEffect(
-    () => {
-      // Load the previous state from local storage when the component mounts
-      const storedState = localStorage.getItem("isChecking");
-      if (storedState && JSON.parse(storedState)) {
-        // Start checking if it was previously running
-        startChecking();
-      } else {
-        // Stop checking if it was not previously running
-        stopChecking();
-      }
-
-      // Load the timeoutSeconds from local storage or use a default value
-      const storedTimeoutSeconds = parseInt(
-        localStorage.getItem("timeoutSeconds")
-      );
-      if (!isNaN(storedTimeoutSeconds)) {
-        setTimeoutSeconds(storedTimeoutSeconds);
-      } else {
-        setTimeoutSeconds(10); // Set a default value if not found in local storage
-      }
-    }, // eslint-disable-next-line
-    []
-  );
-
-  const handleTimeoutChange = (e) => {
-    const newTimeout = parseInt(e.target.value, 10);
-    setTimeoutSeconds(newTimeout);
-
-    // Store the new timeoutSeconds in local storage
-    localStorage.setItem("timeoutSeconds", newTimeout.toString());
-  };
+  useEffect(() => {
+    // Load the previous state from local storage when the component mounts
+    const storedState = localStorage.getItem("isChecking");
+    if (storedState && JSON.parse(storedState)) {
+      // Start checking if it was previously running
+      startChecking();
+    } else {
+      // Stop checking if it was not previously running
+      stopChecking();
+    }
+  }, []); // eslint-disable-next-line
 
   // Start button and change state code
   const startChecking = async () => {
-    setStoredStateCode(true);
+    setIsStartChecking(true);
     // Store the state in local storage when the state changes
     localStorage.setItem("isChecking", JSON.stringify(true));
 
@@ -65,7 +31,10 @@ const PriceChecker = () => {
     await changeBotState(1);
 
     console.log("Price chcker bot start!");
-    // Bot is start
+
+    // Get timeout from db
+    const timeoutSeconds = await getTimeout();
+
     // Call Price Checking with timeout
     // seconds * 1000 = milliseconds
     const intervalDuration = timeoutSeconds * 1000;
@@ -82,7 +51,7 @@ const PriceChecker = () => {
 
   // Stop button and change state code
   const stopChecking = async () => {
-    setStoredStateCode(false);
+    setIsStartChecking(false);
     // Store the state in local storage when the state changes
     localStorage.setItem("isChecking", JSON.stringify(false));
     console.log("Stop checking!");
@@ -106,7 +75,6 @@ const PriceChecker = () => {
     try {
       await axios.post(botStateUrl, {
         bot_is_start: stateCode,
-        timeout_sec: timeoutSeconds,
       });
 
       // Print suc-msg
@@ -117,12 +85,26 @@ const PriceChecker = () => {
     }
   };
 
+  // Get timeout
+  const getTimeout = async () => {
+    try {
+      const response = await axios.get("http://localhost:3030/timeout");
+      const sec = response.data["timeout_sec"];
+      console.log(`timeout of db is: ${sec}`);
+      return sec;
+    } catch (error) {
+      console.error("Error to fetch timeout from db", error);
+    }
+  };
+
   // Price Checking function!
   const priceCheckingApi = async () => {
-    // Print
-    console.log(`${timeoutSeconds}(sec)!`);
-    // Send low-price bot api
-    await axios.get("http://localhost:3030/low-price");
+    try {
+      // Send low-price bot api
+      await axios.get("http://localhost:3030/low-price");
+    } catch (error) {
+      console.error("Error check price");
+    }
   };
 
   // NOT USE (BOT)
@@ -173,13 +155,34 @@ const PriceChecker = () => {
   //     }
   // };
 
-  return {
-    isChecking: storedStateCode,
-    startChecking,
-    stopChecking,
-    timeoutSeconds,
-    handleTimeoutChange,
-  };
+  // return {
+  //   // Start/Stop
+  //   isStartChecking,
+  //   startChecking,
+  //   stopChecking,
+  // };
+  return (
+    // Start/Stop
+    <div className="button-container">
+      {isStartChecking ? (
+        <button
+          className="btn btn-danger"
+          // className="btn btn-danger button-start-stop"
+          onClick={stopChecking}
+        >
+          Stop
+        </button>
+      ) : (
+        <button
+          className="btn btn-primary"
+          // className="btn btn-success button-start-stop"
+          onClick={startChecking}
+        >
+          Start
+        </button>
+      )}
+    </div>
+  );
 };
 
 export default PriceChecker;

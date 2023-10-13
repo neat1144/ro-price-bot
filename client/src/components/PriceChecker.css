@@ -1,0 +1,16 @@
+/* Style for the Start button */
+/* Container for the buttons */
+.button-container {
+  /* position: relative; */
+  position: absolute;
+  top: 1.5%; /* Adjust the top distance as needed */
+  right: 20px; /* Adjust the right distance as needed */
+}
+
+/* Style for the Start button */
+.button-start-stop {
+  /* ... (previous button styles) */
+  position: absolute;
+  top: 1.5%; /* Adjust the top distance as needed */
+  right: 20px; /* Adjust the right distance as needed */
+}
