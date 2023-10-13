@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import "./StateButton.css";
+import "./PriceChecker.css";
 
 // const StateButton = ({ inputTimeout }) => {
 const PriceChecker = (inputTimeout) => {
