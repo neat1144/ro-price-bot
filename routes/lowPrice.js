@@ -67,6 +67,9 @@ router.get("/", async (req, res) => {
     await updateCustomers(lowPriceCustomers);
   }
 
+  // Log
+  console.log("Price is checking...");
+
   // Response
   res.json(lowPriceCustomers);
 });

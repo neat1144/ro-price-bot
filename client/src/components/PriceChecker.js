@@ -6,19 +6,27 @@ import "./PriceChecker.css";
 const PriceChecker = (inputTimeout) => {
   const [isStartChecking, setIsStartChecking] = useState(false);
   const [priceCheckingIntervalId, setPriceCheckingIntervalId] = useState(null);
+  // const [botStateCode, setBotStateCode] = useState(false);
   // const [timeoutSeconds, setTimeoutSeconds] = useState(250);
 
   // Load the previous state from localStorage when the component mounts
   useEffect(() => {
-    // Load the previous state from local storage when the component mounts
-    const storedState = localStorage.getItem("isChecking");
-    if (storedState && JSON.parse(storedState)) {
-      // Start checking if it was previously running
+    // Check state code
+    if (fetchBotState() === 1) {
       startChecking();
     } else {
-      // Stop checking if it was not previously running
       stopChecking();
     }
+
+    // Load the previous state from local storage when the component mounts
+    // const storedState = localStorage.getItem("isChecking");
+    // if (storedState && JSON.parse(storedState)) {
+    //   // Start checking if it was previously running
+    //   startChecking();
+    // } else {
+    //   // Stop checking if it was not previously running
+    //   stopChecking();
+    // }
   }, []); // eslint-disable-next-line
 
   // Start button and change state code
@@ -67,13 +75,26 @@ const PriceChecker = (inputTimeout) => {
     }
   };
 
-  // Bot State API
-  const changeBotState = async (stateCode) => {
-    const botStateUrl = "http://localhost:3030/bot-state";
+  // Fetch bot state
+  const fetchBotState = async () => {
+    const botStateApi = "http://localhost:3030/bot-state";
+    try {
+      const response = await axios.get(botStateApi);
+      const state = response.data["bot_is_start"];
+      // setBotStateCode(state);
+      return state;
+      console.log(`bot state code is: ${state}`);
+    } catch (error) {
+      console.error("Error to get bot state");
+    }
+  };
 
+  // Change Bot State
+  const changeBotState = async (stateCode) => {
+    const botStateApi = "http://localhost:3030/bot-state";
     // Post request
     try {
-      await axios.post(botStateUrl, {
+      await axios.post(botStateApi, {
         bot_is_start: stateCode,
       });
 
@@ -155,12 +176,6 @@ const PriceChecker = (inputTimeout) => {
   //     }
   // };
 
-  // return {
-  //   // Start/Stop
-  //   isStartChecking,
-  //   startChecking,
-  //   stopChecking,
-  // };
   return (
     // Start/Stop
     <div className="button-container">
