@@ -42,7 +42,7 @@ router.get("/", async (req, res) => {
         // If have low price item, Push to list
         // item price < set price
         // item price < new price
-        if (setPrice > lowestPrice) {
+        if (setPrice >= lowestPrice) {
           if (newPrice === null || newPrice === 0 || lowestPrice < newPrice) {
             // Push to new list
             lowPriceCustomers.push(customer);
