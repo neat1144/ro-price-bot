@@ -4,16 +4,22 @@
 
 ## 使用方法
 
+### windows 本地部署
+
+1. 下載 code，解壓縮到 C 槽。
+2. 右鍵 `start.ps1` 檔案，選擇使用 "**用 PowerShell 執行**"。
+
+### docker 部署
+
 1. 安裝 docker。
 2. 下載 code，解壓縮到 C 槽。
-3. 使用系統管理員開啟 `start_ro_spider.bat`
-4. 設定 telegram (chat_id & token)。
-   - token: `＠BotFather` -> `/new bot`
-   - chat_id: `@userinfobot` -> start
-5. 新增要爬蟲的項目。
-6. 設定爬蟲間隔時間（至少要項目的兩倍秒數）。
-7. 啟動爬蟲（右上角按鈕）。
-8. 關閉時，使用系統管理員開啟 `stop_ro_spider.bat`
+3. 使用系統管理員開啟 `docker_start_ro_spider.bat`
+
+4. \*\*刪除容器時，使用系統管理員開啟 `docker_stop_ro_spider.bat`
+
+#### docker 重新安裝
+
+- 使用系統管理員開啟 `docker_rebuild_ro_spider.bat`
 
 ## 需求
 
@@ -56,7 +62,8 @@
 - [x] fix robot
 - [x] timeout form
 - [x] clean new_price button
-- [ ] clean form of customer
+- [x] clean form of customer
+- [x] new timeout function
 
 ## 伺服器更改
 
