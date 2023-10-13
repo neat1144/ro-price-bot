@@ -86,27 +86,28 @@ export const getItemList = async (customer, sort_desc) => {
     const response = await axios.post(ro_url, requestBody, { headers });
     const responseData = response.data;
 
-    // Format response
-    const itemList = [];
-    for (const item of responseData.dt) {
-      const {
-        storeName: store,
-        itemID: id,
-        itemName: name,
-        itemPrice: item_price,
-        storetype: type,
-      } = item;
+    // Check if dt is an array before processing
+    if (Array.isArray(responseData.dt)) {
+      // Format response
+      const itemList = responseData.dt.map((item) => {
+        const {
+          storeName: store,
+          itemID: id,
+          itemName: name,
+          itemPrice: item_price,
+          storetype: type,
+        } = item;
+        return { id, name, store, item_price, svr, type };
+      });
 
-      // Push
-      itemList.push({ id, name, store, item_price, svr, type });
+      // Return data
+      // console.log(`Checking price for "${name}"`);
+      return itemList;
+    } else {
+      console.error(`Data format error for "${name}"!`);
     }
-    // console.log(itemList);
-
-    // Return data
-    // console.log(`Checking price for "${name}"`);
-    return itemList;
   } catch (error) {
-    console.error(`Error to checking price of "${name}"!`, error);
+    console.error(`Error checking the price of "${name}"!`, error);
   }
 };
 

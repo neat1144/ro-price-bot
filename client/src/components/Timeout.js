@@ -3,7 +3,7 @@ import axios from "axios";
 import "./Timeout.css";
 
 const Timeout = () => {
-  const [inputTimeout, setInputTimeout] = useState(30);
+  const [inputTimeout, setInputTimeout] = useState("");
   const [isTimeoutInput, setIsTimeoutInput] = useState(false);
   const [dbTimeout, setDbTimeout] = useState("");
 
