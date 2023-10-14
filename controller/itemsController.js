@@ -12,22 +12,23 @@ export const getCustomers = async () => {
 };
 
 // Update new price to customer
-export const updateCustomers = async (customerList) => {
-  for (const customer of customerList) {
-    // data
-    const requestBody = customer;
+// export const updateCustomers = async (customerList) => {
+export const updateCustomers = async (customer) => {
+  // for (const customer of customerList) {
+  // data
+  const requestBody = customer;
 
-    // PUT method
-    try {
-      await axios.put(
-        `http://localhost:3030/customer/${customer.id}`,
-        requestBody
-      );
-      // console.log(`${customer.name} is updated`);
-    } catch (error) {
-      console.error("Error to update custoemrs", error);
-    }
+  // PUT method
+  try {
+    await axios.put(
+      `http://localhost:3030/customer/${customer.id}`,
+      requestBody
+    );
+    // console.log(`${customer.name} is updated`);
+  } catch (error) {
+    console.error("Error to update custoemrs", error);
   }
+  // }
 };
 
 // Sleep function
@@ -103,15 +104,14 @@ export const getItemList = async (customer, sort_desc) => {
       // Return data
       // console.log(`Checking price for "${name}"`);
       return itemList;
-    } else {
-      console.error(`Data format error for "${name}"!`);
     }
   } catch (error) {
     console.error(`Error checking the price of "${name}"!`, error);
   }
 };
 
-export const sendMsgByChatBot = async (itemList) => {
+// export const sendMsgByChatBot = async (itemList) => {
+export const sendMsgByChatBot = async (item) => {
   // Get token and id
   const { chat_id: chatId, token } = await fetchBotId();
 
@@ -120,37 +120,37 @@ export const sendMsgByChatBot = async (itemList) => {
 
   // Loop item list to send msg
   // console.log("Sending message...");
-  for (const item of itemList) {
-    const { name, set_price: setPrice, new_price: newPrice, type, svr } = item;
+  // for (const item of itemList) {
+  const { name, set_price: setPrice, new_price: newPrice, type, svr } = item;
 
-    const chnType = type === 0 ? "販賣" : type === 1 ? "收購" : "未知";
+  const chnType = type === 0 ? "販賣" : type === 1 ? "收購" : "未知";
 
-    // Msg by sended
-    const messageText = `
+  // Msg by sended
+  const messageText = `
 時間: ${getDateTime()}
 名稱: ${name}
 原本設定價格: ${setPrice.toLocaleString("en-US")} 
 目前${chnType}價格: ${newPrice.toLocaleString("en-US")}
 伺服器: ${svr}`;
 
-    // Log msg
-    console.log(messageText);
-    // console.log();
+  // Log msg
+  console.log(messageText);
+  // console.log();
 
-    // Send request by telegram api
-    try {
-      const response = await axios.post(tgUrl, {
-        chat_id: chatId,
-        text: messageText,
-      });
-    } catch (error) {
-      const errorMsg = `Error sending msg by TG bot.
+  // Send request by telegram api
+  try {
+    const response = await axios.post(tgUrl, {
+      chat_id: chatId,
+      text: messageText,
+    });
+  } catch (error) {
+    const errorMsg = `Error sending msg by TG bot.
 Token:${token}
 chatId:${chatId}
       `;
-      console.error(errorMsg);
-    }
+    console.error(errorMsg);
   }
+  // }
   console.log();
 };
 

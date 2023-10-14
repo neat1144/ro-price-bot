@@ -7,12 +7,14 @@ import {
   sendMsgByChatBot,
   getDateTime,
 } from "../controller/itemsController.js";
-import TelegramBot from "node-telegram-bot-api";
 
 const router = express.Router();
 
 // /low-pric
 router.get("/", async (req, res) => {
+  // Log
+  console.log("Price is checking...");
+
   // Set sort_desc
   const sort_desc = "";
 
@@ -26,12 +28,18 @@ router.get("/", async (req, res) => {
   // Loop customers to get items
   if (customers.length) {
     for (const customer of customers) {
+      // Set price
+      const {
+        name: keyWrod,
+        svr,
+        set_price: setPrice,
+        new_price: newPrice,
+      } = customer;
+
       // Get item list of a customer
+      // console.log(`Checking ${keyWrod}(${svr})`);
       const itemList = await getItemListByCustomer(customer, sort_desc);
       // console.log(itemList);
-
-      // Set price
-      const { set_price: setPrice, new_price: newPrice } = customer;
 
       // Price of first dict (because item list is sorted)
       // if itemList exist
@@ -51,6 +59,10 @@ router.get("/", async (req, res) => {
 
             // Set is_notify
             customer.is_notify = 0;
+
+            // Update customer and Send Nofi
+            await updateCustomers(customer);
+            await sendMsgByChatBot(customer);
           }
         }
       }
@@ -59,16 +71,13 @@ router.get("/", async (req, res) => {
     }
   }
 
-  if (lowPriceCustomers && lowPriceCustomers.length) {
-    // Send msg by chat bot
-    await sendMsgByChatBot(lowPriceCustomers);
+  // if (lowPriceCustomers && lowPriceCustomers.length) {
+  //   // Send msg by chat bot
+  //   await sendMsgByChatBot(lowPriceCustomers);
 
-    // Update new_price to db
-    await updateCustomers(lowPriceCustomers);
-  }
-
-  // Log
-  console.log("Price is checking...");
+  //   // Update new_price to db
+  //   await updateCustomers(lowPriceCustomers);
+  // }
 
   // Response
   res.json(lowPriceCustomers);

@@ -82,8 +82,8 @@ const PriceChecker = (inputTimeout) => {
       const response = await axios.get(botStateApi);
       const state = response.data["bot_is_start"];
       // setBotStateCode(state);
-      return state;
       console.log(`bot state code is: ${state}`);
+      return state;
     } catch (error) {
       console.error("Error to get bot state");
     }
