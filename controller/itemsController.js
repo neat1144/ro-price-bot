@@ -40,7 +40,7 @@ export const sleep = (ms) => {
 //   Get item of a customer
 export const getItemList = async (customer, sort_desc) => {
   // Get key word for api
-  const { name, svr, type } = customer;
+  const { name: itemName, svr, type } = customer;
 
   // Api infromation
   // const ro_url = `http://localhost:3000/ro-request?name="${name}"&svr=${svr}&type=${type}&sort_desc="${sort_desc}"`;
@@ -74,7 +74,7 @@ export const getItemList = async (customer, sort_desc) => {
   const requestBody = {
     div_svr: svr.toString(), // '2290'
     div_storetype: type.toString(), // '0'販售, '1'收購, '2'全部
-    txb_KeyWord: `${name}`, // '乙太星塵'
+    txb_KeyWord: `${itemName}`, // '乙太星塵'
     row_start: "1",
     recaptcha: "",
     sort_by: "itemPrice",
