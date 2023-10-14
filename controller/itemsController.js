@@ -94,11 +94,11 @@ export const getItemList = async (customer, sort_desc) => {
         const {
           storeName: store,
           itemID: id,
-          itemName: name,
+          itemName: itemName,
           itemPrice: item_price,
           storetype: type,
         } = item;
-        return { id, name, store, item_price, svr, type };
+        return { id, itemName, store, item_price, svr, type };
       });
 
       // Return data
@@ -106,12 +106,12 @@ export const getItemList = async (customer, sort_desc) => {
       return itemList;
     }
   } catch (error) {
-    console.error(`Error checking the price of "${name}"!`, error);
+    console.error(`Error checking the price of "${itemName}"!`, error);
   }
 };
 
 // export const sendMsgByChatBot = async (itemList) => {
-export const sendMsgByChatBot = async (item) => {
+export const sendMsgByChatBot = async (item, firstItemName) => {
   // Get token and id
   const { chat_id: chatId, token } = await fetchBotId();
 
@@ -127,11 +127,13 @@ export const sendMsgByChatBot = async (item) => {
 
   // Msg by sended
   const messageText = `
+名稱: ${firstItemName}
+伺服器: ${svr}
+設定價格: ${setPrice.toLocaleString("en-US")} 
+${chnType}價格: ${newPrice.toLocaleString("en-US")}
+關鍵字: ${name}
 時間: ${getDateTime()}
-名稱: ${name}
-原本設定價格: ${setPrice.toLocaleString("en-US")} 
-目前${chnType}價格: ${newPrice.toLocaleString("en-US")}
-伺服器: ${svr}`;
+`;
 
   // Log msg
   console.log(messageText);

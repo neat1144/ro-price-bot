@@ -2,7 +2,7 @@ import express from "express";
 import {
   getCustomers as getCustomerList,
   sleep,
-  getItemList as getItemListByCustomer,
+  getItemList,
   updateCustomers,
   sendMsgByChatBot,
   getDateTime,
@@ -38,7 +38,7 @@ router.get("/", async (req, res) => {
 
       // Get item list of a customer
       // console.log(`Checking ${keyWrod}(${svr})`);
-      const itemList = await getItemListByCustomer(customer, sort_desc);
+      const itemList = await getItemList(customer, sort_desc);
       // console.log(itemList);
 
       // Price of first dict (because item list is sorted)
@@ -46,6 +46,7 @@ router.get("/", async (req, res) => {
       if (itemList && itemList.length) {
         // Lowest Price of customer
         const lowestPrice = itemList[0].item_price;
+        const firstItemName = itemList[0].itemName;
 
         // If have low price item, Push to list
         // item price < set price
@@ -62,7 +63,7 @@ router.get("/", async (req, res) => {
 
             // Update customer and Send Nofi
             await updateCustomers(customer);
-            await sendMsgByChatBot(customer);
+            await sendMsgByChatBot(customer, firstItemName);
           }
         }
       }
