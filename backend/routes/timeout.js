@@ -41,7 +41,7 @@ router.post("/", (req, res) => {
 
       // Sucessful
       // Log
-      console.log(`Timeout is ${timeout_sec}(sec)`);
+      // console.log(`Timeout is ${timeout_sec}(sec)`);
       // Response
       res.status(201).json({
         message: `created/updated timeout: ${timeout_sec}`,

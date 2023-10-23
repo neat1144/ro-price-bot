@@ -1,7 +1,7 @@
 import request from "supertest";
-// import app from "../app"; // Assuming this is your main Express app exported from "../app.js"
 import sqlite3 from "sqlite3";
 import express from "express";
+
 import childRouter from "../routes/child.js";
 
 const app = express();
@@ -18,23 +18,14 @@ describe("/child API", () => {
     // Create the 'child' table in memory database
     db.run(
       `CREATE TABLE IF NOT EXISTS child
-      (id        INTEGER PRIMARY KEY AUTOINCREMENT,
-       include   TEXT,
-       exclude   TEXT,
-       set_price REAL,
-       new_price REAL,
-       nofi_time TEXT,
-       parent_id INTEGER)`,
-      done
-    );
-
-    // Create the 'parent' table in memory database
-    db.run(
-      `CREATE TABLE IF NOT EXISTS parent
-      (id        INTEGER PRIMARY KEY AUTOINCREMENT,
-       keyword   TEXT,
-       svr       INTEGER,
-       type      INTEGER)`,
+    (id        INTEGER PRIMARY KEY AUTOINCREMENT, 
+     include   TEXT, 
+     exclude   TEXT, 
+     set_price REAL, 
+     new_price REAL,
+     nofi_time TEXT,
+     parent_id INTEGER,
+     FOREIGN KEY (parent_id) REFERENCES parent(id))`,
       done
     );
   });
@@ -42,63 +33,115 @@ describe("/child API", () => {
   afterEach((done) => {
     // Delete all data from 'child' table after each test
     db.run(`DELETE FROM child`, done);
-    // Delete all data from 'parent' table after each test
-    db.run(`DELETE FROM parent`, done);
   });
 
-  //  POST test
+  // POST test
   describe("POST /child", () => {
-    it("should create a new child item", async () => {
-      // Create a new parent item in the 'parent' table
-
-      // Insert a new parent item into the 'parent' table
+    it("should create a new child", async () => {
+      // Sucess case
       const res = await request(app).post("/child").send({
-        include: "test1",
-        exclude: "test2",
-        set_price: 10.0,
-        new_price: 20.0,
-        nofi_time: "2022-01-01 00:00:00",
-        parent: 1,
+        include: "乙太",
+        exclude: "星星",
+        set_price: "120",
+        new_price: "300",
+        parent_id: "1",
+        nofi_time: "2022-01-01 (23:30)",
       });
-
       expect(res.statusCode).toEqual(200);
-      expect(res.body).toHaveProperty("message", "success");
-    });
+      expect(res.body).toHaveProperty("message");
+      expect(res.body).toHaveProperty("data");
 
-    it("should return an error if missing parameters", async () => {
+      // Error case
+      const res2 = await request(app).post("/child").send({
+        include: "乙太",
+        exclude: "星星",
+        set_price: "120",
+        new_price: "300",
+        nofi_time: "2022-01-01 (23:30)",
+      });
+      expect(res2.statusCode).toEqual(400);
+      expect(res2.body).toHaveProperty("error");
+    });
+  });
+
+  // UPDATE test
+  describe("PUT /child/:id", () => {
+    it("should update a child", async () => {
+      // Create a child
       const res = await request(app).post("/child").send({
-        include: "test1",
-        exclude: "test2",
-        set_price: 10.0,
-        new_price: 20.0,
+        include: "乙太",
+        exclude: "星星",
+        set_price: "120",
+        new_price: "300",
+        parent_id: "1",
+        nofi_time: "2022-01-01 (23:30)",
       });
 
-      expect(res.statusCode).toEqual(400);
-      expect(res.body).toHaveProperty("error");
+      // Update the child
+      const res2 = await request(app).put(`/child/${res.body.data.id}`).send({
+        include: "乙太",
+        exclude: "星星",
+        set_price: "120",
+        new_price: "300",
+        parent_id: "1",
+        nofi_time: "2022-01-01 (23:30)",
+      });
+
+      expect(res2.statusCode).toEqual(200);
+      expect(res2.body).toHaveProperty("message");
+      expect(res2.body).toHaveProperty("data");
     });
   });
 
   // GET list of child test
-  //   describe("GET /child", () => {
-  //     it("should return all child items", async () => {
-  //       // Insert 2 child items into the 'child' table
-  //       db.run(
-  //         `INSERT INTO child (include, exclude, set_price, new_price, nofi_time) VALUES (?, ?, ?, ?, ?)`,
-  //         ["test1", "test2", 10.0, 20.0, "2022-01-01 00:00:00"]
-  //       );
-  //       db.run(
-  //         `INSERT INTO child (include, exclude, set_price, new_price, nofi_time) VALUES (?, ?, ?, ?, ?)`,
-  //         ["test3", "test4", 30.0, 40.0, "2022-01-01 00:00:00"]
-  //       );
+  describe("GET /child", () => {
+    it("should return all child", async () => {
+      // Create two child
+      const res = await request(app).post("/child").send({
+        include: "乙太",
+        exclude: "星星",
+        set_price: "120",
+        new_price: "300",
+        parent_id: "1",
+        nofi_time: "2022-01-01 (23:30)",
+      });
+      const res2 = await request(app).post("/child").send({
+        include: "乙太",
+        exclude: "星星",
+        set_price: "120",
+        new_price: "300",
+        parent_id: "1",
+        nofi_time: "2022-01-01 (23:30)",
+      });
 
-  //       const res = await request(app).get("/child");
+      // Get all child
+      const res3 = await request(app).get("/child");
 
-  //       expect(res.statusCode).toEqual(200);
-  //       expect(res.body.data).toHaveLength(2);
-  //     });
-  //   });
-
-  // UPDATE test
+      expect(res3.statusCode).toEqual(200);
+      expect(res3.body).toHaveProperty("message");
+      expect(res3.body).toHaveProperty("data");
+      expect(res3.body.data.length).toEqual(2);
+    });
+  });
 
   // DELETE test
+  describe("DELETE /child/:id", () => {
+    it("should delete a child", async () => {
+      // Create a child
+      const res = await request(app).post("/child").send({
+        include: "乙太",
+        exclude: "星星",
+        set_price: "120",
+        new_price: "300",
+        parent_id: "1",
+        nofi_time: "2022-01-01 (23:30)",
+      });
+
+      // Delete the child
+      const res2 = await request(app).delete(`/child/${res.body.data.id}`);
+
+      expect(res2.statusCode).toEqual(200);
+      expect(res2.body).toHaveProperty("message");
+    });
+  });
 });
