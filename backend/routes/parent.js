@@ -7,17 +7,22 @@ const sqlite3Verbose = sqlite3.verbose();
 // SQLite database connection
 const db = new sqlite3Verbose.Database("mydatabase.db");
 
-// Create the 'parent' table
+// TABLE: Create the 'parent' table
 db.run(`CREATE TABLE IF NOT EXISTS parent
       (id        INTEGER PRIMARY KEY AUTOINCREMENT, 
        keyword   TEXT, 
        svr       INTEGER,
        type      INTEGER)`);
 
-// Create a item for parent table
+// CREATE a item for parent table
 router.post("/", (req, res) => {
   // Parementer from request body
   const { keyword, svr, type } = req.body;
+
+  // Check if 'keyword' is null or empty
+  if (!keyword) {
+    return res.status(400).json({ error: "Keyword is required." });
+  }
 
   // Query
   const insertQuery = `INSERT INTO parent (keyword, svr, type) VALUES (?, ?, ?)`;
@@ -37,7 +42,7 @@ router.post("/", (req, res) => {
   });
 });
 
-// Get all items
+// GET all items
 router.get("/", (req, res) => {
   // Query
   const selectQuery = `SELECT * FROM parent`;
@@ -57,10 +62,51 @@ router.get("/", (req, res) => {
   });
 });
 
-// Get a item by id
+// UPDATE a item by id
+router.put("/:id", (req, res) => {
+  // Parementer from request body
+  const { keyword, svr, type } = req.body;
 
-// Update a item by id
+  // Check if 'keyword' is null or empty
+  if (!keyword) {
+    return res.status(400).json({ error: "Keyword is required." });
+  }
 
-// Delete a item by id
+  // Query
+  const updateQuery = `UPDATE parent SET keyword = ?, svr = ?, type = ? WHERE id = ?`;
+
+  // Update to db
+  db.run(updateQuery, [keyword, svr, type, req.params.id], (err) => {
+    // Handle error
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+    // Handle success
+    res.json({
+      message: "success",
+      data: req.body,
+    });
+  });
+});
+
+// DELETE a item by id
+router.delete("/:id", (req, res) => {
+  // Query
+  const deleteQuery = `DELETE FROM parent WHERE id = ?`;
+
+  // Delete from db
+  db.run(deleteQuery, req.params.id, (err) => {
+    // Handle error
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+    // Handle success
+    res.json({
+      message: "success",
+    });
+  });
+});
 
 export default router;
