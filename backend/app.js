@@ -1,6 +1,8 @@
 // const express = require("express");
 import express from "express";
 import apiCustomer from "./routes/customer.js";
+import apiParent from "./routes/parent.js";
+import apiChild from "./routes/child.js";
 import lowPriceRouter from "./routes/lowPrice.js";
 import apiChatId from "./routes/chatId.js";
 import botStateRouter from "./routes/botState.js";
@@ -31,6 +33,12 @@ app.use(cors(corsOptions)); // Use CORS middleware with options
 
 // Customer api
 app.use("/customer", apiCustomer);
+
+// Parent api
+app.use("/parent", apiParent);
+
+// Child api
+app.use("/child", apiChild);
 
 // Get-items api
 app.use("/low-price", lowPriceRouter);
