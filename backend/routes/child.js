@@ -17,12 +17,20 @@ db.run(`CREATE TABLE IF NOT EXISTS child
          new_price REAL,
          nofi_time TEXT,
          parent_id INTEGER,
+         item_name TEXT,
          FOREIGN KEY (parent_id) REFERENCES parent(id))`);
 
 // CRATE a new child
 router.post("/", (req, res) => {
-  const { include, exclude, set_price, new_price, nofi_time, parent_id } =
-    req.body;
+  const {
+    include,
+    exclude,
+    set_price,
+    new_price,
+    nofi_time,
+    parent_id,
+    item_name,
+  } = req.body;
 
   // If parent_id is not provided, return an error
   if (!parent_id) {
@@ -30,8 +38,8 @@ router.post("/", (req, res) => {
   }
 
   db.run(
-    `INSERT INTO child (include, exclude, set_price, new_price, nofi_time, parent_id) VALUES (?, ?, ?, ?, ?, ?)`,
-    [include, exclude, set_price, new_price, nofi_time, parent_id],
+    `INSERT INTO child (include, exclude, set_price, new_price, nofi_time, parent_id, item_name) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [include, exclude, set_price, new_price, nofi_time, parent_id, item_name],
     (err) => {
       if (err) {
         res.status(400).json({ error: err.message });
@@ -48,13 +56,29 @@ router.post("/", (req, res) => {
 
 // Update a child by id
 router.put("/:id", (req, res) => {
-  const { include, exclude, set_price, new_price, nofi_time, parent_id } =
-    req.body;
+  const {
+    include,
+    exclude,
+    set_price,
+    new_price,
+    nofi_time,
+    parent_id,
+    item_name,
+  } = req.body;
   const { id } = req.params;
 
   db.run(
-    `UPDATE child SET include = ?, exclude = ?, set_price = ?, new_price = ?, nofi_time = ?, parent_id = ? WHERE id = ?`,
-    [include, exclude, set_price, new_price, nofi_time, parent_id, id],
+    `UPDATE child SET include = ?, exclude = ?, set_price = ?, new_price = ?, nofi_time = ?, parent_id = ?, item_name = ? WHERE id = ?`,
+    [
+      include,
+      exclude,
+      set_price,
+      new_price,
+      nofi_time,
+      parent_id,
+      item_name,
+      id,
+    ],
     (err) => {
       if (err) {
         res.status(400).json({ error: err.message });

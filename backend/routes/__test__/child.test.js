@@ -3,7 +3,6 @@ import db from "../../db/db.js";
 import express from "express";
 
 import childRouter from "../../routes/child.js";
-import { describe } from "node:test";
 
 const app = express();
 app.use(express.json());
@@ -15,10 +14,10 @@ describe("/child API", () => {
   //   // Create the 'child' table in memory database
   //   db.run(
   //     `CREATE TABLE IF NOT EXISTS child
-  //   (id        INTEGER PRIMARY KEY AUTOINCREMENT, 
-  //    include   TEXT, 
-  //    exclude   TEXT, 
-  //    set_price REAL, 
+  //   (id        INTEGER PRIMARY KEY AUTOINCREMENT,
+  //    include   TEXT,
+  //    exclude   TEXT,
+  //    set_price REAL,
   //    new_price REAL,
   //    nofi_time TEXT,
   //    parent_id INTEGER,
@@ -43,6 +42,7 @@ describe("/child API", () => {
         new_price: "300",
         parent_id: "1",
         nofi_time: "2022-01-01 (23:30)",
+        item_name: "test_name",
       });
       expect(res.statusCode).toEqual(200);
       expect(res.body).toHaveProperty("message");
@@ -72,21 +72,25 @@ describe("/child API", () => {
         new_price: "300",
         parent_id: "1",
         nofi_time: "2022-01-01 (23:30)",
+        item_name: "test_name",
       });
 
       // Update the child
       const res2 = await request(app).put(`/child/${res.body.data.id}`).send({
-        include: "乙太",
+        include: "乙太-updated",
         exclude: "星星",
         set_price: "120",
         new_price: "300",
-        parent_id: "1",
+        parent_id: "2",
         nofi_time: "2022-01-01 (23:30)",
+        item_name: "test_name",
       });
 
       expect(res2.statusCode).toEqual(200);
       expect(res2.body).toHaveProperty("message");
       expect(res2.body).toHaveProperty("data");
+      expect(res2.body.data.parent_id).toEqual("2");
+      expect(res2.body.data.include).toEqual("乙太-updated");
     });
   });
 
@@ -101,6 +105,7 @@ describe("/child API", () => {
         new_price: "300",
         parent_id: "1",
         nofi_time: "2022-01-01 (23:30)",
+        item_name: "test_name",
       });
       const res2 = await request(app).post("/child").send({
         include: "乙太",
@@ -109,6 +114,7 @@ describe("/child API", () => {
         new_price: "300",
         parent_id: "1",
         nofi_time: "2022-01-01 (23:30)",
+        item_name: "test_name",
       });
 
       // Get all child
@@ -132,6 +138,7 @@ describe("/child API", () => {
         new_price: "300",
         parent_id: "1",
         nofi_time: "2022-01-01 (23:30)",
+        item_name: "test_name",
       });
 
       // Delete the child

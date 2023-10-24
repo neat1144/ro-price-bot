@@ -31,53 +31,67 @@ router.get("/", async (req, res) => {
 
     // Loop child to check price
     for (const child of childList) {
-      // Variable of child
-      const {
-        include: keywordInclude,
-        exclude: keywordExclude,
-        set_price,
-        new_price,
-      } = child;
-
       // Filter item(keyword and price) list by a child
-      for (const item of itemList) {
-        // Variable of item
-        const { itemName, item_price } = item;
+      const childFiltered = await checkChildPriceByItemList(child, itemList);
 
-        // TODO: Support multiple include and exclude, splite by "+"
+      // If childFiltered exist, send msg by chat bot
+      if (childFiltered) {
+        // Send msg by chat bot
+        const botMsg = formatMsg(parent.keyword, childFiltered, item);
+        await sendMsgByBot(getBotIdToken(), botMsg);
 
-        // Filter itemName by keywordInclude and keywordExclude
-        if (
-          itemName.includes(keywordInclude) &&
-          !itemName.includes(keywordExclude)
-        ) {
-          // Filter by set_price (if item_price < set_price or item_price < new_price)
-          if (item_price < set_price || item_price < new_price) {
-            // Update new_price of child
-            child.new_price = item_price;
-
-            // Update nofi_time of child
-            child.nofi_time = getDateTime();
-
-            // Update child
-            await updateChild(child);
-
-            // Send msg by chat bot
-            const messageText = formatMsg(parent.keyword, child, item);
-            await sendMsgByBot(messageText);
-          }
-        }
+        // Update child
+        await updateChild(childFiltered);
       }
     }
   }
 
-  // Time out
-  const ms = 1000;
-  new Promise((resolve) => setTimeout(resolve, ms));
+  // Timeout
+  timeoutSleep(1000);
 });
 
 // Chcek price by a child
-export const checkPriceByChild = async (child) => {};
+export const checkChildPriceByItemList = async (child, itemList) => {
+  // Variable of child
+  const {
+    include: keywordInclude,
+    exclude: keywordExclude,
+    set_price,
+    new_price,
+  } = child;
+
+  // Loop item list to check price of child
+  for (const item of itemList) {
+    // Variable of item
+    const { itemName, itemPrice } = item;
+
+    // TODO: Support multiple include and exclude, splite by "+"
+    // const includeKeywords = keywordInclude.split("+");
+    // const excludeKeywords = keywordExclude.split("+");
+
+    // Filter itemName by keywordInclude,keywordExclude and if they are both not ""
+    if (
+      (itemName.includes(keywordInclude) || keywordInclude === "") &&
+      (!itemName.includes(keywordExclude) || keywordExclude === "")
+    ) {
+      // Filter by set_price (if itemPrice < set_price or itemPrice < new_price)
+      if (itemPrice < set_price || itemPrice < new_price) {
+        // Update new_price of child
+        child.new_price = itemPrice;
+
+        // Update item_name of child
+        child.item_name = itemName;
+
+        // Update nofi_time of child
+        child.nofi_time = getDateTime();
+
+        return child;
+      }
+    }
+  }
+  // If child is not filtered, return original
+  return child;
+};
 
 // Send msg by chat bot
 export const sendMsgByBot = async (botIdToken, messageText) => {
@@ -88,7 +102,7 @@ export const sendMsgByBot = async (botIdToken, messageText) => {
   const tgUrl = `https://api.telegram.org/bot${token}/sendMessage`;
 
   // Log msg
-  console.log(messageText);
+  // console.log(messageText);
 
   // Send request by telegram api
   try {
@@ -115,11 +129,12 @@ export const getBotIdToken = async () => {
       console.error("Error to get bot id and token!", error);
     });
 
-    return response.data;
-}
+  return response.data;
+};
 
 // Send msg by chat bot
-export const formatMsg = async (keyword, child, item) => {
+export const formatMsg = (parent, child, item) => {
+  const { keyword } = parent;
   const { include, exclude, set_price, new_price, svr, nofi_time } = child;
   const { name: firstItemName, type } = item;
 
@@ -171,22 +186,50 @@ export const getItemList = async (parent) => {
     .catch((error) => {
       console.error("Error to get item list from RO server!", error);
     });
+
   const responseData = response.data;
 
+  // Response data:
+  // {  Message: null,
+  //    sdate: null,
+  //    edate: null,
+  //    dt: [
+  //          {...},
+  //          {...},
+  //          ...
+  //        ],
+  // }
+
+  // Filter data of response
+  const itemList = responseData.dt.map((item) => ({
+    itemRefining: item.itemRefining,
+    itemName: item.itemName,
+    ItemGradeLevel: item.ItemGradeLevel,
+    itemPrice: item.itemPrice,
+    type: item.storetype,
+  }));
+
   // Check if dt is an array before processing
-  if (Array.isArray(responseData.dt)) {
-    // Filter data of response (only return itemName, itemPrice, svr, type)
-    const itemList = responseData.dt.map((item) => {
-      const {
-        storeName: store,
-        itemID: id,
-        itemName: itemName,
-        itemPrice: item_price,
-        storetype: type,
-      } = item;
-      return { id, itemName, store, item_price, svr, type };
-    });
-  }
+  // if (Array.isArray(responseData.dt)) {
+  //   // Filter data of response (only return itemName, itemPrice, svr, type)
+  //   const itemList = responseData.dt.map((item) => {
+  //     const {
+  //       storeName: store,
+  //       itemID: id,
+  //       itemName: itemName,
+  //       storetype: type,
+  //     } = item;
+  //     return { id, itemName, store, itemPrice, svr, type };
+  //   });
+  // }
+
+  // Return itemList
+  return itemList;
+};
+
+// Timeout
+export const timeoutSleep = (ms) => {
+  new Promise((resolve) => setTimeout(resolve, ms));
 };
 
 // Get time
@@ -274,7 +317,7 @@ export const setHeaders = () => {
 //       // if itemList exist
 //       if (itemList && itemList.length) {
 //         // Lowest Price of customer
-//         const lowestPrice = itemList[0].item_price;
+//         const lowestPrice = itemList[0].itemPrice;
 //         const firstItemName = itemList[0].itemName;
 
 //         // If have low price item, Push to list
