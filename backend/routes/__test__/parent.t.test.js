@@ -34,12 +34,10 @@ describe("/parent API", () => {
         .send({ keyword: "test", svr: 1, type: 2 });
 
       expect(res.statusCode).toEqual(200);
-      expect(res.body).toHaveProperty("message", "success");
-      expect(res.body).toHaveProperty("data", {
-        keyword: "test",
-        svr: 1,
-        type: 2,
-      });
+      expect(res.body).toHaveProperty("message");
+      expect(res.body).toHaveProperty("data");
+      expect(res.body.data).toHaveProperty("id");
+      expect(res.body.data.keyword).toEqual("test");
     });
 
     // Error case (missing keyword)

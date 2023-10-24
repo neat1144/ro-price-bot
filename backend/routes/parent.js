@@ -7,19 +7,21 @@ const sqlite3Verbose = sqlite3.verbose();
 // SQLite database connection
 const db = new sqlite3Verbose.Database("mydatabase.db");
 
-// TABLE: Create the 'parent' table
+// Set foreign key constraints
 db.serialize(() => {
   db.run("PRAGMA foreign_keys = ON;");
 });
+
+// TABLE: Create the 'parent' table
 db.run(`CREATE TABLE IF NOT EXISTS parent
       (id        INTEGER PRIMARY KEY AUTOINCREMENT, 
        keyword   TEXT, 
        svr       INTEGER,
        type      INTEGER)`);
 
-// CREATE a item for parent table
+// CREATE a new parent
 router.post("/", (req, res) => {
-  // Parementer from request body
+  // Parameters from the request body
   const { keyword, svr, type } = req.body;
 
   // Check if 'keyword' is null or empty
@@ -31,16 +33,25 @@ router.post("/", (req, res) => {
   const insertQuery = `INSERT INTO parent (keyword, svr, type) VALUES (?, ?, ?)`;
 
   // Insert to db
-  db.run(insertQuery, [keyword, svr, type], (err) => {
+  db.run(insertQuery, [keyword, svr, type], function (err) {
     // Handle error
     if (err) {
       res.status(400).json({ error: err.message });
       return;
     }
+
+    // Get the last inserted ID using lastID
+    const parentID = this.lastID;
+
     // Handle success
     res.json({
-      message: "success",
-      data: req.body,
+      message: "success to create a new parent",
+      data: {
+        id: parentID,
+        keyword,
+        svr,
+        type,
+      },
     });
   });
 });

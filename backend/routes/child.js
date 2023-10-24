@@ -7,10 +7,12 @@ const sqlite3Verbose = sqlite3.verbose();
 // SQLite database connection
 const db = new sqlite3Verbose.Database("mydatabase.db");
 
-// TABLE: Create the 'child' table
+// Set foreign key constraints
 db.serialize(() => {
   db.run("PRAGMA foreign_keys = ON;");
 });
+
+// TABLE: Create the 'child' table
 db.run(`CREATE TABLE IF NOT EXISTS child
         (id        INTEGER PRIMARY KEY AUTOINCREMENT, 
          include   TEXT, 
@@ -22,7 +24,7 @@ db.run(`CREATE TABLE IF NOT EXISTS child
          parent_id INTEGER,
          FOREIGN KEY (parent_id) REFERENCES parent(id) ON DELETE CASCADE)`);
 
-// CRATE a new child
+// CREATE a new child
 router.post("/", (req, res) => {
   const {
     include,
@@ -42,15 +44,28 @@ router.post("/", (req, res) => {
   db.run(
     `INSERT INTO child (include, exclude, set_price, new_price, nofi_time, parent_id, item_name) VALUES (?, ?, ?, ?, ?, ?, ?)`,
     [include, exclude, set_price, new_price, nofi_time, parent_id, item_name],
-    (err) => {
+    function (err) {
       if (err) {
         res.status(400).json({ error: err.message });
         return;
       }
+
+      // Get the last inserted ID using lastID
+      const lastID = this.lastID;
+
+      // Return the ID of the newly inserted child
       res.json({
-        message: "success",
-        data: req.body,
-        // id: this.lastID,
+        message: "success to create a new child",
+        data: {
+          id: lastID,
+          include,
+          exclude,
+          set_price,
+          new_price,
+          nofi_time,
+          parent_id,
+          item_name,
+        },
       });
     }
   );
