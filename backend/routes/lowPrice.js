@@ -7,6 +7,9 @@ router.get("/", async (req, res) => {
   // Log
   console.log("Price is checking...");
 
+  // Get bot id and token
+  const botIdToken = await getBotIdToken();
+
   // Get all parent
   const parentList = await axios
     .get("http://localhost:3030/parent")
@@ -76,12 +79,10 @@ router.get("/", async (req, res) => {
 // Chcek price by a child
 export const checkPriceByChild = async (child) => {};
 
-
-
 // Send msg by chat bot
-export const sendMsgByBot = async (messageText) => {
+export const sendMsgByBot = async (botIdToken, messageText) => {
   // Get token and id
-  const { chat_id: chatId, token } = await getBotId();
+  const { chat_id: chatId, token } = botIdToken;
 
   // Api Information
   const tgUrl = `https://api.telegram.org/bot${token}/sendMessage`;
@@ -95,6 +96,8 @@ export const sendMsgByBot = async (messageText) => {
       chat_id: chatId,
       text: messageText,
     });
+
+    return response;
   } catch (error) {
     const errorMsg = `Error sending msg by TG bot.
 Token:${token}
@@ -102,17 +105,18 @@ chatId:${chatId}
       `;
     console.error(errorMsg);
   }
+};
 
-}
-
-export const getBotId = async () => {
-  const botIdResponse = await axios
+export const getBotIdToken = async () => {
+  // Get bot id and token from db
+  const response = await axios
     .get("http://localhost:3030/chat-id")
     .catch((error) => {
-      console.error("Error to get chat id!", error);
+      console.error("Error to get bot id and token!", error);
     });
-  return botIdResponse.data;
-};
+
+    return response.data;
+}
 
 // Send msg by chat bot
 export const formatMsg = async (keyword, child, item) => {
