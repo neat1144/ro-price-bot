@@ -96,8 +96,9 @@ export const checkChildPriceByItemList = async (child, itemList) => {
       (itemName.includes(keywordInclude) || keywordInclude === "") &&
       (!itemName.includes(keywordExclude) || keywordExclude === "")
     ) {
-      // Filter by set_price (if itemPrice <= set_price or itemPrice < new_price)
-      if (itemPrice <= set_price && itemPrice < new_price) {
+      console.log(itemName);
+      // Filter by set_price (if itemPrice <= set_price or  new_price < new_price)
+      if (itemPrice <= set_price && new_price < itemPrice) {
         // Update new_price of child
         child.new_price = itemPrice;
 
@@ -106,7 +107,6 @@ export const checkChildPriceByItemList = async (child, itemList) => {
 
         // Update nofi_time of child
         child.nofi_time = getDateTime();
-
         return child;
       }
     }
