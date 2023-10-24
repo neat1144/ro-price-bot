@@ -1,29 +1,25 @@
 import request from "supertest";
 import express from "express";
-import sqlite3 from "sqlite3";
-
+import db from "../../db/db.js";
 import parentRouter from "../../routes/parent.js";
 
 const app = express();
 app.use(express.json());
 app.use("/parent", parentRouter);
 
-// DB connection
-const sqlite3Verbose = sqlite3.verbose();
-const db = new sqlite3Verbose.Database("mydatabase.db");
 
 describe("/parent API", () => {
-  beforeAll((done) => {
-    // Create the 'parent' table in memory database
-    db.run(
-      `CREATE TABLE IF NOT EXISTS parent
-      (id        INTEGER PRIMARY KEY AUTOINCREMENT,
-       keyword   TEXT,
-       svr       INTEGER,
-       type      INTEGER)`,
-      done
-    );
-  });
+  // beforeAll((done) => {
+  //   // Create the 'parent' table in memory database
+  //   db.run(
+  //     `CREATE TABLE IF NOT EXISTS parent
+  //     (id        INTEGER PRIMARY KEY AUTOINCREMENT,
+  //      keyword   TEXT,
+  //      svr       INTEGER,
+  //      type      INTEGER)`,
+  //     done
+  //   );
+  // });
 
   afterEach((done) => {
     // Delete all data from 'parent' table after each test

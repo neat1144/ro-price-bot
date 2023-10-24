@@ -1,5 +1,5 @@
 import request from "supertest";
-import sqlite3 from "sqlite3";
+import db from "../../db/db.js";
 import express from "express";
 
 import childRouter from "../../routes/child.js";
@@ -9,27 +9,23 @@ const app = express();
 app.use(express.json());
 app.use("/child", childRouter);
 
-// SQLite database connection
-const sqlite3Verbose = sqlite3.verbose();
-const db = new sqlite3Verbose.Database("mydatabase.db");
-
 // Test suite for the child API
 describe("/child API", () => {
-  beforeAll((done) => {
-    // Create the 'child' table in memory database
-    db.run(
-      `CREATE TABLE IF NOT EXISTS child
-    (id        INTEGER PRIMARY KEY AUTOINCREMENT, 
-     include   TEXT, 
-     exclude   TEXT, 
-     set_price REAL, 
-     new_price REAL,
-     nofi_time TEXT,
-     parent_id INTEGER,
-     FOREIGN KEY (parent_id) REFERENCES parent(id))`,
-      done
-    );
-  });
+  // beforeAll((done) => {
+  //   // Create the 'child' table in memory database
+  //   db.run(
+  //     `CREATE TABLE IF NOT EXISTS child
+  //   (id        INTEGER PRIMARY KEY AUTOINCREMENT, 
+  //    include   TEXT, 
+  //    exclude   TEXT, 
+  //    set_price REAL, 
+  //    new_price REAL,
+  //    nofi_time TEXT,
+  //    parent_id INTEGER,
+  //    FOREIGN KEY (parent_id) REFERENCES parent(id))`,
+  //     done
+  //   );
+  // });
 
   afterEach((done) => {
     // Delete all data from 'child' table after each test

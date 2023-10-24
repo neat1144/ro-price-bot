@@ -1,29 +1,25 @@
 import request from "supertest";
-import sqlite3 from "sqlite3";
 import express from "express";
-
+import db from "../../db/db.js";
 import timeoutRouter from "../../routes/timeout.js";
 
 const app = express();
 app.use(express.json());
 app.use("/timeout", timeoutRouter);
 
-// SQLite database connection
-const sqlite3Verbose = sqlite3.verbose();
-const db = new sqlite3Verbose.Database("mydatabase.db");
 
 // Test suite for the timeout API
 describe("/timeout API", () => {
   // beforeAll
-  beforeAll((done) => {
-    // Create the 'timeout' table in memory database
-    db.run(
-      `CREATE TABLE IF NOT EXISTS timeout (
-            id              INTEGER PRIMARY KEY,
-            timeout_sec     INTEGER)`,
-      done
-    );
-  });
+  // beforeAll((done) => {
+  //   // Create the 'timeout' table in memory database
+  //   db.run(
+  //     `CREATE TABLE IF NOT EXISTS timeout (
+  //           id              INTEGER PRIMARY KEY,
+  //           timeout_sec     INTEGER)`,
+  //     done
+  //   );
+  // });
 
   // afterEach
   afterEach((done) => {

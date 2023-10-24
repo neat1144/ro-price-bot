@@ -1,6 +1,6 @@
 import request from "supertest";
-import sqlite3 from "sqlite3";
 import express from "express";
+import db from "../../db/db.js";
 
 import chatIdRouter from "../../routes/chatId.js";
 
@@ -8,23 +8,20 @@ const app = express();
 app.use(express.json());
 app.use("/chatId", chatIdRouter);
 
-// SQLite database connection
-const sqlite3Verbose = sqlite3.verbose();
-const db = new sqlite3Verbose.Database("mydatabase.db");
 
 // Test suite for the chatId API
 describe("/chatId API", () => {
   // beforeAll
-  beforeAll((done) => {
-    // Create the 'chatBot' table in memory database
-    db.run(
-      `CREATE TABLE IF NOT EXISTS chatBot (
-        id      INTEGER PRIMARY KEY,
-        chat_id TEXT,
-        token   TEXT)`,
-      done
-    );
-  });
+  // beforeAll((done) => {
+  //   // Create the 'chatBot' table in memory database
+  //   db.run(
+  //     `CREATE TABLE IF NOT EXISTS chatBot (
+  //       id      INTEGER PRIMARY KEY,
+  //       chat_id TEXT,
+  //       token   TEXT)`,
+  //     done
+  //   );
+  // });
 
   // afterEach
   afterEach((done) => {

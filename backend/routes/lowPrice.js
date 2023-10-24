@@ -60,7 +60,8 @@ router.get("/", async (req, res) => {
             await updateChild(child);
 
             // Send msg by chat bot
-            await sendMsgByChatBot(parent.keyword, child, item);
+            const messageText = formatMsg(parent.keyword, child, item);
+            await sendMsgByBot(messageText);
           }
         }
       }
@@ -72,31 +73,18 @@ router.get("/", async (req, res) => {
   new Promise((resolve) => setTimeout(resolve, ms));
 });
 
+// Chcek price by a child
+export const checkPriceByChild = async (child) => {};
+
+
+
 // Send msg by chat bot
-const sendMsgByChatBot = async (keyword, child, item) => {
+export const sendMsgByBot = async (messageText) => {
   // Get token and id
-  const botIdResponse = await axios.get("http://localhost:3030/chat-id");
-  const { chat_id: chatId, token } = botIdResponse.data;
+  const { chat_id: chatId, token } = await getBotId();
 
   // Api Information
   const tgUrl = `https://api.telegram.org/bot${token}/sendMessage`;
-
-  const { include, exclude, set_price, new_price, svr, nofi_time } = child;
-  const { name: firstItemName, type } = item;
-
-  const chnType = type === 0 ? "販賣" : type === 1 ? "收購" : "未知";
-
-  // Msg by sended
-  const messageText = `
-物品名稱: ${firstItemName}
-伺服器　: ${svr}
-設定價格: ${set_price.toLocaleString("en-US")} 
-${chnType}價格: ${new_price.toLocaleString("en-US")}
-關鍵字　: ${keyword}
-包含　　: ${include}
-排除　　: ${exclude}
-時間　　: ${nofi_time}
-`;
 
   // Log msg
   console.log(messageText);
@@ -114,12 +102,40 @@ chatId:${chatId}
       `;
     console.error(errorMsg);
   }
-  // }
-  console.log();
+
+}
+
+export const getBotId = async () => {
+  const botIdResponse = await axios
+    .get("http://localhost:3030/chat-id")
+    .catch((error) => {
+      console.error("Error to get chat id!", error);
+    });
+  return botIdResponse.data;
+};
+
+// Send msg by chat bot
+export const formatMsg = async (keyword, child, item) => {
+  const { include, exclude, set_price, new_price, svr, nofi_time } = child;
+  const { name: firstItemName, type } = item;
+
+  const chnType = type === 0 ? "販賣" : type === 1 ? "收購" : "未知";
+
+  // Msg by sended
+  const messageText = `
+物品名稱: ${firstItemName}
+伺服器　: ${svr}
+設定價格: ${set_price.toLocaleString("en-US")} 
+${chnType}價格: ${new_price.toLocaleString("en-US")}
+關鍵字　: ${keyword}, 包含(${include}), 排除(${exclude})
+時間　　: ${nofi_time}
+`;
+
+  return messageText;
 };
 
 // Update child by id
-const updateChild = async (child) => {
+export const updateChild = async (child) => {
   try {
     await axios.put(`http://localhost:3030/child/${child.id}`, child);
   } catch (error) {
@@ -128,7 +144,7 @@ const updateChild = async (child) => {
 };
 
 // Get itemList of a parent from RO server
-const getItemList = async (parent) => {
+export const getItemList = async (parent) => {
   // Variable of parent
   const { keyword, svr, type } = parent;
 
@@ -170,7 +186,7 @@ const getItemList = async (parent) => {
 };
 
 // Get time
-const getDateTime = () => {
+export const getDateTime = () => {
   // Create a new Date object to represent the current date and time
   const currentTime = new Date();
 
@@ -188,7 +204,7 @@ const getDateTime = () => {
   return formattedTime;
 };
 
-const setHeaders = () => {
+export const setHeaders = () => {
   const headers = {
     "Content-Type": "application/json; charset=UTF-8",
     "User-Agent":

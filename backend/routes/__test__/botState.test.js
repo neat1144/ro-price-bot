@@ -1,6 +1,6 @@
 import request from "supertest";
 import express from "express";
-import sqlite3 from "sqlite3";
+import db from "../../db/db.js";
 
 import botStateRouter from "../../routes/botState.js";
 
@@ -8,22 +8,19 @@ const app = express();
 app.use(express.json());
 app.use("/botState", botStateRouter);
 
-// SQLite database connection
-const sqlite3Verbose = sqlite3.verbose();
-const db = new sqlite3Verbose.Database("mydatabase.db");
 
 // Test suite for the botState API
 describe("/botState API", () => {
   // beforeAll
-  beforeAll((done) => {
-    // Create the 'botState' table in memory database
-    db.run(
-      `CREATE TABLE IF NOT EXISTS botState (
-            id             INTEGER PRIMARY KEY,
-            bot_is_start   INTEGER)`,
-      done
-    );
-  });
+  // beforeAll((done) => {
+  //   // Create the 'botState' table in memory database
+  //   db.run(
+  //     `CREATE TABLE IF NOT EXISTS botState (
+  //           id             INTEGER PRIMARY KEY,
+  //           bot_is_start   INTEGER)`,
+  //     done
+  //   );
+  // });
 
   // afterEach
   afterEach((done) => {
