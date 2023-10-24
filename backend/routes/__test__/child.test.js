@@ -2,7 +2,7 @@ import request from "supertest";
 import sqlite3 from "sqlite3";
 import express from "express";
 
-import childRouter from "../routes/child.js";
+import childRouter from "../../routes/child.js";
 
 const app = express();
 app.use(express.json());

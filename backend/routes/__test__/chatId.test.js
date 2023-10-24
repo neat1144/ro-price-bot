@@ -2,7 +2,7 @@ import request from "supertest";
 import sqlite3 from "sqlite3";
 import express from "express";
 
-import chatIdRouter from "../routes/chatId.js";
+import chatIdRouter from "../../routes/chatId.js";
 
 const app = express();
 app.use(express.json());
