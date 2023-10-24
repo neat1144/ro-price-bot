@@ -11,37 +11,59 @@ router.get("/", async (req, res) => {
   const botIdToken = await getBotIdToken();
 
   // Get all parent
-  const parentList = await axios
-    .get("http://localhost:3030/parent")
-    .catch((error) => {
-      console.error("Error to get parent list!", error);
-    });
+  const parentList = await getParentList();
 
-  // Loop parent to check price of child
-  for (const parent of parentList) {
-    // Get child list by one parent
-    const childList = await axios
-      .get(`http://localhost:3030/child/parent_id/${parent.id}`)
-      .catch((error) => {
-        console.error("Error to get child list!", error);
-      });
+  // if parentList is empty, response error with 404
+  if (!parentList.length) {
+    // console.log("No parent list found!");
+    res.status(404).json({ message: "No parent list found!" });
+    return;
+  }
 
-    // Get item list by one parent
-    const itemList = await getItemList(parent);
+  // Get bot state
+  const botState = await getBotState();
 
-    // Loop child to check price
-    for (const child of childList) {
-      // Filter item(keyword and price) list by a child
-      const childFiltered = await checkChildPriceByItemList(child, itemList);
+  // if botState is true(1), then start check
+  if (botState === 1) {
+    // Loop parent to check price of child
+    for (const parent of parentList) {
+      // Get child list by one parent
+      const childList = await getChildList(parent.id);
+      // if childList is empty, response error with 404
+      if (!childList.length) {
+        // console.log("No child list found!");
+        res.status(404).json({ message: "No child list found!" });
+        return;
+      }
 
-      // If childFiltered exist, send msg by chat bot
-      if (childFiltered) {
-        // Send msg by chat bot
-        const botMsg = formatMsg(parent.keyword, childFiltered, item);
-        await sendMsgByBot(getBotIdToken(), botMsg);
+      // Get item list by one parent
+      const itemList = await getItemList(parent);
 
-        // Update child
-        await updateChild(childFiltered);
+      // if itemList is empty, response error with 404
+      if (!itemList.length) {
+        // console.log("No item list found!");
+        res.status(404).json({ message: "No item list found!" });
+        return;
+      }
+
+      // Loop child to check price
+      for (const child of childList) {
+        // Filter item(keyword and price) list by a child
+        const childFiltered = await checkChildPriceByItemList(child, itemList);
+
+        // If childFiltered is not empty, send msg by chat bot
+        if (childFiltered) {
+          // Send msg by chat bot
+          const botMsg = formatMsg(parent, childFiltered);
+          console.log(botMsg);
+          await sendMsgByBot(botIdToken, botMsg);
+
+          // Update child
+          await updateChild(childFiltered);
+
+          // Response success with 200
+          // res.status(200).json({ message: "Price Check Success!" });
+        }
       }
     }
   }
@@ -74,8 +96,8 @@ export const checkChildPriceByItemList = async (child, itemList) => {
       (itemName.includes(keywordInclude) || keywordInclude === "") &&
       (!itemName.includes(keywordExclude) || keywordExclude === "")
     ) {
-      // Filter by set_price (if itemPrice < set_price or itemPrice < new_price)
-      if (itemPrice < set_price || itemPrice < new_price) {
+      // Filter by set_price (if itemPrice <= set_price or itemPrice < new_price)
+      if (itemPrice <= set_price && itemPrice < new_price) {
         // Update new_price of child
         child.new_price = itemPrice;
 
@@ -89,8 +111,8 @@ export const checkChildPriceByItemList = async (child, itemList) => {
       }
     }
   }
-  // If child is not filtered, return original
-  return child;
+  // If child is not filtered, return null
+  return null;
 };
 
 // Send msg by chat bot
@@ -133,16 +155,16 @@ export const getBotIdToken = async () => {
 };
 
 // Send msg by chat bot
-export const formatMsg = (parent, child, item) => {
-  const { keyword } = parent;
-  const { include, exclude, set_price, new_price, svr, nofi_time } = child;
-  const { name: firstItemName, type } = item;
+export const formatMsg = (parent, child) => {
+  const { keyword, type, svr } = parent;
+  const { include, exclude, set_price, new_price, nofi_time, item_name } =
+    child;
 
   const chnType = type === 0 ? "販賣" : type === 1 ? "收購" : "未知";
 
   // Msg by sended
   const messageText = `
-物品名稱: ${firstItemName}
+物品名稱: ${item_name}
 伺服器　: ${svr}
 設定價格: ${set_price.toLocaleString("en-US")} 
 ${chnType}價格: ${new_price.toLocaleString("en-US")}
@@ -225,6 +247,38 @@ export const getItemList = async (parent) => {
 
   // Return itemList
   return itemList;
+};
+
+// Get customer list
+const getParentList = async () => {
+  const response = await axios
+    .get("http://localhost:3030/parent")
+    .catch((error) => {
+      console.error("Error to get parent list!", error);
+    });
+
+  return response.data["data"];
+};
+
+// Get child list by parent id
+const getChildList = async (parentId) => {
+  const response = await axios
+    .get(`http://localhost:3030/child/parent_id/${parentId}`)
+    .catch((error) => {
+      console.error("Error to get child list!", error);
+    });
+
+  return response.data["data"];
+};
+
+// Get bot state
+const getBotState = async () => {
+  const response = await axios
+    .get("http://localhost:3030/bot-state")
+    .catch((error) => {
+      console.error("Error to get bot state!", error);
+    });
+  return response.data["bot_is_start"];
 };
 
 // Timeout

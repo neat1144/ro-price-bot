@@ -71,6 +71,7 @@
 - [x] clean new_price button
 - [x] clean form of customer
 - [x] new timeout function
+- [x] add unit test
 - [x] add new table `child` for filter keywrods
 - [ ] support add form (react and node) for table `child`
 - [ ] support **filter** `itemRefining` and `ItemGradeLevel`
