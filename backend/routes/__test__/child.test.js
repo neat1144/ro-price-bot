@@ -3,6 +3,7 @@ import sqlite3 from "sqlite3";
 import express from "express";
 
 import childRouter from "../../routes/child.js";
+import { describe } from "node:test";
 
 const app = express();
 app.use(express.json());
@@ -142,6 +143,37 @@ describe("/child API", () => {
 
       expect(res2.statusCode).toEqual(200);
       expect(res2.body).toHaveProperty("message");
+    });
+  });
+
+  // GET child list by parent_id test
+  describe("GET /child/parent_id/:parent_id", () => {
+    it("should return child list by parent_id", async () => {
+      // Create two child
+      const res = await request(app).post("/child").send({
+        include: "乙太",
+        exclude: "星星",
+        set_price: "120",
+        new_price: "300",
+        parent_id: "1",
+        nofi_time: "2022-01-01 (23:30)",
+      });
+      const res2 = await request(app).post("/child").send({
+        include: "乙太",
+        exclude: "星星",
+        set_price: "120",
+        new_price: "300",
+        parent_id: "1",
+        nofi_time: "2022-01-01 (23:30)",
+      });
+
+      // Get child list by parent_id
+      const res3 = await request(app).get("/child/parent_id/1");
+
+      expect(res3.statusCode).toEqual(200);
+      expect(res3.body).toHaveProperty("message");
+      expect(res3.body).toHaveProperty("data");
+      expect(res3.body.data.length).toEqual(2);
     });
   });
 });

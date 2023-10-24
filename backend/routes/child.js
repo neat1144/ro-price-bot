@@ -82,6 +82,22 @@ router.get("/", (req, res) => {
   });
 });
 
+// Get child list by parent_id
+router.get("/parent_id/:parent_id", (req, res) => {
+  const { parent_id } = req.params;
+
+  db.all(`SELECT * FROM child WHERE parent_id = ?`, parent_id, (err, rows) => {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+    res.json({
+      message: "success",
+      data: rows,
+    });
+  });
+});
+
 // Delete a child by id
 router.delete("/:id", (req, res) => {
   const { id } = req.params;

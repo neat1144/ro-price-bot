@@ -45,15 +45,16 @@
   - 設定價格: 預設空白
 
 ## DB
+
 - **customer**
 
-  | id | keyword | svr | type |
-  | -- | ------- | --- | ---- |
+  | id  | keyword | svr | type |
+  | --- | ------- | --- | ---- |
 
 - **child**
 
-  | id | customer_id | include | exclude | refining | level | set_price | new_price | time |
-  | -- | ----------- | ------- | ------- | -------- | ----- | --------- | --------- | ---- |
+  | id  | customer_id | include | exclude | refining | level | set_price | new_price | time |
+  | --- | ----------- | ------- | ------- | -------- | ----- | --------- | --------- | ---- |
 
 ## To-Do
 
@@ -70,9 +71,9 @@
 - [x] clean new_price button
 - [x] clean form of customer
 - [x] new timeout function
-- [ ] add new table `child` for filter keywrods
+- [x] add new table `child` for filter keywrods
 - [ ] support add form (react and node) for table `child`
-- [ ] support **filter**  `itemRefining` and `ItemGradeLevel`
+- [ ] support **filter** `itemRefining` and `ItemGradeLevel`
 - [ ] support **filter** "exclude" and "include" keywords
 
 ## 伺服器更改
