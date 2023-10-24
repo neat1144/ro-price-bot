@@ -8,7 +8,9 @@ const sqlite3Verbose = sqlite3.verbose();
 const db = new sqlite3Verbose.Database("mydatabase.db");
 
 // TABLE: Create the 'child' table
-
+db.serialize(() => {
+  db.run("PRAGMA foreign_keys = ON;");
+});
 db.run(`CREATE TABLE IF NOT EXISTS child
         (id        INTEGER PRIMARY KEY AUTOINCREMENT, 
          include   TEXT, 
@@ -16,9 +18,9 @@ db.run(`CREATE TABLE IF NOT EXISTS child
          set_price REAL, 
          new_price REAL,
          nofi_time TEXT,
-         parent_id INTEGER,
          item_name TEXT,
-         FOREIGN KEY (parent_id) REFERENCES parent(id))`);
+         parent_id INTEGER,
+         FOREIGN KEY (parent_id) REFERENCES parent(id) ON DELETE CASCADE)`);
 
 // CRATE a new child
 router.post("/", (req, res) => {

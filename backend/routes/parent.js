@@ -8,6 +8,9 @@ const sqlite3Verbose = sqlite3.verbose();
 const db = new sqlite3Verbose.Database("mydatabase.db");
 
 // TABLE: Create the 'parent' table
+db.serialize(() => {
+  db.run("PRAGMA foreign_keys = ON;");
+});
 db.run(`CREATE TABLE IF NOT EXISTS parent
       (id        INTEGER PRIMARY KEY AUTOINCREMENT, 
        keyword   TEXT, 
