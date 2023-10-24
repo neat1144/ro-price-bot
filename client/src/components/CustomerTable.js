@@ -7,6 +7,19 @@ import { faSync } from "@fortawesome/free-solid-svg-icons";
 
 import notificationSound from "./notification.mp3";
 
+// /customer api
+// POST request body:
+// {
+//  keyword: "test keyword1",
+//  svr: 2209,
+//  type: 1,
+//
+//  include: "test include1",
+//  exclude: "test exclude1",
+//  set_price: 1000,
+//  new_price: 0,
+// }
+
 function CustomerTable() {
   const [formCustomer, setFormCustomer] = useState({
     id: "",
