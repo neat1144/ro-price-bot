@@ -18,6 +18,19 @@ import "./CustomerTable.css"; // Import a CSS file for styling
 function CustomerTable() {
   const [parentList, setParentList] = useState([]);
   const [childMap, setChildMap] = useState({});
+  const [editIndex, setEditIndex] = useState(-1);
+  const [editedParent, setEditedParent] = useState({
+    keyword: "",
+    svr: "",
+    type: "",
+  });
+  const [editedChild, setEditedChild] = useState({
+    include: "",
+    exclude: "",
+    set_price: "",
+    new_price: "",
+    nofi_time: "",
+  });
 
   useEffect(() => {
     axios
@@ -51,6 +64,24 @@ function CustomerTable() {
     });
   }, [parentList]);
 
+  // "EDIT MODE"
+  // Hdanle parent's the "Edit" button click
+  const handleParentEdit = (parent, index) => {
+    setEditIndex(index);
+    setEditedParent({ ...parent });
+  };
+
+  // Handle child's the "Edit" button click
+  const handleChildEdit = (child, index) => {
+    setEditIndex(index);
+    setEditedChild({ ...child });
+  };
+
+  // "UPDATE"
+  // Update a parent
+  const handleParentUpdate = (parentId) => {};
+
+  // "DELETE"
   // Delete a parent
   const handleDeleteParent = (id) => {
     axios
@@ -104,16 +135,32 @@ function CustomerTable() {
             <th scope="col">Exclude</th>
             <th scope="col">Set Price</th>
             <th scope="col">New Price</th>
-            <th scope="col">Date</th>
+            <th scope="col">Nofi Time</th>
             <th scope="col">Action</th>
           </tr>
         </thead>
         <tbody>
-          {parentList.map((parent) => (
+          {parentList.map((parent, index) => (
             <React.Fragment key={parent.id}>
               <tr>
                 <td>{serialNumber++}</td>
-                <td>{parent.keyword}</td>
+                <td>
+                  {editIndex === index ? (
+                    <input
+                      type="text"
+                      value={editedParent.keyword}
+                      className="form-control"
+                      onChange={(e) =>
+                        setEditedParent({
+                          ...editedParent,
+                          keyword: e.target.value,
+                        })
+                      }
+                    />
+                  ) : (
+                    parent.keyword
+                  )}
+                </td>
                 <td>{parent.svr}</td>
                 <td>{parent.type}</td>
                 <td></td>
@@ -122,19 +169,45 @@ function CustomerTable() {
                 <td></td>
                 <td></td>
                 <td>
-                  <button type="button" className="btn btn-sm btn-primary">
-                    新增
-                  </button>
-                  <button type="button" className="btn btn-sm btn-secondary">
-                    編輯
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-sm btn-danger"
-                    onClick={() => handleDeleteParent(parent.id)}
-                  >
-                    刪除
-                  </button>
+                  {editIndex === index ? (
+                    // Edit mode
+                    <>
+                      <button
+                        className="btn btn-sm btn-success"
+                        onClick={() => handleParentUpdate(parent.id)}
+                      >
+                        保存
+                      </button>
+
+                      <button
+                        className="btn btn-sm btn-secondary"
+                        onClick={() => setEditIndex(-1)}
+                      >
+                        取消
+                      </button>
+                    </>
+                  ) : (
+                    // View mode
+                    <>
+                      <button type="button" className="btn btn-sm btn-primary">
+                        新增
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-secondary"
+                        onClick={() => handleParentEdit(parent, index)}
+                      >
+                        編輯
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-danger"
+                        onClick={() => handleDeleteParent(parent.id)}
+                      >
+                        刪除
+                      </button>
+                    </>
+                  )}
                 </td>
               </tr>
               {childMap[parent.id] &&
@@ -148,7 +221,7 @@ function CustomerTable() {
                     <td>{child.exclude}</td>
                     <td>{child.set_price}</td>
                     <td>{child.new_price}</td>
-                    <td>{child.date}</td>
+                    <td>{child.nofi_time}</td>
                     <td>
                       <button type="button" className="btn btn-sm btn-warning">
                         重置
