@@ -17,14 +17,15 @@ import "./CustomerTable.css"; // Import a CSS file for styling
 
 function CustomerTable() {
   const [addingChildForParent, setAddingChildForParent] = useState(-1);
+  const [addingNewParent, setAddingNewParent] = useState(false);
   const [parentList, setParentList] = useState([]);
   const [childMap, setChildMap] = useState({});
   const [editParentIndex, setEditParentIndex] = useState(-1);
   const [editChildIndex, setEditChildIndex] = useState(-1);
   const [editedParent, setEditedParent] = useState({
-    keyword: "",
-    svr: "",
-    type: "",
+    keyword: "乙太星塵",
+    svr: 2290,
+    type: 0,
   });
   const [editedChild, setEditedChild] = useState({
     include: "",
@@ -36,9 +37,10 @@ function CustomerTable() {
 
   // Define server options
   const serverOptions = [
-    { value: 100, label: "svr-a" },
-    { value: 200, label: "svr-b" },
-    { value: 300, label: "svr-c" },
+    { value: 2290, label: "巴基利(2290)" },
+    { value: 3290, label: "查爾斯(3290)" },
+    { value: 4290, label: "波利(4290)" },
+    { value: 829, label: "羅札那(829)" },
   ];
 
   // Define type options
@@ -120,6 +122,14 @@ function CustomerTable() {
       set_price: "",
       new_price: 0,
       nofi_time: "",
+    });
+  };
+
+  const initParent = () => {
+    setEditedParent({
+      keyword: "乙太星塵",
+      svr: 2290,
+      type: 0,
     });
   };
 
@@ -290,6 +300,41 @@ function CustomerTable() {
     initChild();
   };
 
+  // Function to handle adding a new parent
+  const handleAddNewParent = () => {
+    setAddingNewParent(true);
+  };
+
+  // Function to save the new parent
+  const handleSaveNewParent = () => {
+    // Make a POST request to add the new parent
+    axios
+      .post(`http://localhost:3030/parent`, {
+        keyword: editedParent.keyword,
+        svr: editedParent.svr,
+        type: editedParent.type,
+      })
+      .then((response) => {
+        if (response.data && response.status === 200) {
+          // Refresh the parent list
+          fetchParentWithChild();
+          setAddingNewParent(false);
+          // Reset the input fields of parent
+          initParent();
+        }
+      })
+      .catch((error) => {
+        console.log("Error adding new parent!", error);
+      });
+  };
+
+  // Function to cancel adding a new parent
+  const handleCancelAddNewParent = () => {
+    setAddingNewParent(false);
+    // Reset the input fields of parent
+    initParent();
+  };
+
   // Create a variable to track the serial number
   let serialNumber = 1;
 
@@ -431,7 +476,7 @@ function CustomerTable() {
                     <>
                       <button
                         type="button"
-                        className="btn btn-sm btn-primary"
+                        className="btn btn-sm btn-info"
                         onClick={() => handleAddChildForParent(parent)}
                       >
                         新增
@@ -509,7 +554,7 @@ function CustomerTable() {
                     <td>
                       {editChildIndex === child.id ? (
                         <input
-                          type="text"
+                          type="number"
                           value={editedChild.set_price}
                           className="form-control form-control-sm"
                           style={{ width: "100px" }}
@@ -529,7 +574,7 @@ function CustomerTable() {
                     <td>
                       {editChildIndex === child.id ? (
                         <input
-                          type="text"
+                          type="number"
                           value={editedChild.new_price}
                           className="form-control form-control-sm"
                           style={{ width: "100px" }}
@@ -595,9 +640,9 @@ function CustomerTable() {
                     </td>
                   </tr>
                 ))}
-              {/*           */}
-              {/* Add child */}
-              {/*           */}
+              {/*               */}
+              {/* Add child row */}
+              {/*               */}
               {addingChildForParent === parent.id && (
                 <tr>
                   <td colSpan="4"></td>
@@ -636,7 +681,7 @@ function CustomerTable() {
                   {/* Set Price */}
                   <td>
                     <input
-                      type="text"
+                      type="number"
                       value={editedChild.set_price}
                       className="form-control form-control-sm"
                       style={{ width: "100px" }}
@@ -669,22 +714,102 @@ function CustomerTable() {
                   </td>
                 </tr>
               )}
-              {/* Add row button */}
-              {/* <tr>
-                <td colSpan="10" style={{ textAlign: "center" }}>
-                  <button
-                    type="button"
-                    className="btn btn-sm btn-primary"
-                    onClick={() => handleAddChildForParent(parent)}
-                  >
-                    新增子項目
-                  </button>
-                </td>
-              </tr> */}
             </React.Fragment>
           ))}
+          {/*                */}
+          {/* Add parent row */}
+          {/*                */}
+          {addingNewParent && (
+            // New parent row for adding
+            <tr>
+              <td>{/* ID column (empty) */}</td>
+              <td>
+                <input
+                  type="text"
+                  value={editedParent.keyword}
+                  className="form-control form-control-sm"
+                  style={{ width: "200px" }}
+                  placeholder="關鍵字"
+                  onChange={(e) =>
+                    setEditedParent({
+                      ...editedParent,
+                      keyword: e.target.value,
+                    })
+                  }
+                />
+              </td>
+              <td>
+                <select
+                  value={editedParent.svr}
+                  className="form-select form-select-sm"
+                  onChange={(e) =>
+                    setEditedParent({
+                      ...editedParent,
+                      svr: e.target.value,
+                    })
+                  }
+                >
+                  {serverOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </td>
+              <td>
+                <select
+                  value={editedParent.type}
+                  className="form-select form-select-sm"
+                  onChange={(e) =>
+                    setEditedParent({
+                      ...editedParent,
+                      type: e.target.value,
+                    })
+                  }
+                >
+                  {typeOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </td>
+              <td style={{ width: "100px" }}></td>
+              <td style={{ width: "100px" }}></td>
+              <td style={{ width: "100px" }}></td>
+              <td style={{ width: "100px" }}></td>
+              <td style={{ width: "100px" }}></td>
+              <td>
+                <button
+                  className="btn btn-sm btn-success"
+                  onClick={handleSaveNewParent}
+                >
+                  保存
+                </button>
+                <button
+                  className="btn btn-sm btn-secondary"
+                  onClick={handleCancelAddNewParent}
+                >
+                  取消
+                </button>
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
+      {/*                   */}
+      {/* Add parent button */}
+      {/*                   */}
+      {!addingNewParent && (
+        <div>
+          <button
+            className="btn btn-primary btn-lg"
+            onClick={handleAddNewParent}
+          >
+            新增關鍵字
+          </button>
+        </div>
+      )}
     </div>
   );
 }
