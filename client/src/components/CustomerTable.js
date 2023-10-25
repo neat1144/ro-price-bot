@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import "./CustomerTable.css"; // Import a CSS file for styling
 
@@ -106,7 +106,7 @@ function CustomerTable() {
   };
 
   // Fetch child list of parent
-  const fetchChild = () => {
+  const fetchChild = useCallback(() => {
     parentList.forEach((parent) => {
       axios
         .get(`http://localhost:3030/child/parent_id/${parent.id}`)
@@ -122,7 +122,7 @@ function CustomerTable() {
           console.log(error);
         });
     });
-  };
+  }, [parentList]);
 
   // Use setInterval to refetch data every 5 seconds
   useEffect(() => {
@@ -149,7 +149,7 @@ function CustomerTable() {
 
     // Clear interval
     return () => clearInterval(interval);
-  }, [parentList]);
+  }, [parentList, fetchChild]);
 
   // "INIT"
   const initChild = () => {

@@ -73,6 +73,7 @@ const priceCheckerBot = async () => {
     console.log(`Start checker every ${timeoutSeconds}(sec)`);
 
     // Do the first check
+    await lowPriceChecker();
 
     // Start checker every ${timeout} seconds
     intervalId = setInterval(lowPriceChecker, timeoutSeconds * 1000);
@@ -85,9 +86,6 @@ const priceCheckerBot = async () => {
   if (botState === 0) {
     // Clean interval
     clearInterval(intervalId);
-
-    // Change bot state to 2
-    await changeBotState(2);
   }
 };
 

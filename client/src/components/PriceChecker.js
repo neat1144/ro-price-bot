@@ -29,11 +29,11 @@ const PriceChecker = () => {
 
       // Print success message
       let chnBotCode =
-        bot_is_start === 0
+        stateCode === 0
           ? "Stop"
-          : bot_is_start === 1
+          : stateCode === 1
           ? "Start"
-          : bot_is_start === 2
+          : stateCode === 2
           ? "None"
           : "";
       console.log(`Change bot code to "${stateCode}" (${chnBotCode})`);

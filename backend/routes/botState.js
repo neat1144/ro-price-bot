@@ -49,7 +49,9 @@ router.post("/", (req, res) => {
           : bot_is_start === 2
           ? "None"
           : "";
-      console.log(`Bot is ${chnState} (${bot_is_start})`);
+      if (bot_is_start === 0 || bot_is_start === 1) {
+        console.log(`Bot is ${chnState} (${bot_is_start})`);
+      }
       // Response
       res.status(201).json({
         message: `created/updated bot_is_start:${bot_is_start}`,
