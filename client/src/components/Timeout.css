@@ -1,19 +1,21 @@
-.timeout-input {
-  /* position: absolute; */
-  /* top: 1%; */
-  /* right: 40%; */
-  /* background-color: white; */
-  padding: 5px;
-  /* border: 1px solid #ccc; */
-  /* border-radius: 5px; */
-  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); */
-  /* width: 40%;  */
+/* Timeout.css */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* margin-top: 4rem; */
 }
 
-.timeout-input input[type="number"] {
-  margin-left: 1%;
-  width: 5%;
-  /* padding: 8px; */
-  /* border: 1px solid #ccc; */
-  /* border-radius: 3px; */
+.narrow-input {
+  width: 150px; /* Adjust the width to your preference */
+  margin-top: 0.5rem; /* Add some top margin for spacing */
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+}
+
+.input-container label {
+  margin-right: 10px; /* Adjust the margin to your preference for spacing between label and input */
 }

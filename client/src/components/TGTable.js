@@ -40,6 +40,8 @@ function TGTable() {
       .post("http://localhost:3030/chat-id", editedData)
       .then(() => {
         alert("Data saved successfully!");
+
+        console.log("TG ID/Token saved to db!");
       })
       .catch((error) => {
         console.error("Error saving data:", error);
@@ -48,7 +50,7 @@ function TGTable() {
 
   return (
     <div>
-      <div className="telegram-btn-container">
+      <div className="container mt-5">
         <button onClick={handleToggleTable} className="btn btn-link btn-sm">
           Telegram
         </button>
@@ -58,7 +60,7 @@ function TGTable() {
         <div className="container mt-4">
           <h2>Telegram ID/Token</h2>
           <div className="row">
-            <div className="col-md-8 mx-auto">
+            <div className="col-md-12">
               <form className="border rounded p-4 shadow">
                 <div className="form-group mb-2">
                   <label htmlFor="chat_id">ID:</label>

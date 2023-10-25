@@ -3,69 +3,75 @@ import axios from "axios";
 import "./Timeout.css";
 
 const Timeout = () => {
-  const [inputTimeout, setInputTimeout] = useState("");
+  const [inputTimeout, setInputTimeout] = useState(""); // Initialize as an empty string
   const [isTimeoutInput, setIsTimeoutInput] = useState(false);
   const [dbTimeout, setDbTimeout] = useState("");
 
   // Fetch timeout
-  const fetchTimeout = async () => {
-    const timeoutApi = "http://localhost:3030/timeout";
-    try {
-      const response = await axios.get(timeoutApi);
-      const sec = response.data["timeout_sec"];
-      setDbTimeout(sec);
-    } catch (error) {
-      console.error("Error to fetch timeout", error);
-    }
-  };
-
-  // Timeout save button
-  const handleTimeoutSave = async () => {
-    const timeoutApi = "http://localhost:3030/timeout";
-    // Post seconds to db
-    try {
-      await axios.post(timeoutApi, {
-        timeout_sec: inputTimeout,
+  const fetchTimeout = () => {
+    axios
+      .get("http://localhost:3030/timeout")
+      .then((response) => {
+        const sec = response.data["timeout_sec"];
+        setDbTimeout(sec);
+      })
+      .catch((error) => {
+        console.error("Error fetching timeout", error);
       });
-      console.log(`Save ${inputTimeout}(sec) to db!`);
-    } catch (error) {
-      console.error("Error save timeout to db", error);
-    }
-
-    // set timeout in this component
-    fetchTimeout();
-
-    // hiden input
-    setIsTimeoutInput(false);
   };
 
+  // useEffect
   useEffect(() => {
     fetchTimeout();
   }, []);
 
+  const handleEdit = (newValue, field) => {
+    setInputTimeout(newValue); // Update the inputTimeout state directly
+  };
+
+  // Save button and POST to db
+  const handleSave = async () => {
+    axios
+      .post("http://localhost:3030/timeout", {
+        timeout_sec: inputTimeout,
+      })
+      .then(() => {
+        console.log(`Saved ${inputTimeout}(sec) to the database!`);
+
+        // Refresh timeout
+        fetchTimeout();
+
+        // Hide input
+        setIsTimeoutInput(false);
+      })
+      .catch((error) => {
+        console.error("Error saving timeout to the database", error);
+      });
+  };
+
   return (
-    <div className="timeout-input">
+    <div className="container mt-4 mb-4">
       {isTimeoutInput ? (
-        <>
-          <label>Timeout(sec): </label>
+        <div className="input-container mt-4">
+          <label className="form-label">Timeout (sec): </label>
           <input
             type="number"
+            className="form-control"
+            style={{ width: "100px" }}
             value={inputTimeout}
-            onChange={(e) => setInputTimeout(e.target.value)}
+            onChange={(e) => handleEdit(e.target.value, "timeout_sec")}
           />
-          <button
-            className="btn btn-warning"
-            // className="btn btn-danger button-start-stop"
-            onClick={handleTimeoutSave}
-          >
-            save
+          <button className="btn btn-warning" onClick={handleSave}>
+            Save
           </button>
-        </>
+        </div>
       ) : (
         <button
           className="btn btn-info"
-          // className="btn btn-danger button-start-stop"
-          onClick={() => setIsTimeoutInput(true)}
+          onClick={() => {
+            setInputTimeout(dbTimeout); // Set the input value to the fetched timeout value
+            setIsTimeoutInput(true);
+          }}
         >
           Timeout ({dbTimeout} sec)
         </button>

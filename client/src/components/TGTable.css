@@ -33,5 +33,6 @@
 
 .telegram-btn-container {
   position: relative;
-  left: 45%;
+  /* margin-top: 150%; */
+  /* left: 45%; */
 }
