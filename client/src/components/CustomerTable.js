@@ -34,6 +34,19 @@ function CustomerTable() {
     nofi_time: "",
   });
 
+  // Define server options
+  const serverOptions = [
+    { value: 100, label: "svr-a" },
+    { value: 200, label: "svr-b" },
+    { value: 300, label: "svr-c" },
+  ];
+
+  // Define type options
+  const typeOptions = [
+    { value: 0, label: "販賣" },
+    { value: 1, label: "收購" },
+  ];
+
   useEffect(() => {
     axios
       .get("http://localhost:3030/parent")
@@ -79,6 +92,36 @@ function CustomerTable() {
     setEditedChild({ ...child });
   };
 
+  // "RESET"
+  // Reset a child
+  const handleResetChild = (childId) => {
+    // Reset the child's new_price to 0 and nofi_time to null
+    setEditedChild({ ...editedChild, new_price: 0, nofi_time: null });
+
+    // Send a PUT request
+    axios
+      .put(`http://localhost:3030/child/${childId}`, editedChild)
+      .then((response) => {
+        if (response.data && response.data.message === "success") {
+          setChildMap((prev) => {
+            const newChildMap = { ...prev };
+            Object.keys(newChildMap).forEach((key) => {
+              newChildMap[key] = newChildMap[key].map((child) => {
+                if (child.id === childId) {
+                  return { ...child, new_price: 0, nofi_time: null };
+                }
+                return child;
+              });
+            });
+            return newChildMap;
+          });
+        }
+      })
+      .catch((error) => {
+        console.log("Error to reset child!", error);
+      });
+  };
+
   // "UPDATE"
   // Update a parent
   const handleParentUpdate = (parentId) => {
@@ -86,15 +129,14 @@ function CustomerTable() {
       .put(`http://localhost:3030/parent/${parentId}`, editedParent)
       .then((response) => {
         if (response.data && response.data.message === "success") {
-          setParentList((prev) =>
-            prev.map((parent) => {
-              if (parent.id === parentId) {
-                return editedParent;
-              }
-              return parent;
-            })
-          );
-          setEditParentIndex(-1);
+          // Update the local state after a successful API call
+          // Fetch the updated data and then update the parentList
+          axios.get(`http://localhost:3030/parent`).then((response) => {
+            if (response.data && response.data.message === "success") {
+              setParentList(response.data.data);
+              setEditParentIndex(-1); // Reset edit mode
+            }
+          });
         }
       })
       .catch((error) => {
@@ -215,43 +257,66 @@ function CustomerTable() {
                 {/* Server */}
                 <td>
                   {editParentIndex === parent.id ? (
-                    <input
-                      type="text"
+                    <select
                       value={editedParent.svr}
-                      className="form-control  form-control-sm"
-                      style={{ width: "100px" }}
-                      placeholder="伺服器"
+                      className="form-select form-select-sm"
                       onChange={(e) =>
                         setEditedParent({
                           ...editedParent,
                           svr: e.target.value,
                         })
                       }
-                    />
+                    >
+                      {serverOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
                   ) : (
-                    parent.svr
+                    serverOptions.find((option) => option.value === parent.svr)
+                      ?.label
                   )}
                 </td>
                 {/* Type */}
                 <td>
                   {editParentIndex === parent.id ? (
-                    <input
-                      type="text"
+                    <select
                       value={editedParent.type}
-                      className="form-control  form-control-sm"
-                      style={{ width: "100px" }}
-                      placeholder="販賣/收購"
+                      className="form-select form-select-sm"
                       onChange={(e) =>
                         setEditedParent({
                           ...editedParent,
                           type: e.target.value,
                         })
                       }
-                    />
+                    >
+                      {typeOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
                   ) : (
-                    parent.type
+                    <span
+                      style={{
+                        color:
+                          parent.type === 0
+                            ? "blue"
+                            : parent.type === 1
+                            ? "red"
+                            : "black",
+                      }}
+                    >
+                      {
+                        typeOptions.find(
+                          (option) => option.value === parent.type
+                        )?.label
+                      }
+                    </span>
                   )}
                 </td>
+                {/* Empty */}
                 <td style={{ width: "100px" }}></td>
                 <td style={{ width: "100px" }}></td>
                 <td style={{ width: "100px" }}></td>
@@ -416,9 +481,10 @@ function CustomerTable() {
                         <>
                           <button
                             type="button"
-                            className="btn btn-sm btn-primary"
+                            className="btn btn-sm btn-warning"
+                            onClick={() => handleResetChild(child.id)}
                           >
-                            新增
+                            重設
                           </button>
                           <button
                             type="button"
