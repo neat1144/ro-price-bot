@@ -97,6 +97,11 @@ function CustomerTable() {
       });
 
     // fetch child data for each parent
+    fetchChild();
+  };
+
+  // Fetch child list of parent
+  const fetchChild = () => {
     parentList.forEach((parent) => {
       axios
         .get(`http://localhost:3030/child/parent_id/${parent.id}`)
@@ -290,22 +295,24 @@ function CustomerTable() {
       });
   };
 
+  // Cancel button
   const handleCancelAddChild = () => {
     setAddingChildForParent(null);
     initChild();
   };
 
+  // Add button
   const handleAddChildForParent = (parent) => {
     setAddingChildForParent(parent.id);
     initChild();
   };
 
-  // Function to handle adding a new parent
+  // Add a new parent
   const handleAddNewParent = () => {
     setAddingNewParent(true);
   };
 
-  // Function to save the new parent
+  // Save button
   const handleSaveNewParent = () => {
     // Make a POST request to add the new parent
     axios
@@ -326,9 +333,12 @@ function CustomerTable() {
       .catch((error) => {
         console.log("Error adding new parent!", error);
       });
+
+    // TODO: If the child list of parent is empty, post a new init child
+    
   };
 
-  // Function to cancel adding a new parent
+  // Cancel button
   const handleCancelAddNewParent = () => {
     setAddingNewParent(false);
     // Reset the input fields of parent
@@ -500,6 +510,80 @@ function CustomerTable() {
                   )}
                 </td>
               </tr>
+              {/*               */}
+              {/* Add child row */}
+              {/*               */}
+              {addingChildForParent === parent.id && (
+                <tr>
+                  <td colSpan="4"></td>
+                  {/* Include */}
+                  <td>
+                    <input
+                      type="text"
+                      value={editedChild.include}
+                      className="form-control form-control-sm"
+                      style={{ width: "100px" }}
+                      placeholder="包含"
+                      onChange={(e) =>
+                        setEditedChild({
+                          ...editedChild,
+                          include: e.target.value,
+                        })
+                      }
+                    />
+                  </td>
+                  {/* Exclude */}
+                  <td>
+                    <input
+                      type="text"
+                      value={editedChild.exclude}
+                      className="form-control form-control-sm"
+                      style={{ width: "100px" }}
+                      placeholder="排除"
+                      onChange={(e) =>
+                        setEditedChild({
+                          ...editedChild,
+                          exclude: e.target.value,
+                        })
+                      }
+                    />
+                  </td>
+                  {/* Set Price */}
+                  <td>
+                    <input
+                      type="number"
+                      value={editedChild.set_price}
+                      className="form-control form-control-sm"
+                      style={{ width: "100px" }}
+                      placeholder="設定價格"
+                      onChange={(e) =>
+                        setEditedChild({
+                          ...editedChild,
+                          set_price: e.target.value,
+                        })
+                      }
+                    />
+                  </td>
+                  {/* New Price */}
+                  <td></td>
+                  <td style={{ width: "200px" }}></td>
+                  {/* Button */}
+                  <td>
+                    <button
+                      className="btn btn-sm btn-success"
+                      onClick={() => handleAddChild(parent.id)}
+                    >
+                      保存
+                    </button>
+                    <button
+                      className="btn btn-sm btn-secondary"
+                      onClick={() => handleCancelAddChild()}
+                    >
+                      取消
+                    </button>
+                  </td>
+                </tr>
+              )}
               {/*       */}
               {/* Child */}
               {/*       */}
@@ -640,80 +724,6 @@ function CustomerTable() {
                     </td>
                   </tr>
                 ))}
-              {/*               */}
-              {/* Add child row */}
-              {/*               */}
-              {addingChildForParent === parent.id && (
-                <tr>
-                  <td colSpan="4"></td>
-                  {/* Include */}
-                  <td>
-                    <input
-                      type="text"
-                      value={editedChild.include}
-                      className="form-control form-control-sm"
-                      style={{ width: "100px" }}
-                      placeholder="包含"
-                      onChange={(e) =>
-                        setEditedChild({
-                          ...editedChild,
-                          include: e.target.value,
-                        })
-                      }
-                    />
-                  </td>
-                  {/* Exclude */}
-                  <td>
-                    <input
-                      type="text"
-                      value={editedChild.exclude}
-                      className="form-control form-control-sm"
-                      style={{ width: "100px" }}
-                      placeholder="排除"
-                      onChange={(e) =>
-                        setEditedChild({
-                          ...editedChild,
-                          exclude: e.target.value,
-                        })
-                      }
-                    />
-                  </td>
-                  {/* Set Price */}
-                  <td>
-                    <input
-                      type="number"
-                      value={editedChild.set_price}
-                      className="form-control form-control-sm"
-                      style={{ width: "100px" }}
-                      placeholder="設定價格"
-                      onChange={(e) =>
-                        setEditedChild({
-                          ...editedChild,
-                          set_price: e.target.value,
-                        })
-                      }
-                    />
-                  </td>
-                  {/* New Price */}
-                  <td></td>
-                  <td style={{ width: "200px" }}></td>
-                  {/* Button */}
-                  <td>
-                    <button
-                      className="btn btn-sm btn-success"
-                      onClick={() => handleAddChild(parent.id)}
-                    >
-                      保存
-                    </button>
-                    <button
-                      className="btn btn-sm btn-secondary"
-                      onClick={() => handleCancelAddChild()}
-                    >
-                      取消
-                    </button>
-                  </td>
-                </tr>
-              )}
             </React.Fragment>
           ))}
           {/*                */}
