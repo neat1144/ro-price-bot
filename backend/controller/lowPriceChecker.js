@@ -1,5 +1,7 @@
 import axios from "axios";
 
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 // router.get("/", async (req, res) => {
 export const lowPriceChecker = async () => {
   // Get bot state
@@ -12,7 +14,9 @@ export const lowPriceChecker = async () => {
   }
 
   // Log
-  console.log("Price is checking...");
+  console.log("");
+  console.log(`Price is checking...               (${getTime()})`);
+  console.log("");
 
   // Get bot id and token
   const botIdToken = await getBotIdToken();
@@ -32,11 +36,22 @@ export const lowPriceChecker = async () => {
     for (const parent of parentList) {
       // Get child list by one parent
       const childList = await getChildList(parent.id);
+
+      // Timeout 5s
+      await delay(2000);
+
       // if childList is empty, response error with 404
       if (!childList.length) {
         console.error("No child list found!");
         return;
       }
+
+      // Log
+      console.log(
+        `Checking ${parent.keyword}-${parent.svr}-${
+          parent.type
+        }...         (${getTime()})`
+      );
 
       // Get item list by one parent
       const itemList = await getItemList(parent);
@@ -44,7 +59,6 @@ export const lowPriceChecker = async () => {
       // if itemList is empty, response error with 404
       if (!itemList.length) {
         console.error("No item list found!");
-        console.log(itemList);
         return;
       }
 
@@ -66,9 +80,9 @@ export const lowPriceChecker = async () => {
       }
     }
   }
-
-  // Timeout
-  timeoutSleep(1000);
+  // Log timeout from db
+  const timeoutSeconds = await getTimeout();
+  console.log(`Next check after ${timeoutSeconds}(sec)`);
 };
 
 // Chcek price by a child
@@ -215,6 +229,10 @@ const getItemList = async (parent) => {
 
   const responseData = response.data;
 
+  // console.log(responseData);
+  if (responseData["Message"] !== null) {
+    console.log("ro response message: ", responseData["Message"]);
+  }
   // Response data:
   // {  Message: null,
   //    sdate: null,
@@ -329,6 +347,16 @@ const getDateTime = () => {
   const formattedTime = `${month}/${day}(${hours}:${minutes})`;
 
   return formattedTime;
+};
+
+const getTime = () => {
+  // Log time (only time)
+  const currentTime = new Date();
+  const hours = String(currentTime.getHours()).padStart(2, "0");
+  const minutes = String(currentTime.getMinutes()).padStart(2, "0");
+  const seconds = String(currentTime.getSeconds()).padStart(2, "0");
+
+  return `${hours}:${minutes}:${seconds}`;
 };
 
 const setHeaders = () => {

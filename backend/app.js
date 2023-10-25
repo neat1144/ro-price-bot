@@ -66,6 +66,9 @@ const priceCheckerBot = async () => {
 
   // Start checker for every ${timeout} seconds
   if (botState === 1) {
+    // Change bot state to 2
+    await changeBotState(2);
+
     // Get timeout
     const timeoutSeconds = await getTimeout();
 
@@ -77,9 +80,6 @@ const priceCheckerBot = async () => {
 
     // Start checker every ${timeout} seconds
     intervalId = setInterval(lowPriceChecker, timeoutSeconds * 1000);
-
-    // Change bot state to 2
-    await changeBotState(2);
   }
 
   // Stop checker
