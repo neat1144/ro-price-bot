@@ -1,5 +1,5 @@
 # Navigate to the directory of your Node.js backend
-Set-Location -Path "C:\ro-price-bot-main"
+Set-Location -Path "C:\ro-price-bot-main\backend"
 
 # Check if node_modules directory exists for the backend
 if (-Not (Test-Path "node_modules")) {

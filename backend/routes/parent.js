@@ -19,6 +19,19 @@ db.run(`CREATE TABLE IF NOT EXISTS parent
        svr       INTEGER,
        type      INTEGER)`);
 
+// If parent table is empty, insert four default rows
+db.get("SELECT * FROM parent", (err, row) => {
+  if (!row) {
+    db.run(
+      `INSERT INTO parent (keyword, svr, type) VALUES 
+      ('乙太星塵', 2290, 0),
+      ('乙太星塵', 3290, 0),
+      ('乙太星塵', 4290, 0),
+      ('乙太星塵', 829, 0)`
+    );
+  }
+});
+
 // CREATE a new parent
 router.post("/", (req, res) => {
   // Parameters from the request body

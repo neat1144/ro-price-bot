@@ -50,54 +50,59 @@ function CustomerTable() {
   ];
 
   // Fetch parent data
-  useEffect(() => {
-    axios
-      .get("http://localhost:3030/parent")
-      .then((response) => {
-        if (response.data && response.data.message === "success") {
-          setParentList(response.data.data);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get("http://localhost:3030/parent")
+  //     .then((response) => {
+  //       if (response.data && response.data.message === "success") {
+  //         setParentList(response.data.data);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // }, []);
 
   // Fetch child data for each parent
-  useEffect(() => {
-    parentList.forEach((parent) => {
-      axios
-        .get(`http://localhost:3030/child/parent_id/${parent.id}`)
-        .then((response) => {
-          if (response.data && response.data.message === "success") {
-            setChildMap((prev) => ({
-              ...prev,
-              [parent.id]: response.data.data,
-            }));
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    });
-  }, [parentList]);
+  // useEffect(() => {
+  //   parentList.forEach((parent) => {
+  //     axios
+  //       .get(`http://localhost:3030/child/parent_id/${parent.id}`)
+  //       .then((response) => {
+  //         if (response.data && response.data.message === "success") {
+  //           setChildMap((prev) => ({
+  //             ...prev,
+  //             [parent.id]: response.data.data,
+  //           }));
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+  //       });
+  //   });
+  // }, [parentList]);
 
   // "FETCH"
-  const fetchParentWithChild = () => {
+  // fetch parent data
+  const fetchData = () => {
     // fetch parent data
+    fetchParent();
+    // fetch child data for each parent
+    fetchChild();
+  };
+
+  // Fetch parent
+  const fetchParent = () => {
     axios
       .get("http://localhost:3030/parent")
       .then((response) => {
-        if (response.data && response.data.message === "success") {
+        if (response.data && response.status === 200) {
           setParentList(response.data.data);
         }
       })
       .catch((error) => {
         console.log(error);
       });
-
-    // fetch child data for each parent
-    fetchChild();
   };
 
   // Fetch child list of parent
@@ -106,7 +111,7 @@ function CustomerTable() {
       axios
         .get(`http://localhost:3030/child/parent_id/${parent.id}`)
         .then((response) => {
-          if (response.data && response.data.message === "success") {
+          if (response.data && response.status === 200) {
             setChildMap((prev) => ({
               ...prev,
               [parent.id]: response.data.data,
@@ -118,6 +123,33 @@ function CustomerTable() {
         });
     });
   };
+
+  // Use setInterval to refetch data every 5 seconds
+  useEffect(() => {
+    // Fetch data for the first time
+    fetchParent();
+
+    // Fetch data every 5 seconds with setInterval
+    const interval = setInterval(() => {
+      fetchParent();
+    }, 2000);
+
+    // Clear interval
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    // Fetch data for the first time
+    fetchChild();
+
+    // Fetch data every 5 seconds with setInterval
+    const interval = setInterval(() => {
+      fetchChild();
+    }, 2500);
+
+    // Clear interval
+    return () => clearInterval(interval);
+  }, [parentList]);
 
   // "INIT"
   const initChild = () => {
@@ -153,15 +185,24 @@ function CustomerTable() {
 
   // "RESET"
   // Reset a child
-  const handleResetChild = (childId) => {
+  const handleResetChild = (child) => {
     // Reset the child's new_price to 0 and nofi_time to null
     setEditedChild({ ...editedChild, new_price: 0, nofi_time: null });
 
+    const { id: childId } = child;
+
     // Send a PUT request
     axios
-      .put(`http://localhost:3030/child/${childId}`, editedChild)
+      .put(`http://localhost:3030/child/${childId}`, {
+        include: child.include,
+        exclude: child.exclude,
+        set_price: child.set_price,
+        new_price: 0,
+        nofi_time: null,
+        parent_id: child.parent_id,
+      })
       .then((response) => {
-        if (response.data && response.data.message === "success") {
+        if (response.data && response.status === 200) {
           setChildMap((prev) => {
             const newChildMap = { ...prev };
             Object.keys(newChildMap).forEach((key) => {
@@ -282,7 +323,7 @@ function CustomerTable() {
       .then((response) => {
         if (response.data && response.status === 200) {
           // After successfully adding the child, refresh the data
-          fetchParentWithChild();
+          fetchData();
 
           // Hide row for adding
           setAddingChildForParent(null);
@@ -327,7 +368,7 @@ function CustomerTable() {
         console.log(response.data.data.id);
         if (response.data && response.status === 200) {
           // Refresh the parent list
-          fetchParentWithChild();
+          fetchData();
           setAddingNewParent(false);
           // Reset the input fields of parent
           initParent();
@@ -357,7 +398,7 @@ function CustomerTable() {
               .then((response) => {
                 if (response.data && response.status === 200) {
                   // Refresh the parent list
-                  fetchParentWithChild();
+                  fetchData();
                   setAddingNewParent(false);
                   // Reset the input fields of parent
                   initParent();
@@ -687,7 +728,7 @@ function CustomerTable() {
                           }
                         />
                       ) : (
-                        child.set_price
+                        child.set_price.toLocaleString()
                       )}
                     </td>
                     {/* New Price */}
@@ -707,7 +748,7 @@ function CustomerTable() {
                           }
                         />
                       ) : (
-                        child.new_price
+                        child.new_price.toLocaleString()
                       )}
                     </td>
                     {/* Nofi time */}
@@ -737,7 +778,7 @@ function CustomerTable() {
                           <button
                             type="button"
                             className="btn btn-sm btn-warning"
-                            onClick={() => handleResetChild(child.id)}
+                            onClick={() => handleResetChild(child)}
                           >
                             重設
                           </button>
@@ -846,7 +887,7 @@ function CustomerTable() {
                   value={editedChild.exclude}
                   className="form-control form-control-sm"
                   style={{ width: "100px" }}
-                  placeholder="包含"
+                  placeholder="排除"
                   onChange={(e) =>
                     setEditedChild({
                       ...editedChild,
@@ -862,7 +903,7 @@ function CustomerTable() {
                   value={editedChild.set_price}
                   className="form-control form-control-sm"
                   style={{ width: "100px" }}
-                  placeholder="包含"
+                  placeholder="設定價格"
                   onChange={(e) =>
                     setEditedChild({
                       ...editedChild,

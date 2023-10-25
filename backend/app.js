@@ -9,7 +9,12 @@ import botStateRouter from "./routes/botState.js";
 import bodyParser from "body-parser";
 import timeoutRouter from "./routes/timeout.js";
 import cors from "cors";
-import axios from "axios";
+import {
+  lowPriceChecker,
+  getBotState,
+  getTimeout,
+  changeBotState,
+} from "./controller/lowPriceChecker.js";
 
 const app = express();
 const port = process.env.PORT || 3030;
@@ -52,28 +57,42 @@ app.use("/bot-state", botStateRouter);
 // Timeout
 app.use("/timeout", timeoutRouter);
 
+let intervalId = null;
+
 // Price checker and Bot nofi
-// const priceCheckerBot = async () => {
-//   // Check bot state
-//   const response = await axios.get("http://localhost:3030/bot-state");
-//   const { bot_is_start: botIsStart, timeout_sec: timeoutSeconds } =
-//     response.data;
+const priceCheckerBot = async () => {
+  // Get bot state
+  const botState = await getBotState();
 
-//   if (botIsStart === 1) {
-//     // Send request to low-price bot
-//     await axios.get("http://localhost:3030/low-price");
+  // Start checker for every ${timeout} seconds
+  if (botState === 1) {
+    // Get timeout
+    const timeoutSeconds = await getTimeout();
 
-//     // Get timeout
+    // Log msg
+    console.log(`Start checker every ${timeoutSeconds}(sec)`);
 
-//     console.log(`Timeout ${timeoutSeconds}(sec)`);
-//   }
-// };
-// priceCheckerBot();
+    // Do the first check
 
-// timeoutS = 3 * 1000;
+    // Start checker every ${timeout} seconds
+    intervalId = setInterval(lowPriceChecker, timeoutSeconds * 1000);
 
-// // Set timeout
-// const interval = setInterval(priceCheckerBot, timeoutS);
+    // Change bot state to 2
+    await changeBotState(2);
+  }
+
+  // Stop checker
+  if (botState === 0) {
+    // Clean interval
+    clearInterval(intervalId);
+
+    // Change bot state to 2
+    await changeBotState(2);
+  }
+};
+
+// Set timeout for price checker bot
+setInterval(priceCheckerBot, 2000);
 
 // Start the Express server
 app.listen(port, () => {

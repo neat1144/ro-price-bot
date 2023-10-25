@@ -39,10 +39,17 @@ router.post("/", (req, res) => {
           .json({ error: "Failed to create/update bot_is_start" });
       }
 
-      // Sucessful
+      // Successful
       // Log
-      const chnState = bot_is_start === 0 ? "Stop" : "Start";
-      console.log(`Bot is ${chnState}`);
+      let chnState =
+        bot_is_start === 0
+          ? "Stop"
+          : bot_is_start === 1
+          ? "Start"
+          : bot_is_start === 2
+          ? "None"
+          : "";
+      console.log(`Bot is ${chnState} (${bot_is_start})`);
       // Response
       res.status(201).json({
         message: `created/updated bot_is_start:${bot_is_start}`,

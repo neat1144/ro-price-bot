@@ -1,9 +1,16 @@
-import express from "express";
 import axios from "axios";
 
-const router = express.Router();
+// router.get("/", async (req, res) => {
+export const lowPriceChecker = async () => {
+  // Get bot state
+  const botState = await getBotState();
 
-router.get("/", async (req, res) => {
+  // if botState is false(0), then stop check
+  if (botState === 0) {
+    // stop this function
+    return;
+  }
+
   // Log
   console.log("Price is checking...");
 
@@ -15,24 +22,19 @@ router.get("/", async (req, res) => {
 
   // if parentList is empty, response error with 404
   if (!parentList.length) {
-    // console.log("No parent list found!");
-    res.status(404).json({ message: "No parent list found!" });
+    console.error("No parent list found!");
     return;
   }
 
-  // Get bot state
-  const botState = await getBotState();
-
   // if botState is true(1), then start check
-  if (botState === 1) {
+  if (botState !== 0) {
     // Loop parent to check price of child
     for (const parent of parentList) {
       // Get child list by one parent
       const childList = await getChildList(parent.id);
       // if childList is empty, response error with 404
       if (!childList.length) {
-        // console.log("No child list found!");
-        res.status(404).json({ message: "No child list found!" });
+        console.error("No child list found!");
         return;
       }
 
@@ -41,8 +43,8 @@ router.get("/", async (req, res) => {
 
       // if itemList is empty, response error with 404
       if (!itemList.length) {
-        // console.log("No item list found!");
-        res.status(404).json({ message: "No item list found!" });
+        console.error("No item list found!");
+        console.log(itemList);
         return;
       }
 
@@ -60,9 +62,6 @@ router.get("/", async (req, res) => {
 
           // Update child
           await updateChild(childFiltered);
-
-          // Response success with 200
-          // res.status(200).json({ message: "Price Check Success!" });
         }
       }
     }
@@ -70,10 +69,10 @@ router.get("/", async (req, res) => {
 
   // Timeout
   timeoutSleep(1000);
-});
+};
 
 // Chcek price by a child
-export const checkChildPriceByItemList = async (child, itemList) => {
+const checkChildPriceByItemList = async (child, itemList) => {
   // Variable of child
   const {
     include: keywordInclude,
@@ -97,16 +96,22 @@ export const checkChildPriceByItemList = async (child, itemList) => {
       (!itemName.includes(keywordExclude) || keywordExclude === "")
     ) {
       // Filter by set_price (if itemPrice <= set_price or new_price < itemPrice)
-      if (itemPrice <= set_price || itemPrice < new_price) {
-        // Update new_price of child
-        child.new_price = itemPrice;
+      // Set price > item price
+      // Find a new lowest item price
+      if (set_price > itemPrice) {
+        if (itemPrice < new_price || new_price === 0) {
+          // Update new_price of child
+          child.new_price = itemPrice;
 
-        // Update item_name of child
-        child.item_name = itemName;
+          // Update item_name of child
+          child.item_name = itemName;
 
-        // Update nofi_time of child
-        child.nofi_time = getDateTime();
-        return child;
+          // Update nofi_time of child
+          child.nofi_time = getDateTime();
+
+          // Stop loop
+          return child;
+        }
       }
     }
   }
@@ -115,7 +120,7 @@ export const checkChildPriceByItemList = async (child, itemList) => {
 };
 
 // Send msg by chat bot
-export const sendMsgByBot = async (botIdToken, messageText) => {
+const sendMsgByBot = async (botIdToken, messageText) => {
   // Get token and id
   const { chat_id: chatId, token } = botIdToken;
 
@@ -142,7 +147,7 @@ chatId:${chatId}
   }
 };
 
-export const getBotIdToken = async () => {
+const getBotIdToken = async () => {
   // Get bot id and token from db
   const response = await axios
     .get("http://localhost:3030/chat-id")
@@ -154,7 +159,7 @@ export const getBotIdToken = async () => {
 };
 
 // Send msg by chat bot
-export const formatMsg = (parent, child) => {
+const formatMsg = (parent, child) => {
   const { keyword, type, svr } = parent;
   const { include, exclude, set_price, new_price, nofi_time, item_name } =
     child;
@@ -175,7 +180,7 @@ ${chnType}價格: ${new_price.toLocaleString("en-US")}
 };
 
 // Update child by id
-export const updateChild = async (child) => {
+const updateChild = async (child) => {
   try {
     await axios.put(`http://localhost:3030/child/${child.id}`, child);
   } catch (error) {
@@ -184,7 +189,7 @@ export const updateChild = async (child) => {
 };
 
 // Get itemList of a parent from RO server
-export const getItemList = async (parent) => {
+const getItemList = async (parent) => {
   // Variable of parent
   const { keyword, svr, type } = parent;
 
@@ -275,7 +280,7 @@ const getChildList = async (parentId) => {
 };
 
 // Get bot state
-const getBotState = async () => {
+export const getBotState = async () => {
   const response = await axios
     .get("http://localhost:3030/bot-state")
     .catch((error) => {
@@ -285,12 +290,30 @@ const getBotState = async () => {
 };
 
 // Timeout
-export const timeoutSleep = (ms) => {
+const timeoutSleep = (ms) => {
   new Promise((resolve) => setTimeout(resolve, ms));
 };
 
+// Get timeout from db
+export const getTimeout = async () => {
+  const response = await axios
+    .get("http://localhost:3030/timeout")
+    .catch((error) => {
+      console.error("Error to get timeout!", error);
+    });
+  return response.data["timeout_sec"];
+};
+
+export const changeBotState = async (botState) => {
+  axios
+    .post("http://localhost:3030/bot-state", { bot_is_start: botState })
+    .catch((error) => {
+      console.error("Error to change bot state!", error);
+    });
+};
+
 // Get time
-export const getDateTime = () => {
+const getDateTime = () => {
   // Create a new Date object to represent the current date and time
   const currentTime = new Date();
 
@@ -308,7 +331,7 @@ export const getDateTime = () => {
   return formattedTime;
 };
 
-export const setHeaders = () => {
+const setHeaders = () => {
   const headers = {
     "Content-Type": "application/json; charset=UTF-8",
     "User-Agent":
@@ -339,78 +362,5 @@ export const setHeaders = () => {
   return headers;
 };
 
-// // /low-pric
-// router.get("/", async (req, res) => {
-//   // Log
-//   console.log("Price is checking...");
-
-//   // Set sort_desc
-//   const sort_desc = "";
-
-//   // Get all customers
-//   const customers = await getCustomerList();
-//   // console.log(customers);
-
-//   // Low price lsit
-//   const lowPriceCustomers = [];
-
-//   // Loop customers to get items
-//   if (customers.length) {
-//     for (const customer of customers) {
-//       // Set price
-//       const {
-//         name: keyWrod,
-//         svr,
-//         set_price: setPrice,
-//         new_price: newPrice,
-//       } = customer;
-
-//       // Get item list of a customer
-//       // console.log(`Checking ${keyWrod}(${svr})`);
-//       const itemList = await getItemList(customer, sort_desc);
-//       // console.log(itemList);
-
-//       // Price of first dict (because item list is sorted)
-//       // if itemList exist
-//       if (itemList && itemList.length) {
-//         // Lowest Price of customer
-//         const lowestPrice = itemList[0].itemPrice;
-//         const firstItemName = itemList[0].itemName;
-
-//         // If have low price item, Push to list
-//         // item price < set price
-//         // item price < new price
-//         if (setPrice >= lowestPrice) {
-//           if (newPrice === null || newPrice === 0 || lowestPrice < newPrice) {
-//             // Push to new list
-//             lowPriceCustomers.push(customer);
-//             customer.new_price = lowestPrice;
-//             customer.time = getDateTime();
-
-//             // Set is_notify
-//             customer.is_notify = 0;
-
-//             // Update customer and Send Nofi
-//             await updateCustomers(customer);
-//             await sendMsgByChatBot(customer, firstItemName);
-//           }
-//         }
-//       }
-//       // Set timeout
-//       await sleep(1000);
-//     }
-//   }
-
-//   // if (lowPriceCustomers && lowPriceCustomers.length) {
-//   //   // Send msg by chat bot
-//   //   await sendMsgByChatBot(lowPriceCustomers);
-
-//   //   // Update new_price to db
-//   //   await updateCustomers(lowPriceCustomers);
-//   // }
-
-//   // Response
-//   res.json(lowPriceCustomers);
-// });
-
-export default router;
+// export
+export default lowPriceChecker;
