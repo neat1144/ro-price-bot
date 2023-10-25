@@ -7,6 +7,12 @@
     "start": "nodemon app.js",
     "test": "node --experimental-vm-modules node_modules/.bin/jest --watch --coverage"
   },
+  "jest": {
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "./routes/test/jest.setup.js"
+    ]
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
