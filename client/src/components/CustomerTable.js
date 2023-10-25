@@ -267,6 +267,7 @@ function CustomerTable() {
   };
 
   // "ADD"
+  // "child"
   // Add a child
   const handleAddChild = (parentId) => {
     axios
@@ -307,12 +308,13 @@ function CustomerTable() {
     initChild();
   };
 
+  // "Parent"
   // Add a new parent
   const handleAddNewParent = () => {
     setAddingNewParent(true);
   };
 
-  // Save button
+  // Save button and Create parent
   const handleSaveNewParent = () => {
     // Make a POST request to add the new parent
     axios
@@ -322,20 +324,54 @@ function CustomerTable() {
         type: editedParent.type,
       })
       .then((response) => {
+        console.log(response.data.data.id);
         if (response.data && response.status === 200) {
           // Refresh the parent list
           fetchParentWithChild();
           setAddingNewParent(false);
           // Reset the input fields of parent
           initParent();
+
+          // If the child list of parent is empty, post a new child
+          handleParentFirstCreate(response.data.data.id);
         }
       })
       .catch((error) => {
         console.log("Error adding new parent!", error);
       });
+  };
 
-    // TODO: If the child list of parent is empty, post a new init child
-    
+  // Handle parent first create (create a init child automatically)
+  const handleParentFirstCreate = (parentId) => {
+    axios
+      .get(`http://localhost:3030/child/parent_id/${parentId}`)
+      .then((response) => {
+        if (response.data && response.status === 200) {
+          // if response.data.data is empty, then post a new init child
+          if (response.data.data.length === 0) {
+            axios
+              .post(`http://localhost:3030/child`, {
+                ...editedChild,
+                parent_id: parentId,
+              })
+              .then((response) => {
+                if (response.data && response.status === 200) {
+                  // Refresh the parent list
+                  fetchParentWithChild();
+                  setAddingNewParent(false);
+                  // Reset the input fields of parent
+                  initParent();
+                }
+              })
+              .catch((error) => {
+                console.log("Error adding new parent!", error);
+              });
+          }
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   // Cancel button
@@ -733,6 +769,7 @@ function CustomerTable() {
             // New parent row for adding
             <tr>
               <td>{/* ID column (empty) */}</td>
+              {/* Keyword */}
               <td>
                 <input
                   type="text"
@@ -748,6 +785,7 @@ function CustomerTable() {
                   }
                 />
               </td>
+              {/* Server */}
               <td>
                 <select
                   value={editedParent.svr}
@@ -766,6 +804,7 @@ function CustomerTable() {
                   ))}
                 </select>
               </td>
+              {/* Type */}
               <td>
                 <select
                   value={editedParent.type}
@@ -784,9 +823,55 @@ function CustomerTable() {
                   ))}
                 </select>
               </td>
-              <td style={{ width: "100px" }}></td>
-              <td style={{ width: "100px" }}></td>
-              <td style={{ width: "100px" }}></td>
+              {/* Include */}
+              <td>
+                <input
+                  type="text"
+                  value={editedChild.include}
+                  className="form-control form-control-sm"
+                  style={{ width: "100px" }}
+                  placeholder="包含"
+                  onChange={(e) =>
+                    setEditedChild({
+                      ...editedChild,
+                      include: e.target.value,
+                    })
+                  }
+                />
+              </td>
+              {/* Exclude */}
+              <td>
+                <input
+                  type="text"
+                  value={editedChild.exclude}
+                  className="form-control form-control-sm"
+                  style={{ width: "100px" }}
+                  placeholder="包含"
+                  onChange={(e) =>
+                    setEditedChild({
+                      ...editedChild,
+                      exclude: e.target.value,
+                    })
+                  }
+                />
+              </td>
+              {/* Set Price */}
+              <td>
+                <input
+                  type="text"
+                  value={editedChild.set_price}
+                  className="form-control form-control-sm"
+                  style={{ width: "100px" }}
+                  placeholder="包含"
+                  onChange={(e) =>
+                    setEditedChild({
+                      ...editedChild,
+                      set_price: e.target.value,
+                    })
+                  }
+                />
+              </td>
+              {/* Empty */}
               <td style={{ width: "100px" }}></td>
               <td style={{ width: "100px" }}></td>
               <td>
