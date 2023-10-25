@@ -19,6 +19,8 @@ function CustomerTable() {
   const [parentList, setParentList] = useState([]);
   const [childMap, setChildMap] = useState({});
   const [editIndex, setEditIndex] = useState(-1);
+  const [editParentIndex, setEditParentIndex] = useState(-1);
+  const [editChildIndex, setEditChildIndex] = useState(-1);
   const [editedParent, setEditedParent] = useState({
     keyword: "",
     svr: "",
@@ -67,19 +69,64 @@ function CustomerTable() {
   // "EDIT MODE"
   // Hdanle parent's the "Edit" button click
   const handleParentEdit = (parent, index) => {
-    setEditIndex(index);
+    setEditParentIndex(index);
     setEditedParent({ ...parent });
   };
 
   // Handle child's the "Edit" button click
   const handleChildEdit = (child, index) => {
-    setEditIndex(index);
+    setEditChildIndex(index);
     setEditedChild({ ...child });
   };
 
   // "UPDATE"
   // Update a parent
-  const handleParentUpdate = (parentId) => {};
+  const handleParentUpdate = (parentId) => {
+    axios
+      .put(`http://localhost:3030/parent/${parentId}`, editedParent)
+      .then((response) => {
+        if (response.data && response.data.message === "success") {
+          setParentList((prev) =>
+            prev.map((parent) => {
+              if (parent.id === parentId) {
+                return editedParent;
+              }
+              return parent;
+            })
+          );
+          setEditParentIndex(-1);
+        }
+      })
+      .catch((error) => {
+        console.log("Error to update parent!", error);
+      });
+  };
+
+  // Update a child
+  const handleChildUpdate = (childId) => {
+    axios
+      .put(`http://localhost:3030/child/${childId}`, editedChild)
+      .then((response) => {
+        if (response.data && response.data.message === "success") {
+          setChildMap((prev) => {
+            const newChildMap = { ...prev };
+            Object.keys(newChildMap).forEach((key) => {
+              newChildMap[key] = newChildMap[key].map((child) => {
+                if (child.id === childId) {
+                  return editedChild;
+                }
+                return child;
+              });
+            });
+            return newChildMap;
+          });
+          setEditChildIndex(-1);
+        }
+      })
+      .catch((error) => {
+        console.log("Error to update child!", error);
+      });
+  };
 
   // "DELETE"
   // Delete a parent
@@ -128,28 +175,32 @@ function CustomerTable() {
         <thead>
           <tr>
             <th scope="col">ID</th>
-            <th scope="col">Keywrod</th>
-            <th scope="col">Server</th>
-            <th scope="col">Type</th>
-            <th scope="col">Include</th>
-            <th scope="col">Exclude</th>
-            <th scope="col">Set Price</th>
-            <th scope="col">New Price</th>
-            <th scope="col">Nofi Time</th>
-            <th scope="col">Action</th>
+            <th scope="col">關鍵字</th>
+            <th scope="col">伺服器</th>
+            <th scope="col">販賣/收購</th>
+            <th scope="col">包含</th>
+            <th scope="col">排除</th>
+            <th scope="col">設定價格</th>
+            <th scope="col">目前最低價</th>
+            <th scope="col">通知時間</th>
+            <th scope="col">操作</th>
           </tr>
         </thead>
         <tbody>
-          {parentList.map((parent, index) => (
+          {parentList.map((parent) => (
             <React.Fragment key={parent.id}>
+              {/* Parent */}
               <tr>
                 <td>{serialNumber++}</td>
+                {/* Keywrod */}
                 <td>
-                  {editIndex === index ? (
+                  {editParentIndex === parent.id ? (
                     <input
                       type="text"
                       value={editedParent.keyword}
-                      className="form-control"
+                      className="form-control form-control-sm"
+                      style={{ width: "100px" }}
+                      placeholder="關鍵字"
                       onChange={(e) =>
                         setEditedParent({
                           ...editedParent,
@@ -161,15 +212,54 @@ function CustomerTable() {
                     parent.keyword
                   )}
                 </td>
-                <td>{parent.svr}</td>
-                <td>{parent.type}</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                {/* Server */}
                 <td>
-                  {editIndex === index ? (
+                  {editParentIndex === parent.id ? (
+                    <input
+                      type="text"
+                      value={editedParent.svr}
+                      className="form-control  form-control-sm"
+                      style={{ width: "100px" }}
+                      placeholder="伺服器"
+                      onChange={(e) =>
+                        setEditedParent({
+                          ...editedParent,
+                          svr: e.target.value,
+                        })
+                      }
+                    />
+                  ) : (
+                    parent.svr
+                  )}
+                </td>
+                {/* Type */}
+                <td>
+                  {editParentIndex === parent.id ? (
+                    <input
+                      type="text"
+                      value={editedParent.type}
+                      className="form-control  form-control-sm"
+                      style={{ width: "100px" }}
+                      placeholder="販賣/收購"
+                      onChange={(e) =>
+                        setEditedParent({
+                          ...editedParent,
+                          type: e.target.value,
+                        })
+                      }
+                    />
+                  ) : (
+                    parent.type
+                  )}
+                </td>
+                <td style={{ width: "100px" }}></td>
+                <td style={{ width: "100px" }}></td>
+                <td style={{ width: "100px" }}></td>
+                <td style={{ width: "100px" }}></td>
+                <td style={{ width: "100px" }}></td>
+                {/* Button */}
+                <td>
+                  {editParentIndex === parent.id ? (
                     // Edit mode
                     <>
                       <button
@@ -181,7 +271,7 @@ function CustomerTable() {
 
                       <button
                         className="btn btn-sm btn-secondary"
-                        onClick={() => setEditIndex(-1)}
+                        onClick={() => setEditParentIndex(-1)}
                       >
                         取消
                       </button>
@@ -195,7 +285,7 @@ function CustomerTable() {
                       <button
                         type="button"
                         className="btn btn-sm btn-secondary"
-                        onClick={() => handleParentEdit(parent, index)}
+                        onClick={() => handleParentEdit(parent, parent.id)}
                       >
                         編輯
                       </button>
@@ -210,6 +300,9 @@ function CustomerTable() {
                   )}
                 </td>
               </tr>
+              {/*       */}
+              {/* Child */}
+              {/*       */}
               {childMap[parent.id] &&
                 childMap[parent.id].map((child) => (
                   <tr key={child.id}>
@@ -217,28 +310,132 @@ function CustomerTable() {
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td>{child.include}</td>
-                    <td>{child.exclude}</td>
-                    <td>{child.set_price}</td>
-                    <td>{child.new_price}</td>
-                    <td>{child.nofi_time}</td>
+                    {/* Include */}
                     <td>
-                      <button type="button" className="btn btn-sm btn-warning">
-                        重置
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn-sm btn-secondary"
-                      >
-                        編輯
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn-sm btn-danger"
-                        onClick={() => handleDeleteChild(child.id)}
-                      >
-                        刪除
-                      </button>
+                      {editChildIndex === child.id ? (
+                        <input
+                          type="text"
+                          value={editedChild.include}
+                          className="form-control form-control-sm"
+                          style={{ width: "100px" }}
+                          placeholder="包含"
+                          onChange={(e) =>
+                            setEditedChild({
+                              ...editedChild,
+                              include: e.target.value,
+                            })
+                          }
+                        />
+                      ) : (
+                        child.include
+                      )}
+                    </td>
+                    {/* Exclude */}
+                    <td>
+                      {editChildIndex === child.id ? (
+                        <input
+                          type="text"
+                          value={editedChild.exclude}
+                          className="form-control form-control-sm"
+                          style={{ width: "100px" }}
+                          placeholder="排除"
+                          onChange={(e) =>
+                            setEditedChild({
+                              ...editedChild,
+                              exclude: e.target.value,
+                            })
+                          }
+                        />
+                      ) : (
+                        child.exclude
+                      )}
+                    </td>
+                    {/* Set Price */}
+                    <td>
+                      {editChildIndex === child.id ? (
+                        <input
+                          type="text"
+                          value={editedChild.set_price}
+                          className="form-control form-control-sm"
+                          style={{ width: "100px" }}
+                          placeholder="設定價格"
+                          onChange={(e) =>
+                            setEditedChild({
+                              ...editedChild,
+                              set_price: e.target.value,
+                            })
+                          }
+                        />
+                      ) : (
+                        child.set_price
+                      )}
+                    </td>
+                    {/* New Price */}
+                    <td>
+                      {editChildIndex === child.id ? (
+                        <input
+                          type="text"
+                          value={editedChild.new_price}
+                          className="form-control form-control-sm"
+                          style={{ width: "100px" }}
+                          placeholder="目前最低價"
+                          onChange={(e) =>
+                            setEditedChild({
+                              ...editedChild,
+                              new_price: e.target.value,
+                            })
+                          }
+                        />
+                      ) : (
+                        child.new_price
+                      )}
+                    </td>
+                    {/* Nofi time */}
+                    <td>{child.nofi_time}</td>
+                    {/* Button */}
+                    <td>
+                      {editChildIndex === child.id ? (
+                        // Edit mode
+                        <>
+                          <button
+                            className="btn btn-sm btn-success"
+                            onClick={() => handleChildUpdate(child.id)}
+                          >
+                            保存
+                          </button>
+
+                          <button
+                            className="btn btn-sm btn-secondary"
+                            onClick={() => setEditChildIndex(-1)}
+                          >
+                            取消
+                          </button>
+                        </>
+                      ) : (
+                        // View mode
+                        <>
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-primary"
+                          >
+                            新增
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-secondary"
+                            onClick={() => handleChildEdit(child, child.id)}
+                          >
+                            編輯
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-danger"
+                            onClick={() => handleDeleteChild(child.id)}
+                          >
+                            刪除
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))}
