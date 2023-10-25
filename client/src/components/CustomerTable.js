@@ -36,7 +36,7 @@ function CustomerTable() {
     // Fetch child data for each parent
     parentList.forEach((parent) => {
       axios
-        .get(`http://localhost:3030/child?parent_id=${parent.id}`)
+        .get(`http://localhost:3030/child/parent_id/${parent.id}`)
         .then((response) => {
           if (response.data && response.data.message === "success") {
             setChildMap((prev) => ({
@@ -50,6 +50,42 @@ function CustomerTable() {
         });
     });
   }, [parentList]);
+
+  // Delete a parent
+  const handleDeleteParent = (id) => {
+    axios
+      .delete(`http://localhost:3030/parent/${id}`)
+      .then((response) => {
+        if (response.data && response.data.message === "success") {
+          setParentList((prev) => prev.filter((parent) => parent.id !== id));
+        }
+      })
+      .catch((error) => {
+        console.log("Error to delete parent!", error);
+      });
+  };
+
+  // Delete a child an refresh the child map
+  const handleDeleteChild = (id) => {
+    axios
+      .delete(`http://localhost:3030/child/${id}`)
+      .then((response) => {
+        if (response.data && response.data.message === "success") {
+          setChildMap((prev) => {
+            const newChildMap = { ...prev };
+            Object.keys(newChildMap).forEach((key) => {
+              newChildMap[key] = newChildMap[key].filter(
+                (child) => child.id !== id
+              );
+            });
+            return newChildMap;
+          });
+        }
+      })
+      .catch((error) => {
+        console.log("Error to delete child!", error);
+      });
+  };
 
   // Create a variable to track the serial number
   let serialNumber = 1;
@@ -92,7 +128,11 @@ function CustomerTable() {
                   <button type="button" className="btn btn-sm btn-secondary">
                     編輯
                   </button>
-                  <button type="button" className="btn btn-sm btn-danger">
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-danger"
+                    onClick={() => handleDeleteParent(parent.id)}
+                  >
                     刪除
                   </button>
                 </td>
@@ -119,7 +159,11 @@ function CustomerTable() {
                       >
                         編輯
                       </button>
-                      <button type="button" className="btn btn-sm btn-danger">
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-danger"
+                        onClick={() => handleDeleteChild(child.id)}
+                      >
                         刪除
                       </button>
                     </td>
