@@ -20,6 +20,7 @@ import "./CustomerTable.css"; // Import a CSS file for styling
 function CustomerTable() {
   const [addingChildForParent, setAddingChildForParent] = useState(-1);
   const [addingNewParent, setAddingNewParent] = useState(false);
+  const [addingChildMode, setAddingChildMode] = useState(false);
   const [parentList, setParentList] = useState([]);
   const [childMap, setChildMap] = useState({});
   const [editParentIndex, setEditParentIndex] = useState(-1);
@@ -219,6 +220,7 @@ function CustomerTable() {
             if (response.data && response.data.message === "success") {
               setParentList(response.data.data);
               setEditParentIndex(-1); // Reset edit mode
+              initParent();
             }
           });
         }
@@ -226,6 +228,12 @@ function CustomerTable() {
       .catch((error) => {
         console.log("Error to update parent!", error);
       });
+  };
+
+  // Cancel button
+  const hadnleCancelParentUpdate = () => {
+    setEditParentIndex(-1);
+    initParent();
   };
 
   // Update a child
@@ -317,6 +325,9 @@ function CustomerTable() {
 
           // Reset the input fields
           initChild();
+
+          // Show button
+          setAddingChildMode(false);
         }
       })
       .catch((error) => {
@@ -328,11 +339,15 @@ function CustomerTable() {
   const handleCancelAddChild = () => {
     setAddingChildForParent(null);
     initChild();
+
+    // Show button
+    setAddingChildMode(false);
   };
 
   // Add button
   const handleAddChildForParent = (parent) => {
     setAddingChildForParent(parent.id);
+    setAddingChildMode(true);
     initChild();
   };
 
@@ -420,9 +435,9 @@ function CustomerTable() {
   let serialNumber = 1;
 
   return (
-    <div className="container">
+    <div className="container-fluid">
       <h1>Data Table</h1>
-      <table className="table table-striped">
+      <table className="table">
         <thead>
           <tr>
             <th scope="col">ID</th>
@@ -445,7 +460,7 @@ function CustomerTable() {
               {/*        */}
               {/* Parent */}
               {/*        */}
-              <tr>
+              <tr className="table-info">
                 <td>{serialNumber++}</td>
                 {/* Keywrod */}
                 <td>
@@ -539,50 +554,57 @@ function CustomerTable() {
                 <td></td>
                 {/* Button */}
                 <td>
-                  {editParentIndex === parent.id ? (
-                    // Edit mode
-                    <>
-                      <button
-                        className="btn btn-sm btn-success"
-                        onClick={() => handleParentUpdate(parent.id)}
-                      >
-                        保存
-                      </button>
-
-                      <button
-                        className="btn btn-sm btn-secondary"
-                        onClick={() => setEditParentIndex(-1)}
-                      >
-                        取消
-                      </button>
-                    </>
-                  ) : (
-                    // View mode
-                    <>
-                      <button
-                        type="button"
-                        className="btn btn-sm btn-info"
-                        onClick={() => handleAddChildForParent(parent)}
-                      >
-                        新增
-                      </button>
-
-                      <button
-                        type="button"
-                        className="btn btn-sm btn-secondary"
-                        onClick={() => handleParentEdit(parent, parent.id)}
-                      >
-                        編輯
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn-sm btn-danger"
-                        onClick={() => handleDeleteParent(parent.id)}
-                      >
-                        刪除
-                      </button>
-                    </>
-                  )}
+                  {!addingChildMode &&
+                    (editParentIndex === parent.id ? (
+                      // Edit mode
+                      <>
+                        <button
+                          className="btn btn-sm btn-success"
+                          onClick={() => handleParentUpdate(parent.id)}
+                        >
+                          保存
+                        </button>
+                        <button
+                          className="btn btn-sm btn-secondary"
+                          onClick={() => hadnleCancelParentUpdate()}
+                        >
+                          取消
+                        </button>
+                      </>
+                    ) : (
+                      // View mode
+                      <>
+                        {editChildIndex === -1 &&
+                          editParentIndex === -1 &&
+                          !addingNewParent && (
+                            <>
+                              <button
+                                type="button"
+                                className="btn btn-sm btn-primary"
+                                onClick={() => handleAddChildForParent(parent)}
+                              >
+                                新增
+                              </button>
+                              <button
+                                type="button"
+                                className="btn btn-sm btn-secondary"
+                                onClick={() =>
+                                  handleParentEdit(parent, parent.id)
+                                }
+                              >
+                                編輯
+                              </button>
+                              <button
+                                type="button"
+                                className="btn btn-sm btn-danger"
+                                onClick={() => handleDeleteParent(parent.id)}
+                              >
+                                刪除
+                              </button>
+                            </>
+                          )}
+                      </>
+                    ))}
                 </td>
               </tr>
               {/*               */}
@@ -817,52 +839,61 @@ function CustomerTable() {
                     {/* New Price */}
                     <td>{child.new_price.toLocaleString()}</td>
                     {/* Nofi time */}
-                    <td style={{ width: "200px" }}>{child.nofi_time}</td>
+                    <td style={{ width: "100px" }}>{child.nofi_time}</td>
                     {/* Button */}
                     <td>
-                      {editChildIndex === child.id ? (
-                        // Edit mode
-                        <>
-                          <button
-                            className="btn btn-sm btn-success"
-                            onClick={() => handleChildUpdate(child.id)}
-                          >
-                            保存
-                          </button>
+                      {!addingChildMode &&
+                        (editChildIndex === child.id ? (
+                          // Edit mode
+                          <>
+                            <button
+                              className="btn btn-sm btn-success"
+                              onClick={() => handleChildUpdate(child.id)}
+                            >
+                              保存
+                            </button>
 
-                          <button
-                            className="btn btn-sm btn-secondary"
-                            onClick={() => setEditChildIndex(-1)}
-                          >
-                            取消
-                          </button>
-                        </>
-                      ) : (
-                        // View mode
-                        <>
-                          <button
-                            type="button"
-                            className="btn btn-sm btn-warning"
-                            onClick={() => handleResetChild(child)}
-                          >
-                            重設
-                          </button>
-                          <button
-                            type="button"
-                            className="btn btn-sm btn-secondary"
-                            onClick={() => handleChildEdit(child, child.id)}
-                          >
-                            編輯
-                          </button>
-                          <button
-                            type="button"
-                            className="btn btn-sm btn-danger"
-                            onClick={() => handleDeleteChild(child.id)}
-                          >
-                            刪除
-                          </button>
-                        </>
-                      )}
+                            <button
+                              className="btn btn-sm btn-secondary"
+                              onClick={() => setEditChildIndex(-1)}
+                            >
+                              取消
+                            </button>
+                          </>
+                        ) : (
+                          // View mode
+                          <>
+                            {editParentIndex === -1 &&
+                              editChildIndex === -1 &&
+                              !addingNewParent && (
+                                <>
+                                  <button
+                                    type="button"
+                                    className="btn btn-sm btn-warning"
+                                    onClick={() => handleResetChild(child)}
+                                  >
+                                    重設
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="btn btn-sm btn-secondary"
+                                    onClick={() =>
+                                      handleChildEdit(child, child.id)
+                                    }
+                                  >
+                                    編輯
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="btn btn-sm btn-danger"
+                                    onClick={() => handleDeleteChild(child.id)}
+                                  >
+                                    刪除
+                                  </button>
+                                </>
+                              )}
+                          </>
+                        ))}
                     </td>
                   </tr>
                 ))}
@@ -1040,7 +1071,7 @@ function CustomerTable() {
       {/*                   */}
       {/* Add parent button */}
       {/*                   */}
-      {!addingNewParent && (
+      {!addingNewParent && !addingChildMode && (
         <div>
           <button
             className="btn btn-primary btn-lg"

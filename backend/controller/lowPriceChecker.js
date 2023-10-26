@@ -1,4 +1,5 @@
 import axios from "axios";
+import isOnline from "is-online";
 
 import {
   getBotIdToken,
@@ -28,7 +29,6 @@ export const lowPriceChecker = async () => {
   // Log
   console.log("");
   console.log(`Price is checking...               (${getTime()})`);
-  console.log("");
 
   // Get bot id and token
   const botIdToken = await getBotIdToken();
@@ -283,6 +283,23 @@ const getItemList = async (parent, rowStart) => {
   // Return itemList
   return itemList;
 };
+
+// Check internet
+// const checkInternet = async (delaySeconds) => {
+//   // Check internet by is-online
+//   // If internet is not available, check again after 30s, until internet is available
+//   let internetAvailable = await isOnline();
+//   while (!internetAvailable) {
+//     // delay
+//     await delay(delaySeconds * 1000);
+
+//     // Log
+//     console.log(`Internet disconnected! Check again after ${delaySeconds}s...`);
+
+//     // Check internet again
+//     internetAvailable = await isOnline();
+//   }
+// };
 
 export const requestRoServer = async (parent, rowStart) => {
   // Variable of parent
