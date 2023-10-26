@@ -33,7 +33,7 @@ function CustomerTable() {
     include: "",
     exclude: "",
     set_refine: 0,
-    set_level: 0,
+    set_level: "",
     set_price: "",
     new_price: 0,
     nofi_time: "",
@@ -55,11 +55,11 @@ function CustomerTable() {
 
   // Define level options
   const levelOptions = [
-    { value: 0, label: "" },
-    { value: 1, label: "D" },
-    { value: 2, label: "C" },
-    { value: 3, label: "B" },
     { value: 4, label: "A" },
+    { value: 3, label: "B" },
+    { value: 2, label: "C" },
+    { value: 1, label: "D" },
+    { value: 0, label: "" },
   ];
 
   // "FETCH"
@@ -137,7 +137,7 @@ function CustomerTable() {
       include: "",
       exclude: "",
       set_refine: 0,
-      set_level: 0,
+      set_level: "",
       set_price: "",
       new_price: 0,
       nofi_time: "",
@@ -640,19 +640,22 @@ function CustomerTable() {
                   </td>
                   {/* Set Level */}
                   <td>
-                    <input
-                      type="number"
+                    <select
                       value={editedChild.set_level}
-                      className="form-control form-control-sm"
-                      style={{ width: "50px" }}
-                      placeholder="階級"
+                      className="form-select form-select-sm"
                       onChange={(e) =>
                         setEditedChild({
                           ...editedChild,
                           set_level: e.target.value,
                         })
                       }
-                    />
+                    >
+                      {levelOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
                   </td>
 
                   {/* Set Price */}
@@ -764,21 +767,30 @@ function CustomerTable() {
                     {/* Set Lavel */}
                     <td>
                       {editChildIndex === child.id ? (
-                        <input
-                          type="number"
+                        <select
                           value={editedChild.set_level}
-                          className="form-control form-control-sm"
-                          style={{ width: "70px" }}
-                          placeholder="階級"
+                          className="form-select form-select-sm"
                           onChange={(e) =>
                             setEditedChild({
                               ...editedChild,
                               set_level: e.target.value,
                             })
                           }
-                        />
+                        >
+                          {levelOptions.map((option) => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
                       ) : (
-                        child.set_level
+                        <span>
+                          {
+                            levelOptions.find(
+                              (option) => option.value === child.set_level
+                            )?.label
+                          }
+                        </span>
                       )}
                     </td>
                     {/* Set Price */}

@@ -18,7 +18,7 @@ db.run(`CREATE TABLE IF NOT EXISTS child
          include    TEXT, 
          exclude    TEXT, 
          set_refine REAL,
-         set_lavel  REAL,
+         set_level  REAL,
          set_price  REAL, 
          new_price  REAL,
          nofi_time  TEXT,
@@ -32,7 +32,7 @@ router.post("/", (req, res) => {
     include,
     exclude,
     set_refine,
-    set_lavel,
+    set_level,
     set_price,
     new_price,
     nofi_time,
@@ -46,8 +46,18 @@ router.post("/", (req, res) => {
   }
 
   db.run(
-    `INSERT INTO child (include, exclude, set_refine, set_lavel, set_price, new_price, nofi_time, parent_id, item_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [include, exclude, set_refine, set_lavel, set_price, new_price, nofi_time, parent_id, item_name],
+    `INSERT INTO child (include, exclude, set_refine, set_level, set_price, new_price, nofi_time, parent_id, item_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      include,
+      exclude,
+      set_refine,
+      set_level,
+      set_price,
+      new_price,
+      nofi_time,
+      parent_id,
+      item_name,
+    ],
     function (err) {
       if (err) {
         res.status(400).json({ error: err.message });
@@ -65,7 +75,7 @@ router.post("/", (req, res) => {
           include,
           exclude,
           set_refine,
-          set_lavel,
+          set_level,
           set_price,
           new_price,
           nofi_time,
@@ -83,7 +93,7 @@ router.put("/:id", (req, res) => {
     include,
     exclude,
     set_refine,
-    set_lavel,
+    set_level,
     set_price,
     new_price,
     nofi_time,
@@ -93,12 +103,12 @@ router.put("/:id", (req, res) => {
   const { id } = req.params;
 
   db.run(
-    `UPDATE child SET include = ?, exclude = ?, set_refine = ?, set_lavel = ?, set_price = ?, new_price = ?, nofi_time = ?, parent_id = ?, item_name = ? WHERE id = ?`,
+    `UPDATE child SET include = ?, exclude = ?, set_refine = ?, set_level = ?, set_price = ?, new_price = ?, nofi_time = ?, parent_id = ?, item_name = ? WHERE id = ?`,
     [
       include,
       exclude,
       set_refine,
-      set_lavel,
+      set_level,
       set_price,
       new_price,
       nofi_time,
