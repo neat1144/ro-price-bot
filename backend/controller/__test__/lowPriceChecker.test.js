@@ -1,7 +1,6 @@
 import lowPriceRouter, {
   sendMsgByBot,
   formatMsg,
-  checkChildPriceByItemList,
   filterChildPrice,
   itemNameFilter,
   requestRoServer,

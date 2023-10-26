@@ -33,7 +33,7 @@ function CustomerTable() {
     include: "",
     exclude: "",
     set_refine: 0,
-    set_level: "",
+    set_level: 0,
     set_price: "",
     new_price: 0,
     nofi_time: "",
@@ -55,7 +55,7 @@ function CustomerTable() {
 
   // Define level options
   const levelOptions = [
-    { value: 0, label: '""' },
+    { value: 0, label: "N/A" },
     { value: 4, label: "A" },
     { value: 3, label: "B" },
     { value: 2, label: "C" },
@@ -137,7 +137,7 @@ function CustomerTable() {
       include: "",
       exclude: "",
       set_refine: 0,
-      set_level: "",
+      set_level: 0,
       set_price: "",
       new_price: 0,
       nofi_time: "",

@@ -66,7 +66,20 @@ export const lowPriceChecker = async () => {
       );
 
       // Get item list by one parent
-      const itemList = await getItemList(parent);
+      // Because RO server only return 30 items per page
+      const itemList1 = await getItemList(parent, "1"); // First page (item1 ~ item30)
+      await delay(1500);
+
+      // if item of itemList1 is less than 30, then itemList2 is empty
+      let itemList2 = [];
+      if (itemList1.length < 30) {
+        itemList2 = [];
+      } else {
+        itemList2 = await getItemList(parent, "31"); // Second page (item31 ~ )
+      }
+
+      // Merge itemList1 and itemList2
+      const itemList = [...itemList1, ...itemList2];
 
       // if itemList is empty, response error with 404
       if (!itemList.length) {
@@ -77,17 +90,22 @@ export const lowPriceChecker = async () => {
       // Loop child to check price
       for (const child of childList) {
         // Filter item(keyword and price) list by a child
-        const childFiltered = await checkChildPriceByItemList(child, itemList);
+        // const childFiltered = await checkChildPriceByItemList(child, itemList);
+        // Filter itemList by a child (include, exclude, itemRefine, and itemLevel)
+        const itemListFiltered = itemNameFilter(child, itemList);
+
+        // Filter item list by a child (price)
+        const childFilteredByPrice = filterChildPrice(child, itemListFiltered);
 
         // If childFiltered is not empty, send msg by chat bot
-        if (childFiltered) {
+        if (childFilteredByPrice) {
           // Send msg by chat bot
-          const botMsg = formatMsg(parent, childFiltered);
+          const botMsg = formatMsg(parent, childFilteredByPrice);
           console.log(botMsg);
           await sendMsgByBot(botIdToken, botMsg);
 
           // Update child
-          await updateChild(childFiltered);
+          await updateChild(childFilteredByPrice);
         }
       }
     }
@@ -130,6 +148,7 @@ export const itemNameFilter = (child, itemList) => {
     const matchesLevel = setLevel === 0 || setLevel === itemLevel;
 
     if (includesTerm && excludesTerm && matchesRefine && matchesLevel) {
+      // if (includesTerm && excludesTerm) {
       itemListFiltered.push(item);
     }
   });
@@ -168,53 +187,6 @@ export const filterChildPrice = (child, itemList) => {
   }
 };
 
-// Chcek price by a child
-export const checkChildPriceByItemList = async (child, itemList) => {
-  // Variable of child
-  const {
-    include: keywordInclude,
-    exclude: keywordExclude,
-    set_price,
-    new_price,
-  } = child;
-
-  // Loop item list to check price of child
-  for (const item of itemList) {
-    // Variable of item
-    const { itemName, itemPrice } = item;
-
-    // const includeKeywords = keywordInclude.split("+");
-    // const excludeKeywords = keywordExclude.split("+");
-
-    // Filter itemName by keywordInclude,keywordExclude and if they are both not ""
-    if (
-      (itemName.includes(keywordInclude) || keywordInclude === "") &&
-      (!itemName.includes(keywordExclude) || keywordExclude === "")
-    ) {
-      // Filter by set_price (if itemPrice <= set_price or new_price < itemPrice)
-      // Set price > item price
-      // Find a new lowest item price
-      if (set_price > itemPrice) {
-        if (itemPrice < new_price || new_price === 0) {
-          // Update new_price of child
-          child.new_price = itemPrice;
-
-          // Update item_name of child
-          child.item_name = itemName;
-
-          // Update nofi_time of child
-          child.nofi_time = getDateTime();
-
-          // Stop loop
-          return child;
-        }
-      }
-    }
-  }
-  // If child is not filtered, return null
-  return null;
-};
-
 // Send msg by chat bot
 export const sendMsgByBot = async (botIdToken, messageText) => {
   // Get token and id
@@ -222,9 +194,6 @@ export const sendMsgByBot = async (botIdToken, messageText) => {
 
   // Api Information
   const tgUrl = `https://api.telegram.org/bot${token}/sendMessage`;
-
-  // Log msg
-  // console.log(messageText);
 
   // Send request by telegram api
   try {
@@ -265,12 +234,11 @@ ${chnType}價格: ${new_price.toLocaleString("en-US")}
 };
 
 // Get itemList of a parent from RO server
-const getItemList = async (parent) => {
+const getItemList = async (parent, rowStart) => {
   // Get original itemList from RO server
-  const response = await requestRoServer(parent);
+  const response = await requestRoServer(parent, rowStart);
   const responseData = response.data;
 
-  // console.log(responseData);
   if (responseData["Message"] !== null) {
     console.log("ro response message: ", responseData["Message"]);
   }
@@ -316,7 +284,7 @@ const getItemList = async (parent) => {
   return itemList;
 };
 
-export const requestRoServer = async (parent) => {
+export const requestRoServer = async (parent, rowStart) => {
   // Variable of parent
   const { keyword, svr, type } = parent;
 
@@ -327,7 +295,7 @@ export const requestRoServer = async (parent) => {
     div_svr: svr.toString(), // '2290'
     div_storetype: type.toString(), // '0'販售, '1'收購, '2'全部
     txb_KeyWord: keyword, // '乙太星塵'
-    row_start: "1",
+    row_start: rowStart, // '1'
     recaptcha: "",
     sort_by: "itemPrice",
     sort_desc: "", // '', 'desc'
