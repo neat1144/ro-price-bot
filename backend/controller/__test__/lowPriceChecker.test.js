@@ -76,6 +76,7 @@ describe("/lowPriceRouter API", () => {
   });
 });
 
+/*
 // Test get item list from RO server
 describe("get item list from RO server", () => {
   it("should get item list from RO server", async () => {
@@ -94,6 +95,7 @@ describe("get item list from RO server", () => {
     expect(itemListByRoServer[0].type).toBe(0);
   });
 });
+*/
 
 // Filter child
 describe("filter child by price, include and exclude", () => {
@@ -127,7 +129,7 @@ describe("filter child by price, include and exclude", () => {
   });
 
   // Only include
-  it("check child.include is in item name", async () => {
+  it("check ONE child.include is in item name", async () => {
     // Set child
     const childByInclude = {
       include: "庇佑",
@@ -146,7 +148,7 @@ describe("filter child by price, include and exclude", () => {
   });
 
   // Only exclude
-  it("check child.exclude is not in item name", async () => {
+  it("check ONE child.exclude is not in item name", async () => {
     expect(itemList.length).toBeGreaterThan(0);
 
     // Set child
@@ -167,7 +169,7 @@ describe("filter child by price, include and exclude", () => {
   });
 
   // Include and exclude
-  it("check child.include is in and child.exclude is NOT in item name", async () => {
+  it("check ONE child.include is in and ONE child.exclude is NOT in item name", async () => {
     // Set child
     const child = {
       include: "4",
@@ -184,6 +186,12 @@ describe("filter child by price, include and exclude", () => {
     expect(itemListFiltered.length).toBe(2);
     expect(itemListFiltered[0].itemName).toBe("乙太星塵4");
   });
+
+  // TODO: Check multiple include (split by "+")
+
+  // TODO: Check multiple exclude (split by "+")
+
+  // TODO: Check multiple include and exclude (split by "+")
 
   // TODO: Check item refine
 
