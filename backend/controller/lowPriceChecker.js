@@ -99,31 +99,35 @@ export const lowPriceChecker = async () => {
 
 // Filter item name list by a child (include, exclude)
 export const itemNameFilter = (child, itemList) => {
-  let itemListFiltered = [];
+  const itemListFiltered = [];
 
-  // TODO: Support multiple include and exclude, splite by "+"
-  // const includeKeywords = keywordInclude.split("+");
-  // const excludeKeywords = keywordExclude.split("+");
+  // Support multiple include and exclude, split by "+"
+  const includeList = child.include.split("+");
+  const excludeList = child.exclude.split("+");
 
-  // Filter itemList by include and exclude
   itemList.forEach((item) => {
     const itemName = item.itemName;
 
     const { include, exclude } = child;
 
-    // Check if the itemName includes the 'include' text and does not include the 'exclude' text
-    // Check includ
-    if (itemName.includes(include) || include === "")
-      if (!itemName.includes(exclude) || exclude === "") {
-        // Check exclude
-        {
-          itemListFiltered.push(item);
-        }
-      }
+    // Check if the itemName matches any term in the includeList, or includeList is empty
+    const includesTerm = includeList.some((includeTerm) =>
+      itemName.includes(includeTerm) || includeTerm === ""
+    );
+
+    // Check if the itemName does not match any term in the excludeList, or excludeList is empty
+    const excludesTerm = excludeList.every((excludeTerm) =>
+      !itemName.includes(excludeTerm) || excludeTerm === ""
+    );
+
+    if (includesTerm && excludesTerm) {
+      itemListFiltered.push(item);
+    }
   });
 
   return itemListFiltered;
 };
+
 
 export const lowerPriceFilter = (child, itemList) => {
   // Get set price of child
