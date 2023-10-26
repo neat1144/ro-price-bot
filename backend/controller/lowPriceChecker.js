@@ -1,5 +1,18 @@
 import axios from "axios";
 
+import {
+  getBotIdToken,
+  getParentList,
+  getChildList,
+  updateChild,
+  getBotState,
+  changeBotState,
+  getTimeout,
+  getDateTime,
+  getTime,
+  setHeaders,
+} from "./toGetUpdate.js";
+
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // router.get("/", async (req, res) => {
@@ -85,8 +98,67 @@ export const lowPriceChecker = async () => {
   console.log(`Next check after ${timeoutSeconds}(sec)`);
 };
 
+// Filter item name list by a child (include, exclude)
+export const itemNameFilter = (child, itemList) => {
+  let itemListFiltered = [];
+
+  // TODO: Support multiple include and exclude, splite by "+"
+  // const includeKeywords = keywordInclude.split("+");
+  // const excludeKeywords = keywordExclude.split("+");
+
+  // Filter itemList by include and exclude
+  itemList.forEach((item) => {
+    const itemName = item.itemName;
+
+    const { include, exclude } = child;
+
+    // Check if the itemName includes the 'include' text and does not include the 'exclude' text
+    // Check includ
+    if (itemName.includes(include) || include === "")
+      if (!itemName.includes(exclude) || exclude === "") {
+        // Check exclude
+        {
+          itemListFiltered.push(item);
+        }
+      }
+  });
+
+  return itemListFiltered;
+};
+
+export const lowerPriceFilter = (child, itemList) => {
+  // Get set price of child
+  const { set_price: setPrice, new_price: newPrice } = child;
+
+  // Loop item list to check price of child
+  for (const item of itemList) {
+    // Get item price and name
+    const { itemPrice, itemName } = item;
+
+    // Condition of filter
+    // If item price < set price
+    if (itemPrice <= setPrice) {
+      if (itemPrice < newPrice || newPrice === 0) {
+        // Update new_price of child
+        child.new_price = itemPrice;
+
+        // Update item_name of child
+        child.item_name = itemName;
+
+        // Update nofi_time of child
+        child.nofi_time = getDateTime();
+
+        // Stop loop and return child
+        // Because item list is already sorted by price
+        // So the first item that meet the condition is the lowest price
+        return child;
+      }
+    }
+  }
+};
+
 // Chcek price by a child
-const checkChildPriceByItemList = async (child, itemList) => {
+export const checkChildPriceByItemList = async (child, itemList) => {
   // Variable of child
   const {
     include: keywordInclude,
@@ -100,7 +172,6 @@ const checkChildPriceByItemList = async (child, itemList) => {
     // Variable of item
     const { itemName, itemPrice } = item;
 
-    // TODO: Support multiple include and exclude, splite by "+"
     // const includeKeywords = keywordInclude.split("+");
     // const excludeKeywords = keywordExclude.split("+");
 
@@ -134,7 +205,7 @@ const checkChildPriceByItemList = async (child, itemList) => {
 };
 
 // Send msg by chat bot
-const sendMsgByBot = async (botIdToken, messageText) => {
+export const sendMsgByBot = async (botIdToken, messageText) => {
   // Get token and id
   const { chat_id: chatId, token } = botIdToken;
 
@@ -161,19 +232,8 @@ chatId:${chatId}
   }
 };
 
-const getBotIdToken = async () => {
-  // Get bot id and token from db
-  const response = await axios
-    .get("http://localhost:3030/chat-id")
-    .catch((error) => {
-      console.error("Error to get bot id and token!", error);
-    });
-
-  return response.data;
-};
-
 // Send msg by chat bot
-const formatMsg = (parent, child) => {
+export const formatMsg = (parent, child) => {
   const { keyword, type, svr } = parent;
   const { include, exclude, set_price, new_price, nofi_time, item_name } =
     child;
@@ -193,17 +253,8 @@ ${chnType}價格: ${new_price.toLocaleString("en-US")}
   return messageText;
 };
 
-// Update child by id
-const updateChild = async (child) => {
-  try {
-    await axios.put(`http://localhost:3030/child/${child.id}`, child);
-  } catch (error) {
-    console.error("Error to update child!", error);
-  }
-};
-
 // Get itemList of a parent from RO server
-const getItemList = async (parent) => {
+export const getItemList = async (parent) => {
   // Variable of parent
   const { keyword, svr, type } = parent;
 
@@ -252,7 +303,7 @@ const getItemList = async (parent) => {
     itemList = responseData.dt.map((item) => ({
       itemRefining: item.itemRefining,
       itemName: item.itemName,
-      ItemGradeLevel: item.ItemGradeLevel,
+      itemGradeLevel: item.ItemGradeLevel,
       itemPrice: item.itemPrice,
       type: item.storetype,
     }));
@@ -273,121 +324,6 @@ const getItemList = async (parent) => {
 
   // Return itemList
   return itemList;
-};
-
-// Get customer list
-const getParentList = async () => {
-  const response = await axios
-    .get("http://localhost:3030/parent")
-    .catch((error) => {
-      console.error("Error to get parent list!", error);
-    });
-
-  return response.data["data"];
-};
-
-// Get child list by parent id
-const getChildList = async (parentId) => {
-  const response = await axios
-    .get(`http://localhost:3030/child/parent_id/${parentId}`)
-    .catch((error) => {
-      console.error("Error to get child list!", error);
-    });
-
-  return response.data["data"];
-};
-
-// Get bot state
-export const getBotState = async () => {
-  const response = await axios
-    .get("http://localhost:3030/bot-state")
-    .catch((error) => {
-      console.error("Error to get bot state!", error);
-    });
-  return response.data["bot_is_start"];
-};
-
-// Timeout
-const timeoutSleep = (ms) => {
-  new Promise((resolve) => setTimeout(resolve, ms));
-};
-
-// Get timeout from db
-export const getTimeout = async () => {
-  const response = await axios
-    .get("http://localhost:3030/timeout")
-    .catch((error) => {
-      console.error("Error to get timeout!", error);
-    });
-  return response.data["timeout_sec"];
-};
-
-export const changeBotState = async (botState) => {
-  axios
-    .post("http://localhost:3030/bot-state", { bot_is_start: botState })
-    .catch((error) => {
-      console.error("Error to change bot state!", error);
-    });
-};
-
-// Get time
-const getDateTime = () => {
-  // Create a new Date object to represent the current date and time
-  const currentTime = new Date();
-
-  // Get the current date components (month and day)
-  const month = String(currentTime.getMonth() + 1).padStart(2, "0"); // Add 1 to the month because it's zero-based
-  const day = String(currentTime.getDate()).padStart(2, "0");
-
-  // Get the current time components (hours and minutes)
-  const hours = String(currentTime.getHours()).padStart(2, "0");
-  const minutes = String(currentTime.getMinutes()).padStart(2, "0");
-
-  // Format the date and time as a string (e.g., "MM/DD HH:mm")
-  const formattedTime = `${month}/${day}(${hours}:${minutes})`;
-
-  return formattedTime;
-};
-
-const getTime = () => {
-  // Log time (only time)
-  const currentTime = new Date();
-  const hours = String(currentTime.getHours()).padStart(2, "0");
-  const minutes = String(currentTime.getMinutes()).padStart(2, "0");
-  const seconds = String(currentTime.getSeconds()).padStart(2, "0");
-
-  return `${hours}:${minutes}:${seconds}`;
-};
-
-const setHeaders = () => {
-  const headers = {
-    "Content-Type": "application/json; charset=UTF-8",
-    "User-Agent":
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36",
-
-    Accept: "application/json, text/javascript, */*; q=0.01",
-    "Accept-Language":
-      "zh-TW,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,zh-CN;q=0.5",
-    Dnt: "1",
-    // Host: "httpbin.org",
-    Referer:
-      "https://event.gnjoy.com.tw/Ro/RoShopSearch?fbclid=IwAR1xC46Qfmpbv0RzjG2t7LpJp19ZUKNnpBDL0QLKNfAbzScZYgU_Sl9C04Q",
-    "Sec-Ch-Ua":
-      '"Microsoft Edge";v="117", "Not;A=Brand";v="8", "Chromium";v="117"',
-    "Sec-Ch-Ua-Mobile": "?0",
-    "Sec-Ch-Ua-Platform": '"Windows"',
-    "Sec-Fetch-Dest": "empty",
-    "Sec-Fetch-Mode": "cors",
-    "Sec-Fetch-Site": "same-origin",
-    // "Sec-Fetch-User": "?1",
-    // "Upgrade-Insecure-Requests": "1",
-    "User-Agent":
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.60",
-    // "X-Amzn-Trace-Id": "Root=1-65267ecd-1956ffae7713148b3b9305fa",
-    "x-request-with": "XMLHttpRequest",
-  };
-
-  return headers;
 };
 
 // export
