@@ -11,6 +11,8 @@ import "./CustomerTable.css"; // Import a CSS file for styling
 //
 //  include: "test include1",
 //  exclude: "test exclude1",
+//  set_refine: 0,
+//  set_level: 0,
 //  set_price: 1000,
 //  new_price: 0,
 // }
@@ -30,6 +32,8 @@ function CustomerTable() {
   const [editedChild, setEditedChild] = useState({
     include: "",
     exclude: "",
+    set_refine: 0,
+    set_level: 0,
     set_price: "",
     new_price: 0,
     nofi_time: "",
@@ -49,38 +53,14 @@ function CustomerTable() {
     { value: 1, label: "收購" },
   ];
 
-  // Fetch parent data
-  // useEffect(() => {
-  //   axios
-  //     .get("http://localhost:3030/parent")
-  //     .then((response) => {
-  //       if (response.data && response.data.message === "success") {
-  //         setParentList(response.data.data);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // }, []);
-
-  // Fetch child data for each parent
-  // useEffect(() => {
-  //   parentList.forEach((parent) => {
-  //     axios
-  //       .get(`http://localhost:3030/child/parent_id/${parent.id}`)
-  //       .then((response) => {
-  //         if (response.data && response.data.message === "success") {
-  //           setChildMap((prev) => ({
-  //             ...prev,
-  //             [parent.id]: response.data.data,
-  //           }));
-  //         }
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //       });
-  //   });
-  // }, [parentList]);
+  // Define level options
+  const levelOptions = [
+    { value: 0, label: "" },
+    { value: 1, label: "D" },
+    { value: 2, label: "C" },
+    { value: 3, label: "B" },
+    { value: 4, label: "A" },
+  ];
 
   // "FETCH"
   // fetch parent data
@@ -156,6 +136,8 @@ function CustomerTable() {
     setEditedChild({
       include: "",
       exclude: "",
+      set_refine: 0,
+      set_level: 0,
       set_price: "",
       new_price: 0,
       nofi_time: "",
@@ -196,6 +178,8 @@ function CustomerTable() {
       .put(`http://localhost:3030/child/${childId}`, {
         include: child.include,
         exclude: child.exclude,
+        set_refine: child.set_refine,
+        set_level: child.set_level,
         set_price: child.set_price,
         new_price: 0,
         nofi_time: null,
@@ -246,6 +230,7 @@ function CustomerTable() {
 
   // Update a child
   const handleChildUpdate = (childId) => {
+    console.log(editedChild);
     axios
       .put(`http://localhost:3030/child/${childId}`, editedChild)
       .then((response) => {
@@ -316,6 +301,8 @@ function CustomerTable() {
         parent_id: parentId,
         include: editedChild.include,
         exclude: editedChild.exclude,
+        set_refine: editedChild.set_refine,
+        set_level: editedChild.set_level,
         set_price: editedChild.set_price,
         new_price: 0,
         nofi_time: editedChild.nofi_time,
@@ -422,6 +409,12 @@ function CustomerTable() {
     initParent();
   };
 
+  // "CHANGE"
+  const handleChildChange = (e) => {
+    setEditedChild({ ...editedChild, [e.target.name]: e.target.value });
+    console.log(editedChild);
+  };
+
   // Create a variable to track the serial number
   let serialNumber = 1;
 
@@ -437,6 +430,8 @@ function CustomerTable() {
             <th scope="col">販賣/收購</th>
             <th scope="col">包含</th>
             <th scope="col">排除</th>
+            <th scope="col">精煉值</th>
+            <th scope="col">階級</th>
             <th scope="col">設定價格</th>
             <th scope="col">目前最低價</th>
             <th scope="col">通知時間</th>
@@ -534,11 +529,13 @@ function CustomerTable() {
                   )}
                 </td>
                 {/* Empty */}
-                <td style={{ width: "100px" }}></td>
-                <td style={{ width: "100px" }}></td>
-                <td style={{ width: "100px" }}></td>
-                <td style={{ width: "100px" }}></td>
-                <td style={{ width: "100px" }}></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
                 {/* Button */}
                 <td>
                   {editParentIndex === parent.id ? (
@@ -625,6 +622,39 @@ function CustomerTable() {
                       }
                     />
                   </td>
+                  {/* Set Refine */}
+                  <td>
+                    <input
+                      type="number"
+                      value={editedChild.set_refine}
+                      className="form-control form-control-sm"
+                      style={{ width: "50px" }}
+                      placeholder="精煉值"
+                      onChange={(e) =>
+                        setEditedChild({
+                          ...editedChild,
+                          set_refine: e.target.value,
+                        })
+                      }
+                    />
+                  </td>
+                  {/* Set Level */}
+                  <td>
+                    <input
+                      type="number"
+                      value={editedChild.set_level}
+                      className="form-control form-control-sm"
+                      style={{ width: "50px" }}
+                      placeholder="階級"
+                      onChange={(e) =>
+                        setEditedChild({
+                          ...editedChild,
+                          set_level: e.target.value,
+                        })
+                      }
+                    />
+                  </td>
+
                   {/* Set Price */}
                   <td>
                     <input
@@ -643,7 +673,7 @@ function CustomerTable() {
                   </td>
                   {/* New Price */}
                   <td></td>
-                  <td style={{ width: "200px" }}></td>
+                  <td style={{ width: "100px" }}></td>
                   {/* Button */}
                   <td>
                     <button
@@ -711,6 +741,46 @@ function CustomerTable() {
                         child.exclude
                       )}
                     </td>
+                    {/* Set Refining */}
+                    <td>
+                      {editChildIndex === child.id ? (
+                        <input
+                          type="number"
+                          value={editedChild.set_refine}
+                          className="form-control form-control-sm"
+                          style={{ width: "70px" }}
+                          placeholder="精煉值"
+                          onChange={(e) =>
+                            setEditedChild({
+                              ...editedChild,
+                              set_refine: e.target.value,
+                            })
+                          }
+                        />
+                      ) : (
+                        child.set_refine
+                      )}
+                    </td>
+                    {/* Set Lavel */}
+                    <td>
+                      {editChildIndex === child.id ? (
+                        <input
+                          type="number"
+                          value={editedChild.set_level}
+                          className="form-control form-control-sm"
+                          style={{ width: "70px" }}
+                          placeholder="階級"
+                          onChange={(e) =>
+                            setEditedChild({
+                              ...editedChild,
+                              set_level: e.target.value,
+                            })
+                          }
+                        />
+                      ) : (
+                        child.set_level
+                      )}
+                    </td>
                     {/* Set Price */}
                     <td>
                       {editChildIndex === child.id ? (
@@ -732,25 +802,7 @@ function CustomerTable() {
                       )}
                     </td>
                     {/* New Price */}
-                    <td>
-                      {editChildIndex === child.id ? (
-                        <input
-                          type="number"
-                          value={editedChild.new_price}
-                          className="form-control form-control-sm"
-                          style={{ width: "100px" }}
-                          placeholder="目前最低價"
-                          onChange={(e) =>
-                            setEditedChild({
-                              ...editedChild,
-                              new_price: e.target.value,
-                            })
-                          }
-                        />
-                      ) : (
-                        child.new_price.toLocaleString()
-                      )}
-                    </td>
+                    <td>{child.new_price.toLocaleString()}</td>
                     {/* Nofi time */}
                     <td style={{ width: "200px" }}>{child.nofi_time}</td>
                     {/* Button */}

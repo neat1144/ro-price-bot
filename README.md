@@ -73,9 +73,9 @@
 - [x] new timeout function
 - [x] add unit test
 - [x] add new table `child` for filter keywrods
-- [ ] support add form (react and node) for table `child`
+- [x] support add form (react and node) for table `child`
 - [ ] support **filter** `itemRefining` and `ItemGradeLevel`
-- [ ] support **filter** "exclude" and "include" keywords
+- [x] support **filter** "exclude" and "include" keywords
 
 ## 伺服器更改
 
