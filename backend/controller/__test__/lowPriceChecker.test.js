@@ -1,40 +1,50 @@
 import lowPriceRouter, {
   sendMsgByBot,
   formatMsg,
-  getItemList,
   checkChildPriceByItemList,
-  lowerPriceFilter,
+  filterChildPrice,
   itemNameFilter,
+  requestRoServer,
 } from "../lowPriceChecker";
 
-const create12Items = () => {
-  // Create a list of 12 items
-  const itemJson5Data = {
+// Create a list of 14 items
+const create14Items = () => {
+  const itemJson10Data = {
     itemRefining: 0,
     itemName: "乙太星塵",
     itemGradeLevel: 0,
     itemPrice: 1000,
     type: 0,
   };
+
   const itemJsonData = {
-    itemRefining: 0,
+    ...itemJson10Data,
     itemName: "庇佑乙太星塵",
-    itemGradeLevel: 0,
     itemPrice: 2000,
-    type: 0,
   };
+
   const itemJsonData2 = {
-    itemRefining: 0,
+    ...itemJsonData,
     itemName: "庇佑乙太星塵2",
-    itemGradeLevel: 0,
-    itemPrice: 2000,
-    type: 0,
   };
+
+  const itemJsonDataRefining12 = {
+    ...itemJsonData,
+    itemName: "庇佑乙太星塵2 (+12)",
+    itemRefining: 12,
+  };
+
+  const itemJsonDataLevelA = {
+    ...itemJsonData,
+    itemName: "庇佑乙太星塵99 A",
+    itemGradeLevel: 4,
+  };
+
   const itemList = [];
   for (let i = 1; i <= 5; i++) {
     // itemPrice of itemJsonData multiply by i every time
     const itemJsonDataCopy = {
-      ...itemJson5Data,
+      ...itemJson10Data,
       itemPrice: i * 1000,
       itemName: `乙太星塵${i}`,
     };
@@ -45,14 +55,15 @@ const create12Items = () => {
   }
   itemList.push(itemJsonData);
   itemList.push(itemJsonData2);
+  itemList.push(itemJsonDataRefining12);
+  itemList.push(itemJsonDataLevelA);
 
   return itemList;
 };
 
-/*
-describe("/lowPriceRouter API", () => {
+describe("Low Price Checker", () => {
   // Helper function
-  describe("chat bot function", () => {
+  describe("should send msg by chat bot", () => {
     // Test send msg by chat bot
     it("should send msg by chat bot", async () => {
       // Token and id
@@ -82,183 +93,209 @@ describe("/lowPriceRouter API", () => {
       expect(response.status).toBe(200);
     });
   });
-});
-*/
 
-/*
-// Test get item list from RO server
-describe("get item list from RO server", () => {
-  it("should get item list from RO server", async () => {
-    const parent = {
-      keyword: "乙太星塵",
-      svr: 2290,
-      type: 0,
-    };
+  // Test get item list from RO server
+  describe("check response status from RO server", () => {
+    it("should get item list from RO server", async () => {
+      const parent = {
+        keyword: "乙太星塵",
+        svr: 2290,
+        type: 0,
+      };
 
-    const itemListByRoServer = await getItemList(parent);
+      const itemListByRoServer = await requestRoServer(parent);
 
-    // Check itemList have data
-    expect(itemListByRoServer.length).toBeGreaterThan(0);
-    // Check first item of itemList itemName is "乙太星塵"
-    expect(itemListByRoServer[0].itemName).toBe("乙太星塵");
-    expect(itemListByRoServer[0].type).toBe(0);
-  });
-});
-*/
-
-// Filter child
-describe("filter child by price, include and exclude", () => {
-  // Create a list of 12 items
-  const itemList = create12Items();
-
-  it("check item list have data", () => {
-    expect(itemList.length).toBeGreaterThan(0);
-    expect(itemList[0].itemName).toBe("乙太星塵1");
-    expect(itemList[10 - 1].itemPrice).toBe(5000);
+      // Check itemList have data
+      // expect(itemListByRoServer.length).toBeGreaterThan(0);
+      expect(itemListByRoServer.status).toBe(200);
+      // Check first item of itemList itemName is "乙太星塵"
+      // expect(itemListByRoServer[0].itemName).toBe("乙太星塵");
+      // expect(itemListByRoServer[0].type).toBe(0);
+    });
   });
 
-  // Test check child price is lower than set price
-  it("check set price < item price", async () => {
-    // Set child
-    const child = {
+  // Filter child
+  describe("filter child by price, include and exclude", () => {
+    // Create a list of 12 items
+    const itemList = create14Items();
+
+    // init child
+    const childInit = {
       include: "",
       exclude: "",
-      set_price: 6000000,
-      new_price: 0,
-      nofi_time: "",
-      item_name: "",
-    };
-
-    // Check child price is lower than set price
-    const childFiltered = lowerPriceFilter(child, itemList);
-
-    // Check item price < set price
-    expect(childFiltered.new_price).toBeLessThan(child.set_price);
-    expect(childFiltered.item_name).toBe("乙太星塵1");
-  });
-
-  // Only include
-  it("check ONE child.include is in item name", async () => {
-    // Set child
-    const childByInclude = {
-      include: "庇佑",
-      exclude: "",
+      set_refine: 0,
+      set_level: 0,
       set_price: 0,
       new_price: 0,
       nofi_time: "",
       item_name: "",
     };
 
-    // Check child price is lower than set price with exclude
-    const itemListFiltered = itemNameFilter(childByInclude, itemList);
+    it("check item list have data", () => {
+      expect(itemList.length).toBeGreaterThan(0);
+      expect(itemList[0].itemName).toBe("乙太星塵1");
+      expect(itemList[10 - 1].itemPrice).toBe(5000);
+    });
 
-    expect(itemListFiltered.length).toBe(2);
-    expect(itemListFiltered[0].itemName).toBe("庇佑乙太星塵");
+    // Test check child price is lower than set price
+    it("check set price < item price", async () => {
+      // Set child
+      const childByPrice = {
+        ...childInit,
+        set_price: 6000000,
+      };
+
+      // Check child price is lower than set price
+      const childFiltered = filterChildPrice(childByPrice, itemList);
+
+      // Check item price < set price
+      expect(childFiltered.new_price).toBeLessThan(childByPrice.set_price);
+      expect(childFiltered.item_name).toBe("乙太星塵1");
+    });
+
+    // Only include
+    it("check ONE child.include is in item name", async () => {
+      // Set child
+      const childByInclude = {
+        ...childInit,
+        include: "庇佑",
+      };
+
+      // Filter item list by child
+      const itemListFiltered = itemNameFilter(childByInclude, itemList);
+      expect(itemListFiltered.length).toBe(4);
+      expect(itemListFiltered[0].itemName).toBe("庇佑乙太星塵");
+    });
+
+    // Only exclude
+    it("check ONE child.exclude is not in item name", async () => {
+      expect(itemList.length).toBeGreaterThan(0);
+
+      // Set child
+      const childByExclude = {
+        ...childInit,
+        exclude: "庇佑",
+      };
+
+      // Filter item list by child
+      const itemListFiltered = itemNameFilter(childByExclude, itemList);
+
+      expect(itemListFiltered.length).toBe(10);
+      expect(itemListFiltered[0].itemName).toBe("乙太星塵1");
+    });
+
+    // Include and exclude
+    it("check ONE child.include is in and ONE child.exclude is NOT in item name", async () => {
+      // Set child
+      const childByBoth = {
+        ...childInit,
+        include: "4",
+        exclude: "庇佑",
+      };
+
+      // Filter item list by child
+      const itemListFiltered = itemNameFilter(childByBoth, itemList);
+
+      expect(itemListFiltered.length).toBe(2);
+      expect(itemListFiltered[0].itemName).toBe("乙太星塵4");
+    });
+
+    // Check multiple include (split by "+")
+    it("check MULTI child.incldue is in item name", async () => {
+      const multiChildByInclude = {
+        ...childInit,
+        include: "1+2+3",
+      };
+
+      // Filter item list by child
+      const itemListFiltered = itemNameFilter(multiChildByInclude, itemList);
+
+      expect(itemListFiltered.length).toBe(8);
+      // First item
+      expect(itemListFiltered[0].itemName).toBe("乙太星塵1");
+      // Last item
+      expect(itemListFiltered[6].itemName).toBe("庇佑乙太星塵2");
+    });
+
+    // Check multiple exclude (split by "+")
+    it("check MULTI child.exclude is NOT in item name", async () => {
+      const multiChildByExclude = {
+        ...childInit,
+        exclude: "1+2+3",
+      };
+
+      // Filter item list by child
+      const itemListFiltered = itemNameFilter(multiChildByExclude, itemList);
+
+      expect(itemListFiltered.length).toBe(6);
+      // First item
+      expect(itemListFiltered[0].itemName).toBe("乙太星塵4");
+      // Last item
+      expect(itemListFiltered[4].itemName).toBe("庇佑乙太星塵");
+    });
+
+    // Check multiple include and exclude (split by "+")
+    it("check MULTI child.include is in and MULTI child.exclude is NOT in item name", async () => {
+      const multiChildByBoth = {
+        ...childInit,
+        include: "庇佑",
+        exclude: "2",
+      };
+
+      // Filter item list by child
+
+      const itemListFiltered = itemNameFilter(multiChildByBoth, itemList);
+      expect(itemListFiltered.length).toBe(2);
+      expect(itemListFiltered[0].itemName).toBe("庇佑乙太星塵");
+    });
+
+    // Check item refine
+    it("check Refine of item is equal to child.set_refine", async () => {
+      const childByRefine = {
+        ...childInit,
+        set_refine: 12,
+      };
+
+      // Filter item list by child
+      const itemListFiltered = itemNameFilter(childByRefine, itemList);
+      expect(itemListFiltered.length).toBe(1);
+      expect(itemListFiltered[0].itemRefining).toBe(12);
+    });
+
+    // Check item level
+    it("check Level of item is equal than child.set_level", async () => {
+      const childByLevel = {
+        ...childInit,
+        set_level: 4, // A
+      };
+
+      // Filter item list by child
+
+      const itemListFiltered = itemNameFilter(childByLevel, itemList);
+
+      expect(itemListFiltered.length).toBe(1);
+      expect(itemListFiltered[0].itemGradeLevel).toBe(4);
+    });
+
+    // TODO: Check child price with filter item list
+    it("check child price with filter item list", async () => {
+      const childByPriceFilter = {
+        ...childInit,
+        include: "庇+佑",
+        exclude: "2",
+        set_level: 4, // A
+        set_price: 200000,
+      };
+
+      // Check child price is lower than set price with include
+      const itemListFiltered = itemNameFilter(childByPriceFilter, itemList);
+
+      expect(itemListFiltered.length).toBe(1);
+      expect(itemListFiltered[0].itemPrice).toBeLessThan(
+        childByPriceFilter.set_price
+      );
+      expect(itemListFiltered[0].itemGradeLevel).toBe(4);
+      expect(itemListFiltered[0].itemName).toBe("庇佑乙太星塵99 A");
+    });
   });
-
-  // Only exclude
-  it("check ONE child.exclude is not in item name", async () => {
-    expect(itemList.length).toBeGreaterThan(0);
-
-    // Set child
-    const childByExclude = {
-      include: "",
-      exclude: "庇佑",
-      set_price: 0,
-      new_price: 0,
-      nofi_time: "",
-      item_name: "",
-    };
-
-    // Check child price is lower than set price with include
-    const itemListFiltered = itemNameFilter(childByExclude, itemList);
-
-    expect(itemListFiltered.length).toBe(10);
-    expect(itemListFiltered[0].itemName).toBe("乙太星塵1");
-  });
-
-  // Include and exclude
-  it("check ONE child.include is in and ONE child.exclude is NOT in item name", async () => {
-    // Set child
-    const childByBoth = {
-      include: "4",
-      exclude: "庇佑",
-      set_price: 0,
-      new_price: 0,
-      nofi_time: "",
-      item_name: "",
-    };
-
-    // Check child price is lower than set price with include
-    const itemListFiltered = itemNameFilter(childByBoth, itemList);
-
-    expect(itemListFiltered.length).toBe(2);
-    expect(itemListFiltered[0].itemName).toBe("乙太星塵4");
-  });
-
-  // Check multiple include (split by "+")
-  it("check MULTI child.incldue is in item name", async () => {
-    const multiChildByInclude = {
-      include: "1+2+3",
-      exclude: "",
-      set_price: 0,
-      new_price: 0,
-      nofi_time: "",
-      item_name: "",
-    };
-
-    // Check child price is lower than set price with include
-    const itemListFiltered = itemNameFilter(multiChildByInclude, itemList);
-
-    expect(itemListFiltered.length).toBe(7);
-    // First item
-    expect(itemListFiltered[0].itemName).toBe("乙太星塵1");
-    // Last item
-    expect(itemListFiltered[6].itemName).toBe("庇佑乙太星塵2");
-  });
-
-  // Check multiple exclude (split by "+")
-  it("check MULTI child.exclude is NOT in item name", async () => {
-    const multiChildByExclude = {
-      include: "",
-      exclude: "1+2+3",
-      set_price: 0,
-      new_price: 0,
-      nofi_time: "",
-      item_name: "",
-    };
-
-    // Check child price is lower than set price with exclude
-    const itemListFiltered = itemNameFilter(multiChildByExclude, itemList);
-
-    expect(itemListFiltered.length).toBe(5);
-    // First item
-    expect(itemListFiltered[0].itemName).toBe("乙太星塵4");
-    // Last item
-    expect(itemListFiltered[4].itemName).toBe("庇佑乙太星塵");
-  });
-
-  // Check multiple include and exclude (split by "+")
-  it("check MULTI child.include is in and MULTI child.exclude is NOT in item name", async () => {
-    const multiChildByBoth = {
-      include: "庇佑",
-      exclude: "2",
-      set_price: 0,
-      new_price: 0,
-      nofi_time: "",
-      item_name: "",
-    };
-
-    // Check child price is lower than set price with include
-    const itemListFiltered = itemNameFilter(multiChildByBoth, itemList);
-
-    expect(itemListFiltered.length).toBe(1);
-    expect(itemListFiltered[0].itemName).toBe("庇佑乙太星塵");
-  });
-
-  // TODO: Check item refine
-
-  // TODO: Check item level
-
-  // TODO: Check child price with filter item list
 });

@@ -97,7 +97,7 @@ export const lowPriceChecker = async () => {
   console.log(`Next check after ${timeoutSeconds}(sec)`);
 };
 
-// Filter item name list by a child (include, exclude)
+// Filter item name list by a child (include, exclude, itemRefine, and itemLevel)
 export const itemNameFilter = (child, itemList) => {
   const itemListFiltered = [];
 
@@ -105,22 +105,31 @@ export const itemNameFilter = (child, itemList) => {
   const includeList = child.include.split("+");
   const excludeList = child.exclude.split("+");
 
+  // Get itemRefining and itemGradeLevel of child
+  const { set_refine: setRefine, set_level: setLevel } = child;
+
   itemList.forEach((item) => {
     const itemName = item.itemName;
-
-    const { include, exclude } = child;
+    const itemRefine = item.itemRefining;
+    const itemLevel = item.itemGradeLevel;
 
     // Check if the itemName matches any term in the includeList, or includeList is empty
-    const includesTerm = includeList.some((includeTerm) =>
-      itemName.includes(includeTerm) || includeTerm === ""
+    const includesTerm = includeList.some(
+      (includeTerm) => itemName.includes(includeTerm) || includeTerm === ""
     );
 
     // Check if the itemName does not match any term in the excludeList, or excludeList is empty
-    const excludesTerm = excludeList.every((excludeTerm) =>
-      !itemName.includes(excludeTerm) || excludeTerm === ""
+    const excludesTerm = excludeList.every(
+      (excludeTerm) => !itemName.includes(excludeTerm) || excludeTerm === ""
     );
 
-    if (includesTerm && excludesTerm) {
+    // Check if set_refine matches itemRefine, or set_refine is 0 (no filter on refining)
+    const matchesRefine = setRefine === 0 || setRefine === itemRefine;
+
+    // Check if set_level matches itemLevel, or set_level is 0 (no filter on level)
+    const matchesLevel = setLevel === 0 || setLevel === itemLevel;
+
+    if (includesTerm && excludesTerm && matchesRefine && matchesLevel) {
       itemListFiltered.push(item);
     }
   });
@@ -128,8 +137,7 @@ export const itemNameFilter = (child, itemList) => {
   return itemListFiltered;
 };
 
-
-export const lowerPriceFilter = (child, itemList) => {
+export const filterChildPrice = (child, itemList) => {
   // Get set price of child
   const { set_price: setPrice, new_price: newPrice } = child;
 
@@ -257,30 +265,9 @@ ${chnType}價格: ${new_price.toLocaleString("en-US")}
 };
 
 // Get itemList of a parent from RO server
-export const getItemList = async (parent) => {
-  // Variable of parent
-  const { keyword, svr, type } = parent;
-
-  // Request
-  const ro_url = "https://event.gnjoy.com.tw/Ro/RoShopSearch/forAjax_shopDeal";
-  const headers = setHeaders();
-  const requestBody = {
-    div_svr: svr.toString(), // '2290'
-    div_storetype: type.toString(), // '0'販售, '1'收購, '2'全部
-    txb_KeyWord: keyword, // '乙太星塵'
-    row_start: "1",
-    recaptcha: "",
-    sort_by: "itemPrice",
-    sort_desc: "", // '', 'desc'
-  };
-
-  // Send request
-  const response = await axios
-    .post(ro_url, requestBody, { headers })
-    .catch((error) => {
-      console.error("Error to get item list from RO server!", error);
-    });
-
+const getItemList = async (parent) => {
+  // Get original itemList from RO server
+  const response = await requestRoServer(parent);
   const responseData = response.data;
 
   // console.log(responseData);
@@ -327,6 +314,33 @@ export const getItemList = async (parent) => {
 
   // Return itemList
   return itemList;
+};
+
+export const requestRoServer = async (parent) => {
+  // Variable of parent
+  const { keyword, svr, type } = parent;
+
+  // Request
+  const ro_url = "https://event.gnjoy.com.tw/Ro/RoShopSearch/forAjax_shopDeal";
+  const headers = setHeaders();
+  const requestBody = {
+    div_svr: svr.toString(), // '2290'
+    div_storetype: type.toString(), // '0'販售, '1'收購, '2'全部
+    txb_KeyWord: keyword, // '乙太星塵'
+    row_start: "1",
+    recaptcha: "",
+    sort_by: "itemPrice",
+    sort_desc: "", // '', 'desc'
+  };
+
+  // Send request
+  const response = await axios
+    .post(ro_url, requestBody, { headers })
+    .catch((error) => {
+      console.error("Error to get item list from RO server!", error);
+    });
+
+  return response;
 };
 
 // export

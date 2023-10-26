@@ -55,11 +55,11 @@ function CustomerTable() {
 
   // Define level options
   const levelOptions = [
+    { value: 0, label: '""' },
     { value: 4, label: "A" },
     { value: 3, label: "B" },
     { value: 2, label: "C" },
     { value: 1, label: "D" },
-    { value: 0, label: "" },
   ];
 
   // "FETCH"
