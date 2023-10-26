@@ -468,8 +468,7 @@ function CustomerTable() {
                     <input
                       type="text"
                       value={editedParent.keyword}
-                      className="form-control form-control-sm"
-                      style={{ width: "100px" }}
+                      className="big-input"
                       placeholder="關鍵字"
                       onChange={(e) =>
                         setEditedParent({
@@ -618,8 +617,7 @@ function CustomerTable() {
                     <input
                       type="text"
                       value={editedChild.include}
-                      className="form-control form-control-sm"
-                      style={{ width: "100px" }}
+                      className="big-input"
                       placeholder="包含(a+b)"
                       onChange={(e) =>
                         setEditedChild({
@@ -634,8 +632,7 @@ function CustomerTable() {
                     <input
                       type="text"
                       value={editedChild.exclude}
-                      className="form-control form-control-sm"
-                      style={{ width: "100px" }}
+                      className="big-input"
                       placeholder="排除(a+b)"
                       onChange={(e) =>
                         setEditedChild({
@@ -650,8 +647,7 @@ function CustomerTable() {
                     <input
                       type="number"
                       value={editedChild.set_refine}
-                      className="form-control form-control-sm"
-                      style={{ width: "50px" }}
+                      className="small-input"
                       placeholder="精煉值"
                       onChange={(e) =>
                         setEditedChild({
@@ -686,8 +682,7 @@ function CustomerTable() {
                     <input
                       type="number"
                       value={editedChild.set_price}
-                      className="form-control form-control-sm"
-                      style={{ width: "100px" }}
+                      className="big-input"
                       placeholder="設定價格"
                       onChange={(e) =>
                         setEditedChild({
@@ -733,8 +728,7 @@ function CustomerTable() {
                         <input
                           type="text"
                           value={editedChild.include}
-                          className="form-control form-control-sm"
-                          style={{ width: "100px" }}
+                          className="big-input"
                           placeholder="包含(a+b)"
                           onChange={(e) =>
                             setEditedChild({
@@ -753,8 +747,7 @@ function CustomerTable() {
                         <input
                           type="text"
                           value={editedChild.exclude}
-                          className="form-control form-control-sm"
-                          style={{ width: "100px" }}
+                          className="big-input"
                           placeholder="排除(a+b)"
                           onChange={(e) =>
                             setEditedChild({
@@ -773,8 +766,7 @@ function CustomerTable() {
                         <input
                           type="number"
                           value={editedChild.set_refine}
-                          className="form-control form-control-sm"
-                          style={{ width: "70px" }}
+                          className="small-input"
                           placeholder="精煉值"
                           onChange={(e) =>
                             setEditedChild({
@@ -822,8 +814,7 @@ function CustomerTable() {
                         <input
                           type="number"
                           value={editedChild.set_price}
-                          className="form-control form-control-sm"
-                          style={{ width: "100px" }}
+                          className="big-input"
                           placeholder="設定價格"
                           onChange={(e) =>
                             setEditedChild({
@@ -839,7 +830,7 @@ function CustomerTable() {
                     {/* New Price */}
                     <td>{child.new_price.toLocaleString()}</td>
                     {/* Nofi time */}
-                    <td style={{ width: "100px" }}>{child.nofi_time}</td>
+                    <td>{child.nofi_time}</td>
                     {/* Button */}
                     <td>
                       {!addingChildMode &&
@@ -911,8 +902,7 @@ function CustomerTable() {
                 <input
                   type="text"
                   value={editedParent.keyword}
-                  className="form-control form-control-sm"
-                  style={{ width: "200px" }}
+                  className="big-input"
                   placeholder="關鍵字"
                   onChange={(e) =>
                     setEditedParent({
@@ -965,8 +955,7 @@ function CustomerTable() {
                 <input
                   type="text"
                   value={editedChild.include}
-                  className="form-control form-control-sm"
-                  style={{ width: "100px" }}
+                  className="big-input"
                   placeholder="包含(a+b)"
                   onChange={(e) =>
                     setEditedChild({
@@ -981,8 +970,7 @@ function CustomerTable() {
                 <input
                   type="text"
                   value={editedChild.exclude}
-                  className="form-control form-control-sm"
-                  style={{ width: "100px" }}
+                  className="big-input"
                   placeholder="排除(a+b)"
                   onChange={(e) =>
                     setEditedChild({
@@ -997,8 +985,7 @@ function CustomerTable() {
                 <input
                   type="number"
                   value={editedChild.set_refine}
-                  className="form-control form-control-sm"
-                  style={{ width: "50px" }}
+                  className="small-input"
                   placeholder="精煉值"
                   onChange={(e) =>
                     setEditedChild({
@@ -1032,8 +1019,7 @@ function CustomerTable() {
                 <input
                   type="number"
                   value={editedChild.set_price}
-                  className="form-control form-control-sm"
-                  style={{ width: "100px" }}
+                  className="big-input"
                   placeholder="設定價格"
                   onChange={(e) =>
                     setEditedChild({
@@ -1044,8 +1030,8 @@ function CustomerTable() {
                 />
               </td>
               {/* Empty */}
-              <td style={{ width: "100px" }}></td>
-              <td style={{ width: "100px" }}></td>
+              <td></td>
+              <td></td>
               <td>
                 <button
                   className="btn btn-sm btn-success"

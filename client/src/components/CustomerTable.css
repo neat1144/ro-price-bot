@@ -55,3 +55,11 @@
   /* background-color: #0056b3; */
   color: #004cff;
 }
+
+.big-input {
+  width: 140px;
+}
+
+.small-input {
+  width: 50px;
+}
