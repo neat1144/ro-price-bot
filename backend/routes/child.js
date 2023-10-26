@@ -14,14 +14,16 @@ db.serialize(() => {
 
 // TABLE: Create the 'child' table
 db.run(`CREATE TABLE IF NOT EXISTS child
-        (id        INTEGER PRIMARY KEY AUTOINCREMENT, 
-         include   TEXT, 
-         exclude   TEXT, 
-         set_price REAL, 
-         new_price REAL,
-         nofi_time TEXT,
-         item_name TEXT,
-         parent_id INTEGER,
+        (id         INTEGER PRIMARY KEY AUTOINCREMENT, 
+         include    TEXT, 
+         exclude    TEXT, 
+         set_refine REAL,
+         set_lavel  REAL,
+         set_price  REAL, 
+         new_price  REAL,
+         nofi_time  TEXT,
+         item_name  TEXT,
+         parent_id  INTEGER,
          FOREIGN KEY (parent_id) REFERENCES parent(id) ON DELETE CASCADE)`);
 
 // CREATE a new child
@@ -29,6 +31,8 @@ router.post("/", (req, res) => {
   const {
     include,
     exclude,
+    set_refine,
+    set_lavel,
     set_price,
     new_price,
     nofi_time,
@@ -42,8 +46,8 @@ router.post("/", (req, res) => {
   }
 
   db.run(
-    `INSERT INTO child (include, exclude, set_price, new_price, nofi_time, parent_id, item_name) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    [include, exclude, set_price, new_price, nofi_time, parent_id, item_name],
+    `INSERT INTO child (include, exclude, set_refine, set_lavel, set_price, new_price, nofi_time, parent_id, item_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [include, exclude, set_refine, set_lavel, set_price, new_price, nofi_time, parent_id, item_name],
     function (err) {
       if (err) {
         res.status(400).json({ error: err.message });
@@ -60,6 +64,8 @@ router.post("/", (req, res) => {
           id: lastID,
           include,
           exclude,
+          set_refine,
+          set_lavel,
           set_price,
           new_price,
           nofi_time,
@@ -76,6 +82,8 @@ router.put("/:id", (req, res) => {
   const {
     include,
     exclude,
+    set_refine,
+    set_lavel,
     set_price,
     new_price,
     nofi_time,
@@ -85,10 +93,12 @@ router.put("/:id", (req, res) => {
   const { id } = req.params;
 
   db.run(
-    `UPDATE child SET include = ?, exclude = ?, set_price = ?, new_price = ?, nofi_time = ?, parent_id = ?, item_name = ? WHERE id = ?`,
+    `UPDATE child SET include = ?, exclude = ?, set_refine = ?, set_lavel = ?, set_price = ?, new_price = ?, nofi_time = ?, parent_id = ?, item_name = ? WHERE id = ?`,
     [
       include,
       exclude,
+      set_refine,
+      set_lavel,
       set_price,
       new_price,
       nofi_time,

@@ -44,10 +44,13 @@ describe("/child API", () => {
   const requestBody = {
     include: "",
     exclude: "",
+    set_refine: 0,
+    set_lavel: 0,
     set_price: 200000,
     new_price: 0,
     parent_id: 1,
     nofi_time: "",
+    item_name: "test item",
   };
 
   // POST test
@@ -56,7 +59,7 @@ describe("/child API", () => {
       // Sucess case
       const res = await request(app)
         .post("/child")
-        .send({ ...requestBody, parent_id: parentID });
+        .send({...requestBody, parent_id: parentID});
 
       // Check
       expect(res.statusCode).toEqual(200);
@@ -123,6 +126,8 @@ describe("/child API", () => {
       expect(res3.body).toHaveProperty("message");
       expect(res3.body).toHaveProperty("data");
       expect(res3.body.data.length).toEqual(2);
+      expect(res3.body.data[0]).toHaveProperty("set_refine");
+      expect(res3.body.data[1]).toHaveProperty("set_lavel");
     });
   });
 

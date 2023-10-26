@@ -196,7 +196,7 @@ describe("filter child by price, include and exclude", () => {
     expect(itemListFiltered[0].itemName).toBe("乙太星塵4");
   });
 
-  // TODO: Check multiple include (split by "+")
+  // Check multiple include (split by "+")
   it("check MULTI child.incldue is in item name", async () => {
     const multiChildByInclude = {
       include: "1+2+3",
@@ -217,7 +217,7 @@ describe("filter child by price, include and exclude", () => {
     expect(itemListFiltered[6].itemName).toBe("庇佑乙太星塵2");
   });
 
-  // TODO: Check multiple exclude (split by "+")
+  // Check multiple exclude (split by "+")
   it("check MULTI child.exclude is NOT in item name", async () => {
     const multiChildByExclude = {
       include: "",
@@ -238,7 +238,7 @@ describe("filter child by price, include and exclude", () => {
     expect(itemListFiltered[4].itemName).toBe("庇佑乙太星塵");
   });
 
-  // TODO: Check multiple include and exclude (split by "+")
+  // Check multiple include and exclude (split by "+")
   it("check MULTI child.include is in and MULTI child.exclude is NOT in item name", async () => {
     const multiChildByBoth = {
       include: "庇佑",
@@ -258,7 +258,7 @@ describe("filter child by price, include and exclude", () => {
 
   // TODO: Check item refine
 
-  // TODO: Check item grade level
+  // TODO: Check item level
 
   // TODO: Check child price with filter item list
 });

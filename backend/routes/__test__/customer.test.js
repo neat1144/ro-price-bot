@@ -1,3 +1,4 @@
+
 import request from "supertest";
 import db from "../../db/db.js";
 import express from "express";
@@ -22,9 +23,11 @@ describe("/customer API", () => {
     type: 1,
     include: "test include1",
     exclude: "test exclude1",
+    set_refine: 0,
+    set_lavel: 0,
     set_price: 1000,
     new_price: 0,
-    time: "2022-01-01 (23:09)",
+    nofi_time: "2022-01-01 (23:09)",
   };
 
   const requestBody2 = {
@@ -33,9 +36,11 @@ describe("/customer API", () => {
     type: 1,
     include: "test include2",
     exclude: "test exclude2",
+    set_refine: 2,
+    set_lavel: 2,
     set_price: 8888,
     new_price: 0,
-    time: "2030-01-01 (23:09)",
+    nofi_time: "2030-01-01 (23:09)",
   };
 
   const insertOneParent = () => {
@@ -96,6 +101,8 @@ describe("/customer API", () => {
       //     "child_id": 3,
       //     "include": "",
       //     "exclude": "",
+      //     "set_refine": 0,
+      //     "set_lavel": 0,
       //     "set_price": 200000,
       //     "new_price": 0,
       //     "nofi_time": "",
@@ -110,7 +117,7 @@ describe("/customer API", () => {
       expect(getRes.body[0].exclude).toEqual(requestBody.exclude);
       expect(getRes.body[0].set_price).toEqual(requestBody.set_price);
       expect(getRes.body[0].new_price).toEqual(requestBody.new_price);
-      expect(getRes.body[0].nofi_time).toEqual(requestBody.time);
+      expect(getRes.body[0].nofi_time).toEqual(requestBody.nofi_time);
       expect(getRes.body[0].item_name).toEqual(null);
       expect(getRes.body[0]).toHaveProperty("parent_id");
       expect(getRes.body[0].keyword).toEqual(requestBody.keyword);
@@ -119,6 +126,8 @@ describe("/customer API", () => {
 
       expect(getRes.body[1].keyword).toEqual(requestBody2.keyword);
       expect(getRes.body[1].set_price).toEqual(requestBody2.set_price);
+      expect(getRes.body[1].set_refine).toEqual(2);
+      expect(getRes.body[1].set_lavel).toEqual(2);
     });
   });
 });

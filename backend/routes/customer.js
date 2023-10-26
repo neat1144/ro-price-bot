@@ -19,6 +19,8 @@ db.run("PRAGMA foreign_keys = ON;");
   "child_id": 1,
   "include": "Example Include",
   "exclude": "Example Exclude",
+  "set_refine": 0,
+  "set_lavel": 0,
   "set_price": 50,
   "new_price": 40,
   "time": "2022-01-01 00:00",
@@ -30,7 +32,7 @@ db.run("PRAGMA foreign_keys = ON;");
 router.get("/", (req, res) => {
   // Query to fetch all child records joined with parent records
   const query = `
-  SELECT child.id AS child_id, include, exclude, set_price, new_price, nofi_time, item_name, parent_id, keyword, svr, type
+  SELECT child.id AS child_id, include, exclude, set_refine, set_lavel, set_price, new_price, nofi_time, item_name, parent_id, keyword, svr, type
   FROM child
   LEFT JOIN parent ON child.parent_id = parent.id;
 `;
@@ -46,30 +48,48 @@ router.get("/", (req, res) => {
 
 // Create child and parent
 router.post("/", (req, res) => {
-  // Get the data from the request
-  const { keyword, svr, type, include, exclude, set_price, new_price, time } =
-    req.body;
+  const {
+    keyword,
+    svr,
+    type,
+    include,
+    exclude,
+    set_refine,
+    set_lavel,
+    set_price,
+    new_price,
+    nofi_time,
+  } = req.body;
 
-  // Use keyword, svr, and type to get parent_id
   const selectParentQuery = `
     SELECT id
     FROM parent
     WHERE keyword = ? AND svr = ? AND type = ?
   `;
+
   db.get(selectParentQuery, [keyword, svr, type], (err, row) => {
     if (err) {
       res.status(500).json({ error: "Internal Server Error" });
     } else {
-      // If parent_id exists
       if (row) {
         // If parent_id does exist, use that parent_id to create a new child
+        const parentId = row.id;
         const insertChildQuery = `
-          INSERT INTO child (parent_id, include, exclude, set_price, new_price, nofi_time)
-          VALUES (?, ?, ?, ?, ?, ?)
+          INSERT INTO child (parent_id, include, exclude, set_refine, set_lavel, set_price, new_price, nofi_time)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `;
         db.run(
           insertChildQuery,
-          [row.id, include, exclude, set_price, new_price, time],
+          [
+            parentId,
+            include,
+            exclude,
+            set_refine,
+            set_lavel,
+            set_price,
+            new_price,
+            nofi_time,
+          ],
           (err) => {
             if (err) {
               res.status(500).json({ error: "Internal Server Error" });
@@ -78,9 +98,8 @@ router.post("/", (req, res) => {
             }
           }
         );
-        // If parent_id doesn't exist
       } else {
-        // create a new parent,
+        // If parent_id doesn't exist, create a new parent first
         const insertParentQuery = `
           INSERT INTO parent (keyword, svr, type)
           VALUES (?, ?, ?)
@@ -89,22 +108,28 @@ router.post("/", (req, res) => {
           if (err) {
             res.status(500).json({ error: "Internal Server Error" });
           } else {
-            // use that parent_id to create a new child
             const parentId = this.lastID;
             const insertChildQuery = `
-                INSERT INTO child (parent_id, include, exclude, set_price, new_price, nofi_time)
-                VALUES (?, ?, ?, ?, ?, ?)
-              `;
+              INSERT INTO child (parent_id, include, exclude, set_refine, set_lavel, set_price, new_price, nofi_time)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            `;
             db.run(
               insertChildQuery,
-              [parentId, include, exclude, set_price, new_price, time],
+              [
+                parentId,
+                include,
+                exclude,
+                set_refine,
+                set_lavel,
+                set_price,
+                new_price,
+                nofi_time,
+              ],
               (err) => {
                 if (err) {
                   res.status(500).json({ error: "Internal Server Error" });
                 } else {
-                  res
-                    .status(201)
-                    .json({ message: "Child created successfully" });
+                  res.status(201).json({ message: "Child created successfully" });
                 }
               }
             );
@@ -114,5 +139,6 @@ router.post("/", (req, res) => {
     }
   });
 });
+
 
 export default router;
