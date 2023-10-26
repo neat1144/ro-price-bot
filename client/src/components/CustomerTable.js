@@ -344,6 +344,7 @@ function CustomerTable() {
 
   // Save button and Create parent
   const handleSaveNewParent = () => {
+    console.log(editedParent);
     // Make a POST request to add the new parent
     axios
       .post(`http://localhost:3030/parent`, {
@@ -410,10 +411,10 @@ function CustomerTable() {
   };
 
   // "CHANGE"
-  const handleChildChange = (e) => {
-    setEditedChild({ ...editedChild, [e.target.name]: e.target.value });
-    console.log(editedChild);
-  };
+  // const handleChildChange = (e) => {
+  //   setEditedChild({ ...editedChild, [e.target.name]: e.target.value });
+  //   console.log(editedChild);
+  // };
 
   // Create a variable to track the serial number
   let serialNumber = 1;
@@ -597,7 +598,7 @@ function CustomerTable() {
                       value={editedChild.include}
                       className="form-control form-control-sm"
                       style={{ width: "100px" }}
-                      placeholder="包含"
+                      placeholder="包含(a+b)"
                       onChange={(e) =>
                         setEditedChild({
                           ...editedChild,
@@ -613,7 +614,7 @@ function CustomerTable() {
                       value={editedChild.exclude}
                       className="form-control form-control-sm"
                       style={{ width: "100px" }}
-                      placeholder="排除"
+                      placeholder="排除(a+b)"
                       onChange={(e) =>
                         setEditedChild({
                           ...editedChild,
@@ -712,7 +713,7 @@ function CustomerTable() {
                           value={editedChild.include}
                           className="form-control form-control-sm"
                           style={{ width: "100px" }}
-                          placeholder="包含"
+                          placeholder="包含(a+b)"
                           onChange={(e) =>
                             setEditedChild({
                               ...editedChild,
@@ -732,7 +733,7 @@ function CustomerTable() {
                           value={editedChild.exclude}
                           className="form-control form-control-sm"
                           style={{ width: "100px" }}
-                          placeholder="排除"
+                          placeholder="排除(a+b)"
                           onChange={(e) =>
                             setEditedChild({
                               ...editedChild,
@@ -935,7 +936,7 @@ function CustomerTable() {
                   value={editedChild.include}
                   className="form-control form-control-sm"
                   style={{ width: "100px" }}
-                  placeholder="包含"
+                  placeholder="包含(a+b)"
                   onChange={(e) =>
                     setEditedChild({
                       ...editedChild,
@@ -951,7 +952,7 @@ function CustomerTable() {
                   value={editedChild.exclude}
                   className="form-control form-control-sm"
                   style={{ width: "100px" }}
-                  placeholder="排除"
+                  placeholder="排除(a+b)"
                   onChange={(e) =>
                     setEditedChild({
                       ...editedChild,
@@ -960,10 +961,45 @@ function CustomerTable() {
                   }
                 />
               </td>
+              {/* Set Refine */}
+              <td>
+                <input
+                  type="number"
+                  value={editedChild.set_refine}
+                  className="form-control form-control-sm"
+                  style={{ width: "50px" }}
+                  placeholder="精煉值"
+                  onChange={(e) =>
+                    setEditedChild({
+                      ...editedChild,
+                      set_refine: e.target.value,
+                    })
+                  }
+                />
+              </td>
+              {/* Set Level */}
+              <td>
+                <select
+                  value={editedChild.set_level}
+                  className="form-select form-select-sm"
+                  onChange={(e) =>
+                    setEditedChild({
+                      ...editedChild,
+                      set_level: e.target.value,
+                    })
+                  }
+                >
+                  {levelOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </td>
               {/* Set Price */}
               <td>
                 <input
-                  type="text"
+                  type="number"
                   value={editedChild.set_price}
                   className="form-control form-control-sm"
                   style={{ width: "100px" }}
@@ -982,13 +1018,17 @@ function CustomerTable() {
               <td>
                 <button
                   className="btn btn-sm btn-success"
-                  onClick={handleSaveNewParent}
+                  onClick={() => {
+                    handleSaveNewParent();
+                  }}
                 >
                   保存
                 </button>
                 <button
                   className="btn btn-sm btn-secondary"
-                  onClick={handleCancelAddNewParent}
+                  onClick={() => {
+                    handleCancelAddNewParent();
+                  }}
                 >
                   取消
                 </button>
