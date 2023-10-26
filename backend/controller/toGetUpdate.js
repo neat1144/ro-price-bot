@@ -1,3 +1,5 @@
+import axios from "axios";
+
 // Get customer list
 export const getBotIdToken = async () => {
   // Get bot id and token from db
