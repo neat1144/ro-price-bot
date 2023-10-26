@@ -19,6 +19,12 @@ const PriceChecker = () => {
     fetchBotState();
   }, []);
 
+  useEffect(() => {
+    if (botState === 2) {
+      changeBotState(3);
+    }
+  }, [botState]);
+
   // Change Bot State
   const changeBotState = async (stateCode) => {
     const botStateApi = "http://localhost:3030/bot-state";
@@ -47,7 +53,7 @@ const PriceChecker = () => {
 
   return (
     <div className="button-container">
-      {botState === 0 ? (
+      {botState === 0 || botState === 3 ? (
         <button className="btn btn-primary" onClick={() => changeBotState(1)}>
           Start
         </button>

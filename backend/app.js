@@ -84,13 +84,16 @@ const priceCheckerBot = async () => {
 
   // Stop checker
   if (botState === 0) {
+    console.log("Stop checker");
     // Clean interval
     clearInterval(intervalId);
+
+    await changeBotState(3);
   }
 };
 
 // Set timeout for price checker bot
-setInterval(priceCheckerBot, 2000);
+setInterval(priceCheckerBot, 500);
 
 // Start the Express server
 app.listen(port, () => {
