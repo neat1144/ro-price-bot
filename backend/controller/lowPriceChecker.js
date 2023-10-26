@@ -21,7 +21,7 @@ export const lowPriceChecker = async () => {
   const botState = await getBotState();
 
   // if botState is false(0), then stop check
-  if (botState === 0) {
+  if (botState === 0 || botState === 3) {
     // stop this function
     return;
   }
