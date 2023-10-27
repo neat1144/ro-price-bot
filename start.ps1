@@ -43,20 +43,24 @@ while ($true) {
     }
 
     # Connect
-    Write-Output "連線中"
+    Write-Output "Connecting..."
     
     $username = ""
     $password = ""
 
-    rasdial "用這個" $username $password
+    rasdial $username $password
+
+    Write-Output "Connected."
 
     # Wait for 20 minutes
+    Write-Output "Waiting for 20 minutes..."
     Start-Sleep -Seconds 1200
 
     # Disconnect
-    Write-Output "斷連中"
-    rasdial "用這個" /DISCONNECT
+    Write-Output "Disconnecting..."
+    rasdial /DISCONNECT
     Start-Sleep -Seconds 3
+    Write-Output "Disconnected."
 
     # Print a msg
     Write-Output "Press 'q' to exit the script."
