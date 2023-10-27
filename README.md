@@ -7,7 +7,9 @@
 ### windows 本地部署
 
 1. 下載 code，解壓縮到 C 槽。
-2. 右鍵 `start.ps1` 檔案，選擇使用 "**用 PowerShell 執行**"。
+2. 編輯 `start.ps1`，修改 pppoe 的 username 和 password
+3. 右鍵 `start.ps1` 檔案，選擇使用 "**用 PowerShell 執行**"。
+4. 結束時，關閉全部的 cmd 視窗即可
 
 ### docker 部署
 
