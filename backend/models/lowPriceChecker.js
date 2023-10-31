@@ -5,12 +5,11 @@ import {
   getChildList,
   updateChild,
   getBotState,
-  getTimeout,
   getDateTime,
   getTime,
   getReqTimeout,
 } from "../utils/toGetUpdate.js";
-import { getAllItemList, getItemList } from "./getItemList.js";
+import { getAllItemList } from "./getItemList.js";
 
 const botStateChecker = async () => {
   // Get bot state
@@ -75,7 +74,6 @@ export const lowPriceChecker = async () => {
     // if itemList is empty, response error with 404
     if (!allItemList.length) {
       console.error("No item list found!");
-      return;
     }
 
     // Loop child to check price
@@ -104,6 +102,7 @@ export const lowPriceChecker = async () => {
   // Log timeout from db
   // const timeoutSeconds = await getTimeout();
   // console.log(`Next check after ${timeoutSeconds}(sec)`);
+  console.log("Waiting for next check...");
 };
 
 // Filter item name list by a child (include, exclude, itemRefine, and itemLevel)

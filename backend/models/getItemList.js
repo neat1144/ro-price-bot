@@ -15,7 +15,7 @@ export const getAllItemList = async (parent, timeoutSeconds) => {
 
   // Get itemList of page 1
   const rowStart = 1;
-  const firstItemList = await getItemList(parent, rowStart);
+  const firstItemList = await getItemListByRoServer(parent, rowStart);
   allItemList = [...allItemList, ...firstItemList];
   await delay(timeoutMilliseconds);
 
@@ -32,7 +32,7 @@ export const getAllItemList = async (parent, timeoutSeconds) => {
 
       // Get itemList i
       const rowStart = (i - 1) * 30 + 1;
-      const tempItemList = await getItemList(parent, rowStart);
+      const tempItemList = await getItemListByRoServer(parent, rowStart);
 
       // Log page and itemList length
       console.log(`page ${i} itemList length: ${tempItemList.length}`);
@@ -47,45 +47,7 @@ export const getAllItemList = async (parent, timeoutSeconds) => {
 };
 
 // Get itemList of a parent from RO server
-export const getItemList = async (parent, rowStart) => {
-  // Get original itemList from RO server
-  const response = await requestRoServer(parent, rowStart);
-  const responseData = response.data;
-
-  if (responseData["Message"] !== null) {
-    console.log("ro response message: ", responseData["Message"]);
-  }
-  // Response data:
-  // {  Message: null,
-  //    sdate: null,
-  //    edate: null,
-  //    dt: [
-  //          {...},
-  //          {...},
-  //          ...
-  //        ],
-  // }
-
-  // Item list
-  let itemList = [];
-
-  // Filter data of response
-  if (responseData.dt && responseData.dt.length) {
-    itemList = responseData.dt.map((item) => ({
-      itemRefining: item.itemRefining,
-      itemName: item.itemName,
-      itemGradeLevel: item.ItemGradeLevel,
-      itemPrice: item.itemPrice,
-      itemCNT: item.itemCNT,
-      type: item.storetype,
-    }));
-  }
-
-  // Return itemList
-  return itemList;
-};
-
-export const requestRoServer = async (parent, rowStart) => {
+export const getItemListByRoServer = async (parent, rowStart) => {
   // Variable of parent
   const { keyword, svr, type } = parent;
 
@@ -102,15 +64,77 @@ export const requestRoServer = async (parent, rowStart) => {
     sort_desc: "", // '', 'desc'
   };
 
-  // Send request
-  const response = await axios
-    .post(ro_url, requestBody, { headers })
-    .catch((error) => {
-      console.error("Error to get item list from RO server!", error);
-    });
+  // Init Item list
+  let itemList = [];
 
-  return response;
+  // Send request
+  try {
+    const response = await axios.post(ro_url, requestBody, { headers });
+
+    // Get original itemList from RO server
+    const responseData = response.data;
+
+    if (responseData["Message"] !== null) {
+      console.log("ro response message: ", responseData["Message"]);
+    }
+    // Response data:
+    // {  Message: null,
+    //    sdate: null,
+    //    edate: null,
+    //    dt: [
+    //          {...},
+    //          {...},
+    //          ...
+    //        ],
+    // }
+
+    // Filter data of response
+    if (responseData.dt && responseData.dt.length) {
+      itemList = responseData.dt.map((item) => ({
+        itemRefining: item.itemRefining,
+        itemName: item.itemName,
+        itemGradeLevel: item.ItemGradeLevel,
+        itemPrice: item.itemPrice,
+        itemCNT: item.itemCNT,
+        type: item.storetype,
+      }));
+    }
+
+    return itemList;
+  } catch (error) {
+    console.error(`Error to get item list by "${keyword}" from RO server!`);
+    return itemList;
+  }
+
+  // Return itemList
 };
+
+// export const requestRoServer = async (parent, rowStart) => {
+//   // Variable of parent
+//   const { keyword, svr, type } = parent;
+
+//   // Request
+//   const ro_url = "https://event.gnjoy.com.tw/Ro/RoShopSearch/forAjax_shopDeal";
+//   const headers = setHeaders();
+//   const requestBody = {
+//     div_svr: svr.toString(), // '2290'
+//     div_storetype: type.toString(), // '0'販售, '1'收購, '2'全部
+//     txb_KeyWord: keyword, // '乙太星塵'
+//     row_start: rowStart.toString(), // '1'
+//     recaptcha: "",
+//     sort_by: "itemPrice",
+//     sort_desc: "", // '', 'desc'
+//   };
+
+//   // Send request
+//   const response = await axios
+//     .post(ro_url, requestBody, { headers })
+//     .catch((error) => {
+//       console.error("Error to get item list from RO server!", error);
+//     });
+
+//   return response;
+// };
 
 const setHeaders = () => {
   const headers = {
