@@ -1,6 +1,4 @@
-import axios from "axios";
-import isOnline from "is-online";
-
+import { sendMsgByBot, formatMsg } from "./chatBot.js";
 import {
   getBotIdToken,
   getParentList,
@@ -10,14 +8,11 @@ import {
   getTimeout,
   getDateTime,
   getTime,
-  setHeaders,
   getReqTimeout,
-} from "./toGetUpdate.js";
+} from "../utils/toGetUpdate.js";
+import { getAllItemList, getItemList } from "./getItemList.js";
 
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-// router.get("/", async (req, res) => {
-export const lowPriceChecker = async () => {
+const botStateChecker = async () => {
   // Get bot state
   const botState = await getBotState();
 
@@ -26,6 +21,12 @@ export const lowPriceChecker = async () => {
     // stop this function
     return;
   }
+};
+
+// router.get("/", async (req, res) => {
+export const lowPriceChecker = async () => {
+  // Check bot state
+  botStateChecker();
 
   // Log
   console.log("");
@@ -44,73 +45,59 @@ export const lowPriceChecker = async () => {
   }
 
   // if botState is true(1), then start check
-  if (botState !== 0) {
-    // Get request timeout
-    const reqTimeout = await getReqTimeout();
-    const reqTimeoutMs = reqTimeout * 1000;
+  // Get request timeout
+  const reqTimeoutSeconds = await getReqTimeout();
 
-    // Loop parent to check price of child
-    for (const parent of parentList) {
-      // Get child list by one parent
-      const childList = await getChildList(parent.id);
+  // Loop parent to check price of child
+  for (const parent of parentList) {
+    // Check bot state
+    botStateChecker();
 
-      // if childList is empty, response error with 404
-      if (!childList.length) {
-        console.error("No child list found!");
-        return;
-      }
+    // Get child list by one parent
+    const childList = await getChildList(parent.id);
 
-      // Log
-      console.log(
-        `Checking ${parent.keyword}-${parent.svr}-${
-          parent.type
-        }...         (${getTime()})`
-      );
+    // if childList is EMPTY, then return
+    if (!childList.length) {
+      console.error("No child list found!");
+      return;
+    }
 
-      // Delay for request timeout
-      await delay(reqTimeoutMs);
+    // Log
+    console.log(
+      `Checking ${parent.keyword}-${parent.svr}-${
+        parent.type
+      }...         (${getTime()})`
+    );
 
-      // Get item list by one parent
-      // Because RO server only return 30 items per page
-      const itemList1 = await getItemList(parent, "1"); // First page (item1 ~ item30)
+    // Get all item list by one parent
+    const allItemList = await getAllItemList(parent, reqTimeoutSeconds);
 
-      // if item of itemList1 is less than 30, then itemList2 is empty
-      let itemList2 = [];
-      if (itemList1.length < 30) {
-        itemList2 = [];
-      } else {
-        itemList2 = await getItemList(parent, "31"); // Second page (item31 ~ )
-      }
+    // if itemList is empty, response error with 404
+    if (!allItemList.length) {
+      console.error("No item list found!");
+      return;
+    }
 
-      // Merge itemList1 and itemList2
-      const itemList = [...itemList1, ...itemList2];
+    // Loop child to check price
+    for (const child of childList) {
+      // Check bot state
+      botStateChecker();
 
-      // if itemList is empty, response error with 404
-      if (!itemList.length) {
-        console.error("No item list found!");
-        return;
-      }
+      // Filter itemList by a child (include, exclude, itemRefine, and itemLevel)
+      const itemListFiltered = itemNameFilter(child, allItemList);
 
-      // Loop child to check price
-      for (const child of childList) {
-        // Filter item(keyword and price) list by a child
-        // const childFiltered = await checkChildPriceByItemList(child, itemList);
-        // Filter itemList by a child (include, exclude, itemRefine, and itemLevel)
-        const itemListFiltered = itemNameFilter(child, itemList);
+      // Filter item list by a child (price)
+      const childFilteredByPrice = childPriceFilter(child, itemListFiltered);
 
-        // Filter item list by a child (price)
-        const childFilteredByPrice = filterChildPrice(child, itemListFiltered);
+      // If childFiltered is not empty, send msg by chat bot
+      if (childFilteredByPrice) {
+        // Send msg by chat bot
+        const botMsg = formatMsg(parent, childFilteredByPrice);
+        console.log(botMsg);
+        await sendMsgByBot(botIdToken, botMsg);
 
-        // If childFiltered is not empty, send msg by chat bot
-        if (childFilteredByPrice) {
-          // Send msg by chat bot
-          const botMsg = formatMsg(parent, childFilteredByPrice);
-          console.log(botMsg);
-          await sendMsgByBot(botIdToken, botMsg);
-
-          // Update child
-          await updateChild(childFilteredByPrice);
-        }
+        // Update child
+        await updateChild(childFilteredByPrice);
       }
     }
   }
@@ -160,7 +147,7 @@ export const itemNameFilter = (child, itemList) => {
   return itemListFiltered;
 };
 
-export const filterChildPrice = (child, itemList) => {
+export const childPriceFilter = (child, itemList) => {
   // Get set price of child
   const { set_price: setPrice, new_price: newPrice } = child;
 
@@ -189,147 +176,6 @@ export const filterChildPrice = (child, itemList) => {
       }
     }
   }
-};
-
-// Send msg by chat bot
-export const sendMsgByBot = async (botIdToken, messageText) => {
-  // Get token and id
-  const { chat_id: chatId, token } = botIdToken;
-
-  // Api Information
-  const tgUrl = `https://api.telegram.org/bot${token}/sendMessage`;
-
-  // Send request by telegram api
-  try {
-    const response = await axios.post(tgUrl, {
-      chat_id: chatId,
-      text: messageText,
-    });
-
-    return response;
-  } catch (error) {
-    const errorMsg = `Error sending msg by TG bot.
-Token:${token}
-chatId:${chatId}
-      `;
-    console.error(errorMsg);
-  }
-};
-
-// Send msg by chat bot
-export const formatMsg = (parent, child) => {
-  const { keyword, type, svr } = parent;
-  const { include, exclude, set_price, new_price, nofi_time, item_name } =
-    child;
-
-  const chnType = type === 0 ? "販賣" : type === 1 ? "收購" : "未知";
-
-  // Msg by sended
-  const messageText = `
-物品名稱: ${item_name}
-伺服器　: ${svr}
-設定價格: ${set_price.toLocaleString("en-US")} 
-${chnType}價格: ${new_price.toLocaleString("en-US")}
-關鍵字　: ${keyword}, 包含(${include}), 排除(${exclude})
-時間　　: ${nofi_time}
-`;
-
-  return messageText;
-};
-
-// Get itemList of a parent from RO server
-const getItemList = async (parent, rowStart) => {
-  // Get original itemList from RO server
-  const response = await requestRoServer(parent, rowStart);
-  const responseData = response.data;
-
-  if (responseData["Message"] !== null) {
-    console.log("ro response message: ", responseData["Message"]);
-  }
-  // Response data:
-  // {  Message: null,
-  //    sdate: null,
-  //    edate: null,
-  //    dt: [
-  //          {...},
-  //          {...},
-  //          ...
-  //        ],
-  // }
-
-  // Item list
-  let itemList = [];
-
-  // Filter data of response
-  if (responseData.dt && responseData.dt.length) {
-    itemList = responseData.dt.map((item) => ({
-      itemRefining: item.itemRefining,
-      itemName: item.itemName,
-      itemGradeLevel: item.ItemGradeLevel,
-      itemPrice: item.itemPrice,
-      type: item.storetype,
-    }));
-  }
-  // Check if dt is an array before processing
-  // if (Array.isArray(responseData.dt)) {
-  //   // Filter data of response (only return itemName, itemPrice, svr, type)
-  //   const itemList = responseData.dt.map((item) => {
-  //     const {
-  //       storeName: store,
-  //       itemID: id,
-  //       itemName: itemName,
-  //       storetype: type,
-  //     } = item;
-  //     return { id, itemName, store, itemPrice, svr, type };
-  //   });
-  // }
-
-  // Return itemList
-  return itemList;
-};
-
-// Check internet
-// const checkInternet = async (delaySeconds) => {
-//   // Check internet by is-online
-//   // If internet is not available, check again after 30s, until internet is available
-//   let internetAvailable = await isOnline();
-//   while (!internetAvailable) {
-//     // delay
-//     await delay(delaySeconds * 1000);
-
-//     // Log
-//     console.log(`Internet disconnected! Check again after ${delaySeconds}s...`);
-
-//     // Check internet again
-//     internetAvailable = await isOnline();
-//   }
-// };
-
-export const requestRoServer = async (parent, rowStart) => {
-  // Variable of parent
-  const { keyword, svr, type } = parent;
-
-  // Request
-  const ro_url = "https://event.gnjoy.com.tw/Ro/RoShopSearch/forAjax_shopDeal";
-  const headers = setHeaders();
-  const requestBody = {
-    div_svr: svr.toString(), // '2290'
-    div_storetype: type.toString(), // '0'販售, '1'收購, '2'全部
-    txb_KeyWord: keyword, // '乙太星塵'
-    row_start: rowStart, // '1'
-    recaptcha: "",
-    sort_by: "itemPrice",
-    sort_desc: "", // '', 'desc'
-  };
-
-  // Send request
-  const response = await axios
-    .post(ro_url, requestBody, { headers })
-    .catch((error) => {
-      console.error("Error to get item list from RO server!", error);
-    });
-
-  return response;
 };
 
 // export

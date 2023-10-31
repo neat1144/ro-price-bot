@@ -8,18 +8,6 @@ app.use(express.json());
 app.use("/parent", parentRouter);
 
 describe("/parent API", () => {
-  // beforeAll((done) => {
-  //   // Create the 'parent' table in memory database
-  //   db.run(
-  //     `CREATE TABLE IF NOT EXISTS parent
-  //     (id        INTEGER PRIMARY KEY AUTOINCREMENT,
-  //      keyword   TEXT,
-  //      svr       INTEGER,
-  //      type      INTEGER)`,
-  //     done
-  //   );
-  // });
-
   afterEach((done) => {
     // Delete all data from 'parent' table after each test
     db.run(`DELETE FROM parent`, done);
@@ -31,7 +19,7 @@ describe("/parent API", () => {
     it("should create a new parent item", async () => {
       const res = await request(app)
         .post("/parent")
-        .send({ keyword: "test", svr: 1, type: 2 });
+        .send({ keyword: "test", svr: 1, type: 2, page: 6 });
 
       expect(res.statusCode).toEqual(200);
       expect(res.body).toHaveProperty("message");
@@ -56,16 +44,14 @@ describe("/parent API", () => {
     // Success case
     it("should return all parent items", async () => {
       // Insert test data
-      db.run(`INSERT INTO parent (keyword, svr, type) VALUES (?, ?, ?)`, [
-        "test1",
-        1,
-        2,
-      ]);
-      db.run(`INSERT INTO parent (keyword, svr, type) VALUES (?, ?, ?)`, [
-        "test2",
-        2,
-        3,
-      ]);
+      db.run(
+        `INSERT INTO parent (keyword, svr, type, page) VALUES (?, ?, ?, ?)`,
+        ["test1", 1, 2, 3]
+      );
+      db.run(
+        `INSERT INTO parent (keyword, svr, type, page) VALUES (?, ?, ?, ?)`,
+        ["test2", 2, 3, 87]
+      );
 
       const res = await request(app).get("/parent");
 
@@ -78,6 +64,7 @@ describe("/parent API", () => {
       expect(res.body.data[1]).toHaveProperty("keyword", "test2");
       expect(res.body.data[1]).toHaveProperty("svr", 2);
       expect(res.body.data[1]).toHaveProperty("type", 3);
+      expect(res.body.data[1]).toHaveProperty("page", 87);
     });
   });
 
@@ -86,21 +73,19 @@ describe("/parent API", () => {
     // Success case
     it("should update a parent item", async () => {
       // Insert test data
-      db.run(`INSERT INTO parent (keyword, svr, type) VALUES (?, ?, ?)`, [
-        "test1",
-        1,
-        2,
-      ]);
-      db.run(`INSERT INTO parent (keyword, svr, type) VALUES (?, ?, ?)`, [
-        "test2",
-        2,
-        3,
-      ]);
+      db.run(
+        `INSERT INTO parent (keyword, svr, type, page) VALUES (?, ?, ?, ?)`,
+        ["test1", 1, 2, 5]
+      );
+      db.run(
+        `INSERT INTO parent (keyword, svr, type, page) VALUES (?, ?, ?, ?)`,
+        ["test2", 2, 3, 45]
+      );
 
       // Update the item
       const res = await request(app)
         .put("/parent/1")
-        .send({ keyword: "test3", svr: 3, type: 4 });
+        .send({ keyword: "test3", svr: 3, type: 4, page: 99 });
 
       // Check if the item is updated
       expect(res.statusCode).toEqual(200);
@@ -109,22 +94,21 @@ describe("/parent API", () => {
         keyword: "test3",
         svr: 3,
         type: 4,
+        page: 99,
       });
     });
 
     // Error case ('keyword' is null or empty)
     it("should return an error if missing parameters", async () => {
       // Insert test data
-      db.run(`INSERT INTO parent (keyword, svr, type) VALUES (?, ?, ?)`, [
-        "test1",
-        1,
-        2,
-      ]);
-      db.run(`INSERT INTO parent (keyword, svr, type) VALUES (?, ?, ?)`, [
-        "test2",
-        2,
-        3,
-      ]);
+      db.run(
+        `INSERT INTO parent (keyword, svr, type, page) VALUES (?, ?, ?, ?)`,
+        ["test1", 1, 2, 99]
+      );
+      db.run(
+        `INSERT INTO parent (keyword, svr, type, page) VALUES (?, ?, ?, ?)`,
+        ["test2", 2, 3, 45]
+      );
 
       // Update the item('keyword' is null or empty)
       const res = await request(app).put("/parent/1").send({ svr: 3, type: 4 });
@@ -140,16 +124,14 @@ describe("/parent API", () => {
     // Success case
     it("should delete a parent item", async () => {
       // Insert test data
-      db.run(`INSERT INTO parent (keyword, svr, type) VALUES (?, ?, ?)`, [
-        "test1",
-        1,
-        2,
-      ]);
-      db.run(`INSERT INTO parent (keyword, svr, type) VALUES (?, ?, ?)`, [
-        "test2",
-        2,
-        3,
-      ]);
+      db.run(
+        `INSERT INTO parent (keyword, svr, type, page) VALUES (?, ?, ?, ?)`,
+        ["test1", 1, 2, 99]
+      );
+      db.run(
+        `INSERT INTO parent (keyword, svr, type, page) VALUES (?, ?, ?, ?)`,
+        ["test2", 2, 3, 45]
+      );
 
       // Delete the item
       const res = await request(app).delete("/parent/1");

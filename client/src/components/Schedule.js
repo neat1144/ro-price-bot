@@ -32,6 +32,7 @@ const Schedule = () => {
         stop_time: stopTime,
       })
       .then((response) => {
+        alert('"Schedule" saved successfully!');
         // console.log(response);
         // Refresh the data
         fetchScheduleTime();
@@ -51,13 +52,15 @@ const Schedule = () => {
               <div className="form-group mb-2">
                 {/* Is Scheduled */}
                 <div class="col-12 mb-2">
-                  <label htmlFor="is_scheduled">啟用: </label>
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    checked={isScheduled}
-                    onChange={(e) => setIsScheduled(e.target.checked)}
-                  />
+                  <label htmlFor="is_scheduled">狀態: </label>
+                  <select
+                    className="form-control"
+                    value={isScheduled}
+                    onChange={(e) => setIsScheduled(e.target.value)}
+                  >
+                    <option value="0">停用</option>
+                    <option value="1">啟用</option>
+                  </select>
                 </div>
                 {/* Start Time */}
                 <div class="col-12 mb-2">

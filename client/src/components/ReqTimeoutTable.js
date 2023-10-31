@@ -28,7 +28,7 @@ const ReqTimeoutTable = () => {
         req_timeout_sec: reqTimeout,
       })
       .then(() => {
-        alert("Data saved successfully!");
+        alert('"Req Timeout" saved successfully!');
         console.log("ReqTimeout saved to db!");
 
         // Reload timeout

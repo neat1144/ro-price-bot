@@ -5,7 +5,7 @@ function TGTable() {
   // const [data, setData] = useState({ chat_id: "", token: null });
   const [editedData, setEditedData] = useState({ chat_id: "", token: null });
 
-  useEffect(() => {
+  const fetchData = async () => {
     // Fetch data from the API
     axios
       .get("http://localhost:3030/chat-id")
@@ -18,6 +18,10 @@ function TGTable() {
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
+  };
+
+  useEffect(() => {
+    fetchData();
   }, []);
 
   const handleEdit = (newValue, field) => {
@@ -35,6 +39,7 @@ function TGTable() {
         alert("Data saved successfully!");
 
         console.log("TG ID/Token saved to db!");
+        fetchData();
       })
       .catch((error) => {
         console.error("Error saving data:", error);

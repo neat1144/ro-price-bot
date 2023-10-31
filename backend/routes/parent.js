@@ -17,25 +17,26 @@ db.run(`CREATE TABLE IF NOT EXISTS parent
       (id        INTEGER PRIMARY KEY AUTOINCREMENT, 
        keyword   TEXT, 
        svr       INTEGER,
-       type      INTEGER)`);
+       type      INTEGER,
+       page      INTEGER)`);
 
 // If parent table is empty, insert four default rows
-db.get("SELECT * FROM parent", (err, row) => {
-  if (!row) {
-    db.run(
-      `INSERT INTO parent (keyword, svr, type) VALUES 
-      ('乙太星塵', 2290, 0),
-      ('乙太星塵', 3290, 0),
-      ('乙太星塵', 4290, 0),
-      ('乙太星塵', 829, 0)`
-    );
-  }
-});
+// db.get("SELECT * FROM parent", (err, row) => {
+//   if (!row) {
+//     db.run(
+//       `INSERT INTO parent (keyword, svr, type, page) VALUES
+//       ('乙太星塵', 2290, 0, 1),
+//       ('乙太星塵', 3290, 0, 1),
+//       ('乙太星塵', 4290, 0, 1),
+//       ('乙太星塵', 829, 0, 1)`
+//     );
+//   }
+// });
 
 // CREATE a new parent
 router.post("/", (req, res) => {
   // Parameters from the request body
-  const { keyword, svr, type } = req.body;
+  const { keyword, svr, type, page } = req.body;
 
   // Check if 'keyword' is null or empty
   if (!keyword) {
@@ -43,10 +44,10 @@ router.post("/", (req, res) => {
   }
 
   // Query
-  const insertQuery = `INSERT INTO parent (keyword, svr, type) VALUES (?, ?, ?)`;
+  const insertQuery = `INSERT INTO parent (keyword, svr, type, page) VALUES (?, ?, ?, ?)`;
 
   // Insert to db
-  db.run(insertQuery, [keyword, svr, type], function (err) {
+  db.run(insertQuery, [keyword, svr, type, page], function (err) {
     // Handle error
     if (err) {
       res.status(400).json({ error: err.message });
@@ -64,6 +65,7 @@ router.post("/", (req, res) => {
         keyword,
         svr,
         type,
+        page,
       },
     });
   });
@@ -92,7 +94,7 @@ router.get("/", (req, res) => {
 // UPDATE a item by id
 router.put("/:id", (req, res) => {
   // Parementer from request body
-  const { keyword, svr, type } = req.body;
+  const { keyword, svr, type, page } = req.body;
 
   // Check if 'keyword' is null or empty
   if (!keyword) {
@@ -100,10 +102,10 @@ router.put("/:id", (req, res) => {
   }
 
   // Query
-  const updateQuery = `UPDATE parent SET keyword = ?, svr = ?, type = ? WHERE id = ?`;
+  const updateQuery = `UPDATE parent SET keyword = ?, svr = ?, type = ?, page = ? WHERE id = ?`;
 
   // Update to db
-  db.run(updateQuery, [keyword, svr, type, req.params.id], (err) => {
+  db.run(updateQuery, [keyword, svr, type, page, req.params.id], (err) => {
     // Handle error
     if (err) {
       res.status(400).json({ error: err.message });

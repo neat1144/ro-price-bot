@@ -29,6 +29,7 @@ function CustomerTable() {
     keyword: "乙太星塵",
     svr: 2290,
     type: 0,
+    page: 1,
   });
   const [editedChild, setEditedChild] = useState({
     include: "",
@@ -150,6 +151,7 @@ function CustomerTable() {
       keyword: "乙太星塵",
       svr: 2290,
       type: 0,
+      page: 1,
     });
   };
 
@@ -444,6 +446,7 @@ function CustomerTable() {
             <th scope="col">關鍵字</th>
             <th scope="col">伺服器</th>
             <th scope="col">販賣/收購</th>
+            <th scope="col">上限頁</th>
             <th scope="col">包含</th>
             <th scope="col">排除</th>
             <th scope="col">精煉值</th>
@@ -543,6 +546,25 @@ function CustomerTable() {
                     </span>
                   )}
                 </td>
+                {/* Limited Page */}
+                <td>
+                  {editParentIndex === parent.id ? (
+                    <input
+                      type="number"
+                      value={editedParent.page}
+                      className="small-input"
+                      placeholder="上限頁"
+                      onChange={(e) =>
+                        setEditedParent({
+                          ...editedParent,
+                          page: e.target.value,
+                        })
+                      }
+                    />
+                  ) : (
+                    parent.page
+                  )}
+                </td>
                 {/* Empty */}
                 <td></td>
                 <td></td>
@@ -611,7 +633,7 @@ function CustomerTable() {
               {/*               */}
               {addingChildForParent === parent.id && (
                 <tr>
-                  <td colSpan="4"></td>
+                  <td colSpan="5"></td>
                   {/* Include */}
                   <td>
                     <input
@@ -718,6 +740,7 @@ function CustomerTable() {
               {childMap[parent.id] &&
                 childMap[parent.id].map((child) => (
                   <tr key={child.id}>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -949,6 +972,21 @@ function CustomerTable() {
                     </option>
                   ))}
                 </select>
+              </td>
+              {/* Page */}
+              <td>
+                <input
+                  type="number"
+                  value={editedParent.page}
+                  className="small-input"
+                  placeholder="上限頁"
+                  onChange={(e) =>
+                    setEditedParent({
+                      ...editedParent,
+                      page: e.target.value,
+                    })
+                  }
+                />
               </td>
               {/* Include */}
               <td>

@@ -99,37 +99,6 @@ export const getTime = () => {
   return `${hours}:${minutes}:${seconds}`;
 };
 
-export const setHeaders = () => {
-  const headers = {
-    "Content-Type": "application/json; charset=UTF-8",
-    "User-Agent":
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36",
-
-    Accept: "application/json, text/javascript, */*; q=0.01",
-    "Accept-Language":
-      "zh-TW,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6,zh-CN;q=0.5",
-    Dnt: "1",
-    // Host: "httpbin.org",
-    Referer:
-      "https://event.gnjoy.com.tw/Ro/RoShopSearch?fbclid=IwAR1xC46Qfmpbv0RzjG2t7LpJp19ZUKNnpBDL0QLKNfAbzScZYgU_Sl9C04Q",
-    "Sec-Ch-Ua":
-      '"Microsoft Edge";v="117", "Not;A=Brand";v="8", "Chromium";v="117"',
-    "Sec-Ch-Ua-Mobile": "?0",
-    "Sec-Ch-Ua-Platform": '"Windows"',
-    "Sec-Fetch-Dest": "empty",
-    "Sec-Fetch-Mode": "cors",
-    "Sec-Fetch-Site": "same-origin",
-    // "Sec-Fetch-User": "?1",
-    // "Upgrade-Insecure-Requests": "1",
-    "User-Agent":
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.60",
-    // "X-Amzn-Trace-Id": "Root=1-65267ecd-1956ffae7713148b3b9305fa",
-    "x-request-with": "XMLHttpRequest",
-  };
-
-  return headers;
-};
-
 // Get start_time and stop_time by /schedule api
 export const getScheduleTime = async () => {
   const response = await axios

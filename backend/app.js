@@ -18,8 +18,7 @@ import {
   getTimeout,
   getCurrentTime,
   getScheduleTime,
-} from "./models/toGetUpdate.js";
-import axios from "axios";
+} from "./utils/toGetUpdate.js";
 
 const app = express();
 const port = process.env.PORT || 3030;
@@ -71,9 +70,10 @@ app.use("/schedule", scheduleRouter);
 let intervalId = null;
 
 // Price checker and Bot nofi
-const priceCheckerBot = async () => {
+const priceCheckerRootBot = async () => {
   // Get bot state
-  const botState = await getBotState();
+  let botState;
+  botState = await getBotState();
 
   // Get current time for 24h format contain seconds (ex: 13:00:00)
   const now = getCurrentTime();
@@ -84,13 +84,18 @@ const priceCheckerBot = async () => {
   const stopTime = scheduleTime["stop_time"];
   const isScheduled = scheduleTime["is_scheduled"];
 
-  // If is_scheduled is 1, then run schedule for start/stop checker
+  // If is_scheduled is 1, then checker current time
+  // If current time is between start time and stop time, then change botState to 1
+  // If current time is not between start time and stop time, then change botState to 0
   if (isScheduled === 1) {
     // Check if current time is between start time and stop time, change bot state to 1
     if (now >= startTime && now <= stopTime) {
       if (botState !== 2) {
         await changeBotState(1);
         console.log("Start checker by schedule");
+
+        // Get new bot state
+        botState = 1;
       }
     }
 
@@ -99,6 +104,9 @@ const priceCheckerBot = async () => {
       if (botState !== 3) {
         await changeBotState(0);
         console.log("Stop checker by schedule");
+
+        // Get new bot state
+        botState = 0;
       }
     }
   }
@@ -107,6 +115,10 @@ const priceCheckerBot = async () => {
   if (botState === 1) {
     // Change bot state to 2
     await changeBotState(2);
+    console.log("Change bot state to 2");
+
+    // Change bot state to 2
+    botState = 2;
 
     // Get timeout
     const timeoutSeconds = await getTimeout();
@@ -123,16 +135,20 @@ const priceCheckerBot = async () => {
 
   // Stop checker
   if (botState === 0) {
-    console.log("Stop checker");
+    await changeBotState(3);
+    console.log("Change bot state to 3");
+
+    // Change bot state to 3
+    botState = 3;
+
+    console.log("Stop checker by user");
     // Clean interval
     clearInterval(intervalId);
-
-    await changeBotState(3);
   }
 };
 
 // Set timeout for price checker bot
-setInterval(priceCheckerBot, 500);
+setInterval(priceCheckerRootBot, 500);
 
 // Start the Express server
 app.listen(port, () => {

@@ -23,6 +23,7 @@ db.run(`CREATE TABLE IF NOT EXISTS child
          new_price  REAL,
          nofi_time  TEXT,
          item_name  TEXT,
+         item_CNT   REAL,
          parent_id  INTEGER,
          FOREIGN KEY (parent_id) REFERENCES parent(id) ON DELETE CASCADE)`);
 
@@ -38,6 +39,7 @@ router.post("/", (req, res) => {
     nofi_time,
     parent_id,
     item_name,
+    item_CNT,
   } = req.body;
 
   // If parent_id is not provided, return an error
@@ -46,7 +48,7 @@ router.post("/", (req, res) => {
   }
 
   db.run(
-    `INSERT INTO child (include, exclude, set_refine, set_level, set_price, new_price, nofi_time, parent_id, item_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO child (include, exclude, set_refine, set_level, set_price, new_price, nofi_time, parent_id, item_name, item_CNT) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       include,
       exclude,
@@ -57,6 +59,7 @@ router.post("/", (req, res) => {
       nofi_time,
       parent_id,
       item_name,
+      item_CNT,
     ],
     function (err) {
       if (err) {
@@ -81,6 +84,7 @@ router.post("/", (req, res) => {
           nofi_time,
           parent_id,
           item_name,
+          item_CNT,
         },
       });
     }
@@ -99,11 +103,12 @@ router.put("/:id", (req, res) => {
     nofi_time,
     parent_id,
     item_name,
+    item_CNT,
   } = req.body;
   const { id } = req.params;
 
   db.run(
-    `UPDATE child SET include = ?, exclude = ?, set_refine = ?, set_level = ?, set_price = ?, new_price = ?, nofi_time = ?, parent_id = ?, item_name = ? WHERE id = ?`,
+    `UPDATE child SET include = ?, exclude = ?, set_refine = ?, set_level = ?, set_price = ?, new_price = ?, nofi_time = ?, parent_id = ?, item_name = ?, item_CNT = ? WHERE id = ?`,
     [
       include,
       exclude,
@@ -114,6 +119,7 @@ router.put("/:id", (req, res) => {
       nofi_time,
       parent_id,
       item_name,
+      item_CNT,
       id,
     ],
     (err) => {

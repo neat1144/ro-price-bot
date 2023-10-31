@@ -16,13 +16,15 @@ describe("/child API", () => {
   beforeAll((done) => {
     // Insert a parent record before running the tests
     db.run(
-      `INSERT INTO parent (keyword, svr, type) VALUES (?, ?, ?)`,
-      ["test keyword", 2209, 1],
+      `INSERT INTO parent (keyword, svr, type, page) VALUES (?, ?, ?, ?)`,
+      ["test keyword", 2209, 1, 5],
       function (err) {
         if (err) {
           console.error(err);
           done();
         } else {
+          // Log the last inserted ID
+          console.log("parentID: ", this.lastID);
           parentID = this.lastID;
           done();
         }
@@ -51,6 +53,7 @@ describe("/child API", () => {
     parent_id: 1,
     nofi_time: "",
     item_name: "test item",
+    item_CNT: 990,
   };
 
   // POST test
@@ -98,6 +101,7 @@ describe("/child API", () => {
           ...requestBody,
           include: "乙太-updated",
           parent_id: parentID,
+          item_CNT: 888,
         });
 
       // Check
@@ -105,6 +109,7 @@ describe("/child API", () => {
       expect(res2.body).toHaveProperty("message");
       expect(res2.body).toHaveProperty("data");
       expect(res2.body.data.include).toEqual("乙太-updated");
+      expect(res2.body.data.item_CNT).toEqual(888);
     });
   });
 
@@ -128,6 +133,11 @@ describe("/child API", () => {
       expect(res3.body.data.length).toEqual(2);
       expect(res3.body.data[0]).toHaveProperty("set_refine");
       expect(res3.body.data[1]).toHaveProperty("set_level");
+      expect(res3.body.data[0]).toHaveProperty("set_price");
+      expect(res3.body.data[1]).toHaveProperty("new_price");
+      expect(res3.body.data[0]).toHaveProperty("nofi_time");
+      expect(res3.body.data[1]).toHaveProperty("item_name");
+      expect(res3.body.data[0]).toHaveProperty("item_CNT");
     });
   });
 
