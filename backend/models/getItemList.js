@@ -1,5 +1,6 @@
 import axios, { all } from "axios";
 import { delay } from "../utils/delay.js";
+import { getTime } from "../utils/toGetUpdate.js";
 
 // Get item list of page
 export const getAllItemList = async (parent, timeoutSeconds) => {
@@ -14,20 +15,27 @@ export const getAllItemList = async (parent, timeoutSeconds) => {
 
   // Get itemList of page 1
   const rowStart = 1;
-  allItemList = await getItemList(parent, rowStart);
+  const firstItemList = await getItemList(parent, rowStart);
+  allItemList = [...allItemList, ...firstItemList];
   await delay(timeoutMilliseconds);
+
+  console.log(`page 1 itemList length: ${firstItemList.length}`);
 
   // If itemList of page 1 is more than 30
   // Then get itemList of other pages
   if (allItemList.length >= 30) {
     // For loop in range(page)
     for (let i = 2; i <= page; i++) {
+      // Log page
       // Delay for request timeout
-      console.log(`delay ${timeoutSeconds} seconds`);
+      console.log(`Getting page ${i}...               (${getTime()})`);
 
       // Get itemList i
       const rowStart = (i - 1) * 30 + 1;
       const tempItemList = await getItemList(parent, rowStart);
+
+      // Log page and itemList length
+      console.log(`page ${i} itemList length: ${tempItemList.length}`);
 
       // Append tempItemList to allItemList
       allItemList = [...allItemList, ...tempItemList];

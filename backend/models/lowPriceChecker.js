@@ -102,8 +102,8 @@ export const lowPriceChecker = async () => {
     }
   }
   // Log timeout from db
-  const timeoutSeconds = await getTimeout();
-  console.log(`Next check after ${timeoutSeconds}(sec)`);
+  // const timeoutSeconds = await getTimeout();
+  // console.log(`Next check after ${timeoutSeconds}(sec)`);
 };
 
 // Filter item name list by a child (include, exclude, itemRefine, and itemLevel)
