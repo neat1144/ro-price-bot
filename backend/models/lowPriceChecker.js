@@ -11,6 +11,7 @@ import {
   getDateTime,
   getTime,
   setHeaders,
+  getReqTimeout,
 } from "./toGetUpdate.js";
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -44,13 +45,14 @@ export const lowPriceChecker = async () => {
 
   // if botState is true(1), then start check
   if (botState !== 0) {
+    // Get request timeout
+    const reqTimeout = await getReqTimeout();
+    const reqTimeoutMs = reqTimeout * 1000;
+
     // Loop parent to check price of child
     for (const parent of parentList) {
       // Get child list by one parent
       const childList = await getChildList(parent.id);
-
-      // Timeout 5s
-      await delay(2000);
 
       // if childList is empty, response error with 404
       if (!childList.length) {
@@ -65,10 +67,12 @@ export const lowPriceChecker = async () => {
         }...         (${getTime()})`
       );
 
+      // Delay for request timeout
+      await delay(reqTimeoutMs);
+
       // Get item list by one parent
       // Because RO server only return 30 items per page
       const itemList1 = await getItemList(parent, "1"); // First page (item1 ~ item30)
-      await delay(1500);
 
       // if item of itemList1 is less than 30, then itemList2 is empty
       let itemList2 = [];

@@ -6,6 +6,7 @@ import apiChild from "./routes/child.js";
 import scheduleRouter from "./routes/schedule.js";
 import lowPriceRouter from "./routes/lowPrice.js";
 import apiChatId from "./routes/chatId.js";
+import reqTimeoutRouter from "./routes/reqTimeout.js";
 import botStateRouter from "./routes/botState.js";
 import bodyParser from "body-parser";
 import timeoutRouter from "./routes/timeout.js";
@@ -60,6 +61,9 @@ app.use("/bot-state", botStateRouter);
 
 // Timeout
 app.use("/timeout", timeoutRouter);
+
+// Req timeout
+app.use("/req-timeout", reqTimeoutRouter);
 
 // Schedule api
 app.use("/schedule", scheduleRouter);

@@ -139,8 +139,7 @@ export const getScheduleTime = async () => {
     });
 
   return response.data;
-
-}
+};
 
 export const getCurrentTime = () => {
   const now = new Date().toLocaleTimeString("en-US", {
@@ -151,4 +150,14 @@ export const getCurrentTime = () => {
   });
 
   return now;
-}
+};
+
+export const getReqTimeout = async () => {
+  const response = await axios
+    .get("http://localhost:3030/req-timeout")
+    .catch((error) => {
+      console.error("Error to get req timeout!", error);
+    });
+
+  return response.data["req_timeout_sec"];
+};
