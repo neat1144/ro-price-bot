@@ -129,3 +129,26 @@ export const setHeaders = () => {
 
   return headers;
 };
+
+// Get start_time and stop_time by /schedule api
+export const getScheduleTime = async () => {
+  const response = await axios
+    .get("http://localhost:3030/schedule")
+    .catch((error) => {
+      console.error("Error to get schedule time!", error);
+    });
+
+  return response.data;
+
+}
+
+export const getCurrentTime = () => {
+  const now = new Date().toLocaleTimeString("en-US", {
+    hour12: false,
+    hour: "numeric",
+    minute: "numeric",
+    // second: "numeric",
+  });
+
+  return now;
+}

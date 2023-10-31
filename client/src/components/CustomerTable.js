@@ -435,7 +435,7 @@ function CustomerTable() {
   let serialNumber = 1;
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid text-center">
       <h1>Data Table</h1>
       <table className="table">
         <thead>

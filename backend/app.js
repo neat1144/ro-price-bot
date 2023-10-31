@@ -3,6 +3,7 @@ import express from "express";
 import apiCustomer from "./routes/customer.js";
 import apiParent from "./routes/parent.js";
 import apiChild from "./routes/child.js";
+import scheduleRouter from "./routes/schedule.js";
 import lowPriceRouter from "./routes/lowPrice.js";
 import apiChatId from "./routes/chatId.js";
 import botStateRouter from "./routes/botState.js";
@@ -14,7 +15,10 @@ import {
   getBotState,
   changeBotState,
   getTimeout,
+  getCurrentTime,
+  getScheduleTime,
 } from "./models/toGetUpdate.js";
+import axios from "axios";
 
 const app = express();
 const port = process.env.PORT || 3030;
@@ -57,12 +61,41 @@ app.use("/bot-state", botStateRouter);
 // Timeout
 app.use("/timeout", timeoutRouter);
 
+// Schedule api
+app.use("/schedule", scheduleRouter);
+
 let intervalId = null;
 
 // Price checker and Bot nofi
 const priceCheckerBot = async () => {
   // Get bot state
   const botState = await getBotState();
+
+  // Get current time for 24h format contain seconds (ex: 13:00:00)
+  const now = getCurrentTime();
+
+  // Get start time and stop time
+  const scheduleTime = await getScheduleTime();
+  const startTime = scheduleTime["start_time"];
+  const stopTime = scheduleTime["stop_time"];
+
+  // TODO:
+  // Check if current time is between start time and stop time, change bot state to 1
+  if (now >= startTime && now <= stopTime) {
+    if (botState !== 2) {
+      await changeBotState(1);
+      console.log("Start checker by schedule");
+    }
+  }
+
+  // TODO:
+  // Check if current time is not between start time and stop time, change bot state to 0
+  if (now < startTime || now > stopTime) {
+    if (botState !== 3) {
+      await changeBotState(0);
+      console.log("Stop checker by schedule");
+    }
+  }
 
   // Start checker for every ${timeout} seconds
   if (botState === 1) {
