@@ -154,7 +154,7 @@ export const childPriceFilter = (child, itemList) => {
   // Loop item list to check price of child
   for (const item of itemList) {
     // Get item price and name
-    const { itemPrice, itemName } = item;
+    const { itemPrice, itemName, itemCNT } = item;
 
     // Condition of filter
     // If item price < set price
@@ -168,6 +168,9 @@ export const childPriceFilter = (child, itemList) => {
 
         // Update nofi_time of child
         child.nofi_time = getDateTime();
+
+        // Update item_CNT of child
+        child.item_CNT = itemCNT;
 
         // Stop loop and return child
         // Because item list is already sorted by price

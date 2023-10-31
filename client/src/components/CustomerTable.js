@@ -368,6 +368,7 @@ function CustomerTable() {
         keyword: editedParent.keyword,
         svr: editedParent.svr,
         type: editedParent.type,
+        page: editedParent.page,
       })
       .then((response) => {
         console.log(response.data.data.id);

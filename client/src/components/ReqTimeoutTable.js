@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 const ReqTimeoutTable = () => {
-  const [reqTimeout, setReqTimeout] = useState(99);
+  const [reqTimeout, setReqTimeout] = useState(3);
 
   const fetchReqTimeout = async () => {
     // Fetch data from the API

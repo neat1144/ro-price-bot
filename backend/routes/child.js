@@ -47,6 +47,11 @@ router.post("/", (req, res) => {
     return res.status(400).json({ error: "parent_id is required" });
   }
 
+  // If item_CNT is not provided, then set it to 1
+  if (!item_CNT) {
+    item_CNT = 1;
+  }
+
   db.run(
     `INSERT INTO child (include, exclude, set_refine, set_level, set_price, new_price, nofi_time, parent_id, item_name, item_CNT) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [

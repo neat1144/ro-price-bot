@@ -28,8 +28,15 @@ export const sendMsgByBot = async (botIdToken, messageText) => {
 // Send msg by chat bot
 export const formatMsg = (parent, child) => {
   const { keyword, type, svr } = parent;
-  const { include, exclude, set_price, new_price, nofi_time, item_name } =
-    child;
+  const {
+    include,
+    exclude,
+    set_price,
+    new_price,
+    nofi_time,
+    item_name,
+    item_CNT,
+  } = child;
 
   const chnType = type === 0 ? "販賣" : type === 1 ? "收購" : "未知";
 
@@ -39,7 +46,7 @@ export const formatMsg = (parent, child) => {
   伺服器　: ${svr}
   設定價格: ${set_price.toLocaleString("en-US")} 
   ${chnType}價格: ${new_price.toLocaleString("en-US")}
-  數量　　: 1
+  數量　　: ${item_CNT}
   關鍵字　: ${keyword}, 包含(${include}), 排除(${exclude})
   時間　　: ${nofi_time}
   `;
