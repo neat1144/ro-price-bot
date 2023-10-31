@@ -9,12 +9,12 @@ import botStateRouter from "./routes/botState.js";
 import bodyParser from "body-parser";
 import timeoutRouter from "./routes/timeout.js";
 import cors from "cors";
-import { lowPriceChecker } from "./controller/lowPriceChecker.js";
+import { lowPriceChecker } from "./models/lowPriceChecker.js";
 import {
   getBotState,
   changeBotState,
   getTimeout,
-} from "./controller/toGetUpdate.js";
+} from "./models/toGetUpdate.js";
 
 const app = express();
 const port = process.env.PORT || 3030;
