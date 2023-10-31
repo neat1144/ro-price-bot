@@ -3,6 +3,7 @@ import Button from "react-bootstrap/Button";
 import axios from "axios";
 
 const Schedule = () => {
+  const [isScheduled, setIsScheduled] = useState(0); // [1, 0]
   const [startTime, setStartTime] = useState("00:00:00");
   const [stopTime, setStopTime] = useState("00:00:00");
 
@@ -26,6 +27,7 @@ const Schedule = () => {
   const handleSubmit = async () => {
     axios
       .post("http://localhost:3030/schedule", {
+        is_scheduled: isScheduled,
         start_time: startTime,
         stop_time: stopTime,
       })
@@ -47,7 +49,18 @@ const Schedule = () => {
           <div className="col-md-12">
             <form className="border rounded p-4 shadow">
               <div className="form-group mb-2">
-                <div class="col-12">
+                {/* Is Scheduled */}
+                <div class="col-12 mb-2">
+                  <label htmlFor="is_scheduled">啟用: </label>
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    checked={isScheduled}
+                    onChange={(e) => setIsScheduled(e.target.checked)}
+                  />
+                </div>
+                {/* Start Time */}
+                <div class="col-12 mb-2">
                   <label htmlFor="start_time">Start Time:</label>
                   <input
                     type="time"
@@ -57,7 +70,7 @@ const Schedule = () => {
                   />
                 </div>
               </div>
-
+              {/* Stop Time */}
               <div className="form-group mb-2">
                 <div class="col-12">
                   <label htmlFor="stop_time">Stop Time:</label>
@@ -69,6 +82,7 @@ const Schedule = () => {
                   />
                 </div>
               </div>
+              {/* Save Button */}
               <div className="form-group mb-2 text-center">
                 <Button
                   className="btn btn-sm btn-success"

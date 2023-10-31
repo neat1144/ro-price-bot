@@ -19,6 +19,7 @@ describe("/schedule API", () => {
     it("should create a new schedule", async () => {
       // Sucess case
       const res = await request(app).post("/schedule").send({
+        is_scheduled: 1,
         start_time: "00:00:00",
         stop_time: "23:59:59",
       });
@@ -32,12 +33,14 @@ describe("/schedule API", () => {
     it("should update the schedule", async () => {
       // Create a schedule entry
       const res1 = await request(app).post("/schedule").send({
+        is_scheduled: 0,
         start_time: "00:00:00",
         stop_time: "23:59:59",
       });
 
       // Update
       const res = await request(app).post("/schedule").send({
+        is_scheduled: 1,
         start_time: "06:06:06",
         stop_time: "18:18:18",
       });
@@ -48,6 +51,7 @@ describe("/schedule API", () => {
       // Check the schedule item
       expect(res2.body).toHaveProperty("start_time");
       expect(res2.body).toHaveProperty("stop_time");
+      expect(res2.body.is_scheduled).toEqual(1);
       expect(res2.body.start_time).toEqual("06:06:06");
       expect(res2.body.stop_time).toEqual("18:18:18");
     });
@@ -58,6 +62,7 @@ describe("/schedule API", () => {
     it("should get the schedule", async () => {
       // Create a schedule entry
       const res1 = await request(app).post("/schedule").send({
+        is_scheduled: 1,
         start_time: "08:30:45",
         stop_time: "21:20:40",
       });
@@ -68,6 +73,7 @@ describe("/schedule API", () => {
       // Check the schedule item
       expect(res2.body).toHaveProperty("start_time");
       expect(res2.body).toHaveProperty("stop_time");
+      expect(res2.body.is_scheduled).toEqual(1);
       expect(res2.body.start_time).toEqual("08:30:45");
       expect(res2.body.stop_time).toEqual("21:20:40");
     });

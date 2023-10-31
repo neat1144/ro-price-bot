@@ -78,22 +78,24 @@ const priceCheckerBot = async () => {
   const scheduleTime = await getScheduleTime();
   const startTime = scheduleTime["start_time"];
   const stopTime = scheduleTime["stop_time"];
+  const isScheduled = scheduleTime["is_scheduled"];
 
-  // TODO:
-  // Check if current time is between start time and stop time, change bot state to 1
-  if (now >= startTime && now <= stopTime) {
-    if (botState !== 2) {
-      await changeBotState(1);
-      console.log("Start checker by schedule");
+  // If is_scheduled is 1, then run schedule for start/stop checker
+  if (isScheduled === 1) {
+    // Check if current time is between start time and stop time, change bot state to 1
+    if (now >= startTime && now <= stopTime) {
+      if (botState !== 2) {
+        await changeBotState(1);
+        console.log("Start checker by schedule");
+      }
     }
-  }
 
-  // TODO:
-  // Check if current time is not between start time and stop time, change bot state to 0
-  if (now < startTime || now > stopTime) {
-    if (botState !== 3) {
-      await changeBotState(0);
-      console.log("Stop checker by schedule");
+    // Check if current time is not between start time and stop time, change bot state to 0
+    if (now < startTime || now > stopTime) {
+      if (botState !== 3) {
+        await changeBotState(0);
+        console.log("Stop checker by schedule");
+      }
     }
   }
 

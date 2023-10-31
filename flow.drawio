@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="gCZHwYNPTszSSE4XXJvn" name="Page-1">
-        <mxGraphModel dx="1497" dy="626" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="2433" dy="1067" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -103,8 +103,8 @@
                 <mxCell id="108" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="104" target="105" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="240" y="1720"/>
-                            <mxPoint x="240" y="1630"/>
+                            <mxPoint x="1080" y="1720"/>
+                            <mxPoint x="1080" y="1640"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
@@ -113,69 +113,56 @@
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="109" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="104" target="106" edge="1">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="270" y="1720"/>
-                            <mxPoint x="270" y="1720"/>
-                        </Array>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="111" value="== 1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="109" vertex="1" connectable="0">
-                    <mxGeometry x="0.1498" y="-2" relative="1" as="geometry">
-                        <mxPoint as="offset"/>
-                    </mxGeometry>
-                </mxCell>
                 <mxCell id="110" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="104" target="107" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="240" y="1720"/>
-                            <mxPoint x="240" y="1800"/>
+                            <mxPoint x="1080" y="1720"/>
+                            <mxPoint x="1080" y="1810"/>
+                            <mxPoint x="1520" y="1810"/>
+                            <mxPoint x="1520" y="1720"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="114" value="== 2 &amp;amp;&amp;amp; == 3" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="110" vertex="1" connectable="0">
                     <mxGeometry x="0.4392" relative="1" as="geometry">
-                        <mxPoint x="9" as="offset"/>
+                        <mxPoint x="-299" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="104" value="Check botState&lt;br&gt;every 2 sec" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" parent="1" vertex="1">
-                    <mxGeometry x="80" y="1690" width="120" height="60" as="geometry"/>
+                <mxCell id="260" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="104" target="106">
+                    <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="228" style="edgeStyle=none;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="105" target="227">
+                <mxCell id="104" value="check botState" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="920" y="1690" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="228" style="edgeStyle=none;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="105" target="227" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="105" value="Stop checker" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" parent="1" vertex="1">
-                    <mxGeometry x="360" y="1600" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="1200" y="1610" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="117" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="106" target="116" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="106" value="Create timeout&lt;br&gt;for Pricechecker" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" parent="1" vertex="1">
-                    <mxGeometry x="360" y="1690" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="1200" y="1690" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="123" style="edgeStyle=elbowEdgeStyle;elbow=vertical;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="107" target="104" edge="1">
+                <mxCell id="258" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="107" target="239">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="280" y="1860"/>
-                            <mxPoint x="280" y="1920"/>
+                            <mxPoint x="1720" y="1720"/>
+                            <mxPoint x="1720" y="1580"/>
+                            <mxPoint x="140" y="1580"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="107" value="None" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" parent="1" vertex="1">
-                    <mxGeometry x="360" y="1770" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="1560" y="1690" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="230" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="116" target="104">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="680" y="1720"/>
-                            <mxPoint x="680" y="1570"/>
-                            <mxPoint x="140" y="1570"/>
-                        </Array>
-                    </mxGeometry>
+                <mxCell id="259" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="116" target="107">
+                    <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="116" value="Change botState&lt;br&gt;to 2" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" parent="1" vertex="1">
-                    <mxGeometry x="520" y="1690" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="1360" y="1690" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="128" value="Fetch child&lt;br&gt;every 2.5 sec" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" parent="1" vertex="1">
                     <mxGeometry x="220" y="410" width="120" height="60" as="geometry"/>
@@ -369,17 +356,86 @@
                 <mxCell id="226" value="Include" style="text;html=1;strokeColor=#b85450;fillColor=#f8cecc;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=23;" parent="1" vertex="1">
                     <mxGeometry x="-80" y="2070" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="231" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="227" target="104">
+                <mxCell id="253" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="227" target="107">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="227" value="Change botState&lt;br&gt;to 3" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="1360" y="1610" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="237" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="232" target="235">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="238" value="==1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="237">
+                    <mxGeometry x="-0.1392" y="-1" relative="1" as="geometry">
+                        <mxPoint x="1" y="8" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="251" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="232" target="104">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
-                            <mxPoint x="680" y="1630"/>
-                            <mxPoint x="680" y="1570"/>
-                            <mxPoint x="140" y="1570"/>
+                            <mxPoint x="400" y="1720"/>
+                            <mxPoint x="400" y="1660"/>
+                            <mxPoint x="840" y="1660"/>
+                            <mxPoint x="840" y="1720"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="227" value="Change botState&lt;br&gt;to 3" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="1">
-                    <mxGeometry x="520" y="1600" width="120" height="60" as="geometry"/>
+                <mxCell id="232" value="Check is_scheduled" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="1">
+                    <mxGeometry x="240" y="1690" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="244" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="235" target="243">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="246" value="in time" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="244">
+                    <mxGeometry x="-0.0656" y="-1" relative="1" as="geometry">
+                        <mxPoint x="7" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="245" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="235" target="242">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="580" y="1760"/>
+                            <mxPoint x="580" y="1800"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="247" value="out of time" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="245">
+                    <mxGeometry x="-0.1011" relative="1" as="geometry">
+                        <mxPoint y="3" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="235" value="Check&lt;br&gt;start/stop time" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="1">
+                    <mxGeometry x="440" y="1730" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="240" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="239" target="232">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="239" value="Run price checker&lt;br&gt;every 2 sec" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="1">
+                    <mxGeometry x="80" y="1690" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="249" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="242" target="104">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="242" value="change&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;botState = 0" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="1">
+                    <mxGeometry x="640" y="1770" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="248" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="243" target="104">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="760" y="1720"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="243" value="change &lt;br&gt;botState = 1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=12;" vertex="1" parent="1">
+                    <mxGeometry x="640" y="1690" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="252" value="==0" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="1">
+                    <mxGeometry x="410" y="1750.0041379310344" as="geometry">
+                        <mxPoint x="-8" y="-53" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="261" value="== 1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="1">
+                    <mxGeometry x="1135" y="1720" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

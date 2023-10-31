@@ -11,29 +11,30 @@ const db = new sqlite3Verbose.Database("mydatabase.db");
 db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS schedule (
-      id         INTEGER PRIMARY KEY,
-      start_time TIME,
-      stop_time  TIME
+      id            INTEGER PRIMARY KEY,
+      is_scheduled  INTEGER DEFAULT 0,
+      start_time    TIME,
+      stop_time     TIME
     )
   `);
 
   db.get("SELECT * FROM schedule", (err, row) => {
     if (!row) {
-      db.run("INSERT INTO schedule (start_time, stop_time) VALUES (?, ?)", [
-        "00:00:00",
-        "23:59:59"
-      ]);
+      db.run(
+        "INSERT INTO schedule (is_scheduled, start_time, stop_time) VALUES (?, ?, ?)",
+        [0, "00:00", "23:59"]
+      );
     }
   });
 });
 
 // Insert or update the single schedule row
 router.post("/", (req, res) => {
-  const { start_time, stop_time } = req.body;
+  const { is_scheduled, start_time, stop_time } = req.body;
 
   db.run(
-    "INSERT OR REPLACE INTO schedule (id, start_time, stop_time) VALUES (?, ?, ?)",
-    [1, start_time, stop_time],
+    "INSERT OR REPLACE INTO schedule (id, is_scheduled, start_time, stop_time) VALUES (?, ?, ?, ?)",
+    [1, is_scheduled, start_time, stop_time],
     (err) => {
       if (err) {
         return res
