@@ -20,6 +20,12 @@ db.serialize(() => {
 
   db.get("SELECT * FROM schedule", (err, row) => {
     if (!row) {
+      // Insert first schedule entry
+      db.run(
+        "INSERT INTO schedule (is_scheduled, start_time, stop_time) VALUES (?, ?, ?)",
+        [0, "00:00", "23:59"]
+      );
+      // Insert second schedule entry
       db.run(
         "INSERT INTO schedule (is_scheduled, start_time, stop_time) VALUES (?, ?, ?)",
         [0, "00:00", "23:59"]
@@ -30,11 +36,11 @@ db.serialize(() => {
 
 // Insert or update the single schedule row
 router.post("/", (req, res) => {
-  const { is_scheduled, start_time, stop_time } = req.body;
+  const { id, is_scheduled, start_time, stop_time } = req.body;
 
   db.run(
     "INSERT OR REPLACE INTO schedule (id, is_scheduled, start_time, stop_time) VALUES (?, ?, ?, ?)",
-    [1, is_scheduled, start_time, stop_time],
+    [id, is_scheduled, start_time, stop_time],
     (err) => {
       if (err) {
         return res
@@ -50,18 +56,21 @@ router.post("/", (req, res) => {
 
 // Get the schedule entry
 router.get("/", (req, res) => {
-  db.get("SELECT * FROM schedule WHERE id = 1", (err, row) => {
+  db.all(`SELECT * FROM schedule`, (err, rows) => {
     if (err) {
       return res.status(500).json({ error: "Failed to fetch schedule entry" });
     }
 
     // Check if row is null (no data found)
-    if (!row) {
+    if (!rows) {
       console.error("No data found in the 'schedule' table.");
       return res.status(404).json({ error: "No data found" });
     }
 
-    res.json(row);
+    res.json({
+      message: "success",
+      data: rows,
+    });
   });
 });
 
