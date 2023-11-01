@@ -17,7 +17,7 @@ export const lowPriceChecker = async () => {
   const botState = await getBotState();
   if (botState === 0 || botState === 3) {
     // Log
-    console.log("Bot is not stopped!");
+    console.log("Bot is stopping...");
 
     // stop this function
     return;
@@ -49,7 +49,7 @@ export const lowPriceChecker = async () => {
     const botState = await getBotState();
     if (botState === 0 || botState === 3) {
       // Log
-      console.log("Bot is not stopped!");
+      console.log("Bot is stopping...");
 
       // stop this loop immediately
       break;
@@ -85,7 +85,7 @@ export const lowPriceChecker = async () => {
       const botState = await getBotState();
       if (botState === 0 || botState === 3) {
         // Log
-        console.log("Bot is not stopped!");
+        console.log("Bot is stopping...");
 
         // stop this loop immediately
         break;

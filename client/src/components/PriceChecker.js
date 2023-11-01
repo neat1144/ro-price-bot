@@ -45,14 +45,41 @@ const PriceChecker = () => {
     }
   };
 
+  // Change schdule state
+  const changeSchduleState = async (stateCode) => {
+    const schduleStateApi = "http://localhost:3030/schedule";
+
+    try {
+      await axios.post(schduleStateApi, {
+        is_scheduled: stateCode,
+      });
+
+      // Print success message
+      console.log(`Change schedule code to "${stateCode}"`);
+    } catch (error) {
+      console.error("Error to set/change Schdule State!");
+    }
+  };
+
+  // Handle start
+  const handleStart = () => {
+    changeBotState(1);
+  };
+
+  // Handle stop
+  const handleStop = () => {
+    changeSchduleState(0);
+    changeBotState(0);
+  };
+
   return (
     <div className="button-container">
       {botState === 1 || botState === 2 ? (
-        <button className="btn btn-danger" onClick={() => changeBotState(0)}>
+        <button className="btn btn-danger" onClick={() => handleStop()}>
           Stop
         </button>
       ) : (
-        <button className="btn btn-primary" onClick={() => changeBotState(1)}>
+        <button className="btn btn-primary" onClick={() => handleStart()}>
           Start
         </button>
       )}
