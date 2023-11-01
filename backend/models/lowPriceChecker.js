@@ -26,6 +26,7 @@ export const lowPriceChecker = async () => {
   // Log
   console.log("");
   console.log(`Price is checking...               (${getTime()})`);
+  console.log("");
 
   // Get bot id and token
   const botIdToken = await getBotIdToken();
@@ -108,8 +109,9 @@ export const lowPriceChecker = async () => {
         await updateChild(childFilteredByPrice);
       }
     }
+    console.log("");
   }
-  console.log("Waiting for next check...");
+  console.log("==============Waiting for next check...==============");
 };
 
 // Filter item name list by a child (include, exclude, itemRefine, and itemLevel)

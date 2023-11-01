@@ -23,9 +23,9 @@ export const getAllItemList = async (parent, timeoutSeconds) => {
 
   // If itemList of page 1 is more than 30
   // Then get itemList of other pages
-  if (allItemList.length >= 30) {
-    // For loop in range(page)
-    for (let i = 2; i <= page; i++) {
+  // For loop in range(page)
+  for (let i = 2; i <= page; i++) {
+    if (allItemList.length >= 30 * (i - 1)) {
       // Log page
       // Delay for request timeout
       console.log(`Getting page ${i}...               (${getTime()})`);
