@@ -11,21 +11,17 @@ import {
 } from "../utils/toGetUpdate.js";
 import { getAllItemList } from "./getItemList.js";
 
-const botStateChecker = async () => {
-  // Get bot state
-  const botState = await getBotState();
-
-  // if botState is false(0), then stop check
-  if (botState === 0 || botState === 3) {
-    // stop this function
-    return;
-  }
-};
-
 // router.get("/", async (req, res) => {
 export const lowPriceChecker = async () => {
   // Check bot state
-  botStateChecker();
+  const botState = await getBotState();
+  if (botState === 0 || botState === 3) {
+    // Log
+    console.log("Bot is not stopped!");
+
+    // stop this function
+    return;
+  }
 
   // Log
   console.log("");
@@ -50,7 +46,14 @@ export const lowPriceChecker = async () => {
   // Loop parent to check price of child
   for (const parent of parentList) {
     // Check bot state
-    botStateChecker();
+    const botState = await getBotState();
+    if (botState === 0 || botState === 3) {
+      // Log
+      console.log("Bot is not stopped!");
+
+      // stop this loop immediately
+      break;
+    }
 
     // Get child list by one parent
     const childList = await getChildList(parent.id);
@@ -79,7 +82,14 @@ export const lowPriceChecker = async () => {
     // Loop child to check price
     for (const child of childList) {
       // Check bot state
-      botStateChecker();
+      const botState = await getBotState();
+      if (botState === 0 || botState === 3) {
+        // Log
+        console.log("Bot is not stopped!");
+
+        // stop this loop immediately
+        break;
+      }
 
       // Filter itemList by a child (include, exclude, itemRefine, and itemLevel)
       const itemListFiltered = itemNameFilter(child, allItemList);
@@ -99,9 +109,6 @@ export const lowPriceChecker = async () => {
       }
     }
   }
-  // Log timeout from db
-  // const timeoutSeconds = await getTimeout();
-  // console.log(`Next check after ${timeoutSeconds}(sec)`);
   console.log("Waiting for next check...");
 };
 
