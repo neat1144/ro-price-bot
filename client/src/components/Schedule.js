@@ -12,6 +12,7 @@ const Schedule = () => {
       .get("http://localhost:3030/schedule")
       .then((response) => {
         console.log(response.data);
+        setIsScheduled(response.data.is_scheduled);
         setStartTime(response.data.start_time);
         setStopTime(response.data.stop_time);
       })
