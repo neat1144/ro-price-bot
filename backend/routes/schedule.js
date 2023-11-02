@@ -41,6 +41,8 @@ router.post("/", (req, res) => {
           .status(500)
           .json({ error: "Failed to create/update schedule entry" });
       }
+      let scheduleStatus = is_scheduled === 1 ? "enabled" : "disabled";
+      console.log(`Schedule created/updated successfully!!\nStatus: ${scheduleStatus}, Start time: ${start_time}, Stop time: ${stop_time}`);
       res
         .status(201)
         .json({ message: "Schedule entry created/updated successfully" });

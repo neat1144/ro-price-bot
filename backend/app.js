@@ -89,9 +89,10 @@ const priceCheckerRootBot = async () => {
   // If current time is not between start time and stop time, then change botState to 0
   if (isScheduled === 1) {
     // Check if current time is between start time and stop time, change bot state to 1
-    if (now >= startTime && now <= stopTime) {
+    if (now === startTime) {
       if (botState !== 2) {
         await changeBotState(1);
+        console.log(`Current time: ${now}`);
         console.log("Start checker by schedule");
 
         // Get new bot state
@@ -100,9 +101,10 @@ const priceCheckerRootBot = async () => {
     }
 
     // Check if current time is not between start time and stop time, change bot state to 0
-    if (now < startTime || now > stopTime) {
+    if (now === stopTime) {
       if (botState !== 3) {
         await changeBotState(0);
+        console.log(`Current time: ${now}`);
         console.log("Stop checker by schedule");
 
         // Get new bot state
@@ -115,7 +117,7 @@ const priceCheckerRootBot = async () => {
   if (botState === 1) {
     // Change bot state to 2
     await changeBotState(2);
-    console.log("Change bot state to 2");
+    console.log("Start bot and Change bot state to 2");
 
     // Change bot state to 2
     botState = 2;
@@ -131,19 +133,24 @@ const priceCheckerRootBot = async () => {
 
     // Start checker every ${timeout} seconds
     intervalId = setInterval(lowPriceChecker, timeoutSeconds * 1000);
+
+    // Log
+    console.log("\n========================START========================\n");
   }
 
   // Stop checker
   if (botState === 0) {
     await changeBotState(3);
-    console.log("Change bot state to 3");
+    console.log("Stop bot and Change bot state to 3");
 
     // Change bot state to 3
     botState = 3;
 
-    console.log("Stop checker by user");
     // Clean interval
     clearInterval(intervalId);
+
+    // Log
+    console.log("\n========================STOP!========================\n");
   }
 };
 

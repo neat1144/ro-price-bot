@@ -4,8 +4,8 @@ import axios from "axios";
 
 const Schedule = () => {
   const [isScheduled, setIsScheduled] = useState(0); // [1, 0]
-  const [startTime, setStartTime] = useState("00:00:00");
-  const [stopTime, setStopTime] = useState("00:00:00");
+  const [startTime, setStartTime] = useState("00:00");
+  const [stopTime, setStopTime] = useState("00:00");
 
   const fetchScheduleTime = async () => {
     axios
