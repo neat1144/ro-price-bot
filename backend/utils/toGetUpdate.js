@@ -107,7 +107,7 @@ export const getScheduleTime = async () => {
       console.error("Error to get schedule time!", error);
     });
 
-  return response.data.data;
+  return response.data;
 };
 
 export const getCurrentTime = () => {

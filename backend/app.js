@@ -19,7 +19,6 @@ import {
   getCurrentTime,
   getScheduleTime,
 } from "./utils/toGetUpdate.js";
-import { checkSchedule } from "./utils/handleSchedule.js";
 
 const app = express();
 const port = process.env.PORT || 3030;
@@ -72,22 +71,45 @@ let intervalId = null;
 
 // Price checker and Bot nofi
 const priceCheckerRootBot = async () => {
-  // Get start time and stop time
-  const scheduleTimeList = await getScheduleTime();
-  const firstSchedule = scheduleTimeList[0];
-  const secondSchedule = scheduleTimeList[1];
-
-  // Check schedule
-  // If firstSchedule is working(1), then skip secondSchedule
-  if (firstSchedule["is_scheduled"] === 1) {
-    await checkSchedule(firstSchedule);
-  } else if (secondSchedule["is_scheduled"] === 1) {
-    await checkSchedule(secondSchedule);
-  }
-
   // Get bot state
   let botState;
   botState = await getBotState();
+
+  // Get current time for 24h format contain seconds (ex: 13:00:00)
+  const now = getCurrentTime();
+
+  // Get start time and stop time
+  const scheduleTime = await getScheduleTime();
+  const startTime = scheduleTime["start_time"];
+  const stopTime = scheduleTime["stop_time"];
+  const isScheduled = scheduleTime["is_scheduled"];
+
+  // If is_scheduled is 1, then checker current time
+  // If current time is between start time and stop time, then change botState to 1
+  // If current time is not between start time and stop time, then change botState to 0
+  if (isScheduled === 1) {
+    // Check if current time is between start time and stop time, change bot state to 1
+    if (now >= startTime && now <= stopTime) {
+      if (botState !== 2) {
+        await changeBotState(1);
+        console.log("Start checker by schedule");
+
+        // Get new bot state
+        botState = 1;
+      }
+    }
+
+    // Check if current time is not between start time and stop time, change bot state to 0
+    if (now < startTime || now > stopTime) {
+      if (botState !== 3) {
+        await changeBotState(0);
+        console.log("Stop checker by schedule");
+
+        // Get new bot state
+        botState = 0;
+      }
+    }
+  }
 
   // Start checker for every ${timeout} seconds
   if (botState === 1) {
