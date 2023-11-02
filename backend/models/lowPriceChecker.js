@@ -24,6 +24,7 @@ export const lowPriceChecker = async () => {
   }
 
   // Log
+  console.log("\n========================START========================");
   console.log("");
   console.log(`Price is checking...               (${getTime()})`);
   console.log("");

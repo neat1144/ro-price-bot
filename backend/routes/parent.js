@@ -21,17 +21,17 @@ db.run(`CREATE TABLE IF NOT EXISTS parent
        page      INTEGER)`);
 
 // If parent table is empty, insert four default rows
-// db.get("SELECT * FROM parent", (err, row) => {
-//   if (!row) {
-//     db.run(
-//       `INSERT INTO parent (keyword, svr, type, page) VALUES
-//       ('乙太星塵', 2290, 0, 1),
-//       ('乙太星塵', 3290, 0, 1),
-//       ('乙太星塵', 4290, 0, 1),
-//       ('乙太星塵', 829, 0, 1)`
-//     );
-//   }
-// });
+db.get("SELECT * FROM parent", (err, row) => {
+  if (!row) {
+    db.run(
+      `INSERT INTO parent (keyword, svr, type, page) VALUES
+      ('乙太星塵', 2290, 0, 1),
+      ('乙太星塵', 3290, 0, 1),
+      ('乙太星塵', 4290, 0, 1),
+      ('乙太星塵', 829, 0, 1)`
+    );
+  }
+});
 
 // CREATE a new parent
 router.post("/", (req, res) => {

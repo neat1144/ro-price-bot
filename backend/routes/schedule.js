@@ -42,10 +42,33 @@ router.post("/", (req, res) => {
           .json({ error: "Failed to create/update schedule entry" });
       }
       let scheduleStatus = is_scheduled === 1 ? "enabled" : "disabled";
-      console.log(`Schedule created/updated successfully!!\nStatus: ${scheduleStatus}, Start time: ${start_time}, Stop time: ${stop_time}`);
+      console.log(
+        `Schedule created/updated successfully!!\nStatus: ${scheduleStatus}, Start time: ${start_time}, Stop time: ${stop_time}`
+      );
       res
         .status(201)
         .json({ message: "Schedule entry created/updated successfully" });
+    }
+  );
+});
+
+// If you want to update only the is_scheduled field, use this route
+// That mean you don't need to send and update start_time and stop_time
+router.post("/is-scheduled", (req, res) => {
+  const { is_scheduled } = req.body;
+
+  db.run(
+    "UPDATE schedule SET is_scheduled = ? WHERE id = 1",
+    [is_scheduled],
+    (err) => {
+      if (err) {
+        return res
+          .status(500)
+          .json({ error: "Failed to update schedule entry" });
+      }
+      let scheduleStatus = is_scheduled === 1 ? "enabled" : "disabled";
+      console.log(`Schedule updated successfully!!\nStatus: ${scheduleStatus}`);
+      res.status(201).json({ message: "Schedule entry updated successfully" });
     }
   );
 });

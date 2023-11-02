@@ -32,7 +32,7 @@ const Schedule = () => {
         start_time: startTime,
         stop_time: stopTime,
       })
-      .then((response) => {
+      .then(() => {
         alert('"Schedule" saved successfully!');
         // console.log(response);
         // Refresh the data

@@ -14,35 +14,34 @@ describe("/schedule API", () => {
     db.run(`DELETE FROM schedule`, done);
   });
 
-  // Post test (Create)
-  describe("POST /schedule for create", () => {
+  // POST test
+  describe("POST /schedule", () => {
+    // Post test (Create)
     it("should create a new schedule", async () => {
       // Sucess case
       const res = await request(app).post("/schedule").send({
         is_scheduled: 1,
-        start_time: "00:00:00",
-        stop_time: "23:59:59",
+        start_time: "00:00",
+        stop_time: "23:59",
       });
       expect(res.statusCode).toEqual(201);
       expect(res.body).toHaveProperty("message");
     });
-  });
 
-  // Post test (Update)
-  describe("POST /schedule for update", () => {
+    // Post test (Update)
     it("should update the schedule", async () => {
       // Create a schedule entry
       const res1 = await request(app).post("/schedule").send({
         is_scheduled: 0,
-        start_time: "00:00:00",
-        stop_time: "23:59:59",
+        start_time: "00:00",
+        stop_time: "23:59",
       });
 
       // Update
       const res = await request(app).post("/schedule").send({
         is_scheduled: 1,
-        start_time: "06:06:06",
-        stop_time: "18:18:18",
+        start_time: "06:06",
+        stop_time: "18:18",
       });
 
       // Get the schedule item
@@ -52,8 +51,33 @@ describe("/schedule API", () => {
       expect(res2.body).toHaveProperty("start_time");
       expect(res2.body).toHaveProperty("stop_time");
       expect(res2.body.is_scheduled).toEqual(1);
-      expect(res2.body.start_time).toEqual("06:06:06");
-      expect(res2.body.stop_time).toEqual("18:18:18");
+      expect(res2.body.start_time).toEqual("06:06");
+      expect(res2.body.stop_time).toEqual("18:18");
+    });
+
+    // Post test (Update is_scheduled only)
+    it("should update the schedule", async () => {
+      // Create first
+      const res = await request(app).post("/schedule").send({
+        is_scheduled: 0,
+        start_time: "05:43",
+        stop_time: "19:34",
+      });
+      expect(res.statusCode).toEqual(201);
+
+      // Update is_scheduled only
+      const res1 = await request(app).post("/schedule/is-scheduled").send({
+        is_scheduled: 1,
+      });
+      expect(res1.statusCode).toEqual(201);
+
+      // Get the schedule item
+      const res2 = await request(app).get("/schedule");
+
+      // Check
+      expect(res2.body.start_time).toEqual("05:43");
+      expect(res2.body.stop_time).toEqual("19:34");
+      expect(res2.body.is_scheduled).toEqual(1);
     });
   });
 
@@ -63,8 +87,8 @@ describe("/schedule API", () => {
       // Create a schedule entry
       const res1 = await request(app).post("/schedule").send({
         is_scheduled: 1,
-        start_time: "08:30:45",
-        stop_time: "21:20:40",
+        start_time: "08:30",
+        stop_time: "21:20",
       });
 
       // Get the schedule item
@@ -74,8 +98,8 @@ describe("/schedule API", () => {
       expect(res2.body).toHaveProperty("start_time");
       expect(res2.body).toHaveProperty("stop_time");
       expect(res2.body.is_scheduled).toEqual(1);
-      expect(res2.body.start_time).toEqual("08:30:45");
-      expect(res2.body.stop_time).toEqual("21:20:40");
+      expect(res2.body.start_time).toEqual("08:30");
+      expect(res2.body.stop_time).toEqual("21:20");
     });
   });
 });

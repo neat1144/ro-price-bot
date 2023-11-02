@@ -134,8 +134,6 @@ const priceCheckerRootBot = async () => {
     // Start checker every ${timeout} seconds
     intervalId = setInterval(lowPriceChecker, timeoutSeconds * 1000);
 
-    // Log
-    console.log("\n========================START========================\n");
   }
 
   // Stop checker

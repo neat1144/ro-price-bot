@@ -15,8 +15,17 @@ const PriceChecker = () => {
     }
   };
 
+  // Fetch bot state on page load
   useEffect(() => {
     fetchBotState();
+  }, []);
+
+  // Fetch bot state every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchBotState();
+    }, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   // Change Bot State
@@ -45,20 +54,15 @@ const PriceChecker = () => {
     }
   };
 
-  // Change schdule state
-  const changeSchduleState = async (stateCode) => {
-    const schduleStateApi = "http://localhost:3030/schedule";
-
-    try {
-      await axios.post(schduleStateApi, {
-        is_scheduled: stateCode,
+  const updateIsScheduled = async (isScheduled) => {
+    axios
+      .post("http://localhost:3030/schedule/is-scheduled", {
+        is_scheduled: isScheduled,
+      })
+      .then(() => {})
+      .catch((error) => {
+        console.log(error.response.data);
       });
-
-      // Print success message
-      console.log(`Change schedule code to "${stateCode}"`);
-    } catch (error) {
-      console.error("Error to set/change Schdule State!");
-    }
   };
 
   // Handle start
@@ -68,7 +72,7 @@ const PriceChecker = () => {
 
   // Handle stop
   const handleStop = () => {
-    changeSchduleState(0);
+    updateIsScheduled(0);
     changeBotState(0);
   };
 
