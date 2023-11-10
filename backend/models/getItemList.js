@@ -16,6 +16,13 @@ export const getAllItemList = async (parent, timeoutSeconds) => {
   // Get itemList of page 1
   const rowStart = 1;
   const firstItemList = await getItemListByRoServer(parent, rowStart);
+
+  // If firstItemList is error, then drop out this function
+  if (firstItemList === "error") {
+    return [];
+  }
+
+  // Append firstItemList to allItemList
   allItemList = [...allItemList, ...firstItemList];
   await delay(timeoutMilliseconds);
 
@@ -77,7 +84,10 @@ export const getItemListByRoServer = async (parent, rowStart) => {
 
   // Send request
   try {
-    const response = await axios.post(ro_url, requestBody, { headers });
+    const response = await axios.post(ro_url, requestBody, {
+      headers,
+      timeout: 1000,
+    });
 
     // Get original itemList from RO server
     const responseData = response.data;
@@ -110,8 +120,8 @@ export const getItemListByRoServer = async (parent, rowStart) => {
 
     return itemList;
   } catch (error) {
-    console.error(`Error to get item list by "${keyword}" from RO server!`);
-    return itemList;
+    console.error("Error to get item list from RO server!");
+    return "error";
   }
 
   // Return itemList
