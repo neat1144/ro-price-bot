@@ -91,6 +91,23 @@ router.get("/", (req, res) => {
   });
 });
 
+// GET count of parent
+router.get("/count", (req, res) => {
+  // Query
+  const selectQuery = `SELECT COUNT(*) AS count FROM parent`;
+
+  // Get from db
+  db.get(selectQuery, (err, row) => {
+    // Handle error
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+    // Handle success
+    res.json(row);
+  });
+});
+
 // UPDATE a item by id
 router.put("/:id", (req, res) => {
   // Parementer from request body

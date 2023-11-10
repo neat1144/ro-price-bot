@@ -6,6 +6,8 @@ const Timeout = () => {
   const [inputTimeout, setInputTimeout] = useState(""); // Initialize as an empty string
   const [isTimeoutInput, setIsTimeoutInput] = useState(false);
   const [dbTimeout, setDbTimeout] = useState("");
+  const [reqTimeout, setReqTimeout] = useState("");
+  const [parentCount, setParentCount] = useState("");
 
   // Fetch timeout
   const fetchTimeout = () => {
@@ -20,9 +22,39 @@ const Timeout = () => {
       });
   };
 
+  // Fetch request timeout
+  const fetchReqTimeout = async () => {
+    // Fetch data from the API
+    axios
+      .get("http://localhost:3030/req-timeout")
+      .then((response) => {
+        // Extract the values from the API response
+        const { req_timeout_sec } = response.data;
+        setReqTimeout(req_timeout_sec);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  };
+
+  // Fetch count of parent
+  const fetchParentCount = () => {
+    axios
+      .get("http://localhost:3030/parent/count")
+      .then((response) => {
+        const { count } = response.data;
+        setParentCount(count);
+      })
+      .catch((error) => {
+        console.error("Error fetching parent count", error);
+      });
+  };
+
   // useEffect
   useEffect(() => {
     fetchTimeout();
+    fetchReqTimeout();
+    fetchParentCount();
   }, []);
 
   const handleEdit = (newValue, field) => {
@@ -66,15 +98,21 @@ const Timeout = () => {
           </button>
         </div>
       ) : (
-        <button
-          className="btn btn-info"
-          onClick={() => {
-            setInputTimeout(dbTimeout); // Set the input value to the fetched timeout value
-            setIsTimeoutInput(true);
-          }}
-        >
-          Timeout ({dbTimeout} sec)
-        </button>
+        <>
+          <button
+            className="btn btn-info"
+            onClick={() => {
+              setInputTimeout(dbTimeout); // Set the input value to the fetched timeout value
+              setIsTimeoutInput(true);
+            }}
+          >
+            Timeout ({dbTimeout} sec)
+          </button>
+          <span>
+            {" "}
+            Recommand: bigger than {parentCount}x{reqTimeout}
+          </span>
+        </>
       )}
     </div>
   );

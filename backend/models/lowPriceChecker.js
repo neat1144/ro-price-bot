@@ -68,7 +68,7 @@ export const lowPriceChecker = async () => {
 
     // Log
     console.log(
-      `Checking ${parent.keyword}-${parent.svr}-${
+      `Checking ${parent.id}-${parent.keyword}-${parent.svr}-${
         parent.type
       }...         (${getTime()})`
     );
