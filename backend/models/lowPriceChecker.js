@@ -17,7 +17,7 @@ export const lowPriceChecker = async () => {
   const botState = await getBotState();
   if (botState === 0 || botState === 3) {
     // Log
-    console.log("Bot is stopping...");
+    console.log("Bot is stopping... (lowPriceChecker)");
 
     // stop this function
     return;
@@ -51,7 +51,7 @@ export const lowPriceChecker = async () => {
     const botState = await getBotState();
     if (botState === 0 || botState === 3) {
       // Log
-      console.log("Bot is stopping...");
+      console.log("Bot is stopping...(lowPriceChecker-parent))");
 
       // stop this loop immediately
       break;
@@ -87,7 +87,7 @@ export const lowPriceChecker = async () => {
       const botState = await getBotState();
       if (botState === 0 || botState === 3) {
         // Log
-        console.log("Bot is stopping...");
+        console.log("Bot is stopping...(lowPriceChecker-child)");
 
         // stop this loop immediately
         break;
@@ -132,7 +132,7 @@ export const itemNameFilter = (child, itemList) => {
     const itemLevel = item.itemGradeLevel;
 
     // Check if the itemName matches any term in the includeList, or includeList is empty
-    const includesTerm = includeList.some(
+    const includesTerm = includeList.every(
       (includeTerm) => itemName.includes(includeTerm) || includeTerm === ""
     );
 

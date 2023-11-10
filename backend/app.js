@@ -67,10 +67,56 @@ app.use("/req-timeout", reqTimeoutRouter);
 // Schedule api
 app.use("/schedule", scheduleRouter);
 
-let intervalId = null;
+let priceCheckerIntervalId = null;
 
 // Price checker and Bot nofi
 const priceCheckerRootBot = async () => {
+  // Get bot state
+  let botState;
+  botState = await getBotState();
+
+  // Start checker for every ${timeout} seconds
+  if (botState === 1) {
+    // Change bot state to 2
+    await changeBotState(2);
+    console.log("Start bot and Change bot state to 2");
+
+    // Change bot state to 2
+    botState = 2;
+
+    // Get timeout
+    const timeoutSeconds = await getTimeout();
+
+    // Log msg
+    console.log(`Start checker every ${timeoutSeconds}(sec)`);
+
+    // Do the first check
+    await lowPriceChecker();
+
+    // Start checker every ${timeout} seconds
+    priceCheckerIntervalId = setInterval(
+      lowPriceChecker,
+      timeoutSeconds * 1000
+    );
+  }
+
+  // Stop checker
+  if (botState === 0) {
+    await changeBotState(3);
+    console.log("Stop bot and Change bot state to 3");
+
+    // Change bot state to 3
+    botState = 3;
+
+    // Clean interval
+    clearInterval(priceCheckerIntervalId);
+
+    // Log
+    console.log("\n========================STOP!========================\n");
+  }
+};
+
+const scheduleChecker = async () => {
   // Get bot state
   let botState;
   botState = await getBotState();
@@ -112,48 +158,11 @@ const priceCheckerRootBot = async () => {
       }
     }
   }
-
-  // Start checker for every ${timeout} seconds
-  if (botState === 1) {
-    // Change bot state to 2
-    await changeBotState(2);
-    console.log("Start bot and Change bot state to 2");
-
-    // Change bot state to 2
-    botState = 2;
-
-    // Get timeout
-    const timeoutSeconds = await getTimeout();
-
-    // Log msg
-    console.log(`Start checker every ${timeoutSeconds}(sec)`);
-
-    // Do the first check
-    await lowPriceChecker();
-
-    // Start checker every ${timeout} seconds
-    intervalId = setInterval(lowPriceChecker, timeoutSeconds * 1000);
-
-  }
-
-  // Stop checker
-  if (botState === 0) {
-    await changeBotState(3);
-    console.log("Stop bot and Change bot state to 3");
-
-    // Change bot state to 3
-    botState = 3;
-
-    // Clean interval
-    clearInterval(intervalId);
-
-    // Log
-    console.log("\n========================STOP!========================\n");
-  }
 };
 
 // Set timeout for price checker bot
-setInterval(priceCheckerRootBot, 500);
+setInterval(priceCheckerRootBot, 2000); // every 2 seconds
+setInterval(scheduleChecker, 10000); // every 10 seconds
 
 // Start the Express server
 app.listen(port, () => {

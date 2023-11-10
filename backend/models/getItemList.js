@@ -1,6 +1,6 @@
 import axios, { all } from "axios";
 import { delay } from "../utils/delay.js";
-import { getTime } from "../utils/toGetUpdate.js";
+import { getTime, getBotState } from "../utils/toGetUpdate.js";
 
 // Get item list of page
 export const getAllItemList = async (parent, timeoutSeconds) => {
@@ -25,6 +25,14 @@ export const getAllItemList = async (parent, timeoutSeconds) => {
   // Then get itemList of other pages
   // For loop in range(page)
   for (let i = 2; i <= page; i++) {
+    // check bot status
+    const botState = await getBotState();
+    if (botState === 0 || botState === 3) {
+      console.log("Bot is stopped! (getAllItemList)");
+      break;
+    }
+
+    // Get page i itemList
     if (allItemList.length >= 30 * (i - 1)) {
       // Log page
       // Delay for request timeout
