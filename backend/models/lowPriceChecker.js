@@ -45,8 +45,14 @@ export const lowPriceChecker = async () => {
   // Get request timeout
   const reqTimeoutSeconds = await getReqTimeout();
 
+  // index of parent
+  let index = 0;
+
   // Loop parent to check price of child
   for (const parent of parentList) {
+    // Add index
+    index++;
+
     // Check bot state
     const botState = await getBotState();
     if (botState === 0 || botState === 3) {
@@ -68,7 +74,7 @@ export const lowPriceChecker = async () => {
 
     // Log
     console.log(
-      `Checking ${parent.id}-${parent.keyword}-${parent.svr}-${
+      `Checking ${index}-${parent.keyword}-${parent.svr}-${
         parent.type
       }...         (${getTime()})`
     );

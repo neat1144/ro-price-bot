@@ -8,6 +8,7 @@ const Timeout = () => {
   const [dbTimeout, setDbTimeout] = useState("");
   const [reqTimeout, setReqTimeout] = useState("");
   const [parentCount, setParentCount] = useState("");
+  const [recommandTimeout, setRecommandTimeout] = useState("");
 
   // Fetch timeout
   const fetchTimeout = () => {
@@ -56,6 +57,11 @@ const Timeout = () => {
     fetchReqTimeout();
     fetchParentCount();
   }, []);
+
+  useEffect(() => {
+    const recommand = (parentCount / 2) * (reqTimeout + reqTimeout + 1);
+    setRecommandTimeout(recommand);
+  }, [parentCount, reqTimeout]);
 
   const handleEdit = (newValue, field) => {
     setInputTimeout(newValue); // Update the inputTimeout state directly
@@ -108,10 +114,7 @@ const Timeout = () => {
           >
             Timeout ({dbTimeout} sec)
           </button>
-          <span>
-            {" "}
-            Recommand: bigger than {parentCount}x{reqTimeout}
-          </span>
+          <span> Recommand: {recommandTimeout}</span>
         </>
       )}
     </div>
