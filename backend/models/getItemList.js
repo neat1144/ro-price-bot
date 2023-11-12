@@ -18,7 +18,7 @@ export const getAllItemList = async (parent, timeoutSeconds) => {
   const firstItemList = await getItemListByRoServer(parent, rowStart);
 
   // If firstItemList is error, then drop out this function
-  if (firstItemList === "error") {
+  if (firstItemList === "no-internet-error") {
     return [];
   }
 
@@ -48,6 +48,11 @@ export const getAllItemList = async (parent, timeoutSeconds) => {
       // Get itemList i
       const rowStart = (i - 1) * 30 + 1;
       const tempItemList = await getItemListByRoServer(parent, rowStart);
+
+      // If tempItemList is error, then stop this loop and return []
+      if (tempItemList === "no-internet-error") {
+        return [];
+      }
 
       // Log page and itemList length
       console.log(`page ${i} itemList length: ${tempItemList.length}`);
@@ -121,7 +126,7 @@ export const getItemListByRoServer = async (parent, rowStart) => {
     return itemList;
   } catch (error) {
     console.error("Error to get item list from RO server!");
-    return "error";
+    return "no-internet-error";
   }
 
   // Return itemList

@@ -86,14 +86,14 @@ const priceCheckerRootBot = async () => {
     // Log msg
     console.log(`Start checker every ${timeoutSeconds}(sec)`);
 
-    // Do the first check
-    await lowPriceChecker();
-
     // Start checker every ${timeout} seconds
     priceCheckerIntervalId = setInterval(
       lowPriceChecker,
       timeoutSeconds * 1000
     );
+
+    // Do the first check
+    await lowPriceChecker();
   }
 
   // Stop checker
