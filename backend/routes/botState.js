@@ -1,11 +1,7 @@
 import express from "express";
-import sqlite3 from "sqlite3";
+import db from "../db/db.js";
 
 const router = express.Router();
-const sqlite3Verbose = sqlite3.verbose();
-
-// SQLite database connection
-const db = new sqlite3Verbose.Database("mydatabase.db");
 
 // Create the 'botState' table if it doesn't exist and insert a single row
 db.serialize(() => {

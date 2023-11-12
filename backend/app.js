@@ -4,7 +4,6 @@ import apiCustomer from "./routes/customer.js";
 import apiParent from "./routes/parent.js";
 import apiChild from "./routes/child.js";
 import scheduleRouter from "./routes/schedule.js";
-import lowPriceRouter from "./routes/lowPrice.js";
 import apiChatId from "./routes/chatId.js";
 import reqTimeoutRouter from "./routes/reqTimeout.js";
 import botStateRouter from "./routes/botState.js";
@@ -48,9 +47,6 @@ app.use("/parent", apiParent);
 
 // Child api
 app.use("/child", apiChild);
-
-// Get-items api
-app.use("/low-price", lowPriceRouter);
 
 // Chat-bot id
 app.use("/chat-id", apiChatId);

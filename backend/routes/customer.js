@@ -1,11 +1,7 @@
 import express from "express";
-import sqlite3 from "sqlite3";
+import db from "../db/db.js";
 
 const router = express.Router();
-const sqlite3Verbose = sqlite3.verbose();
-
-// SQLite database connection
-const db = new sqlite3Verbose.Database("mydatabase.db");
 
 // Enable foreign key support (if not already enabled)
 db.run("PRAGMA foreign_keys = ON;");
@@ -129,7 +125,9 @@ router.post("/", (req, res) => {
                 if (err) {
                   res.status(500).json({ error: "Internal Server Error" });
                 } else {
-                  res.status(201).json({ message: "Child created successfully" });
+                  res
+                    .status(201)
+                    .json({ message: "Child created successfully" });
                 }
               }
             );
@@ -139,6 +137,5 @@ router.post("/", (req, res) => {
     }
   });
 });
-
 
 export default router;

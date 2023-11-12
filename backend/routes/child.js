@@ -1,11 +1,7 @@
 import express from "express";
-import sqlite3 from "sqlite3";
+import db from "../db/db.js";
 
 const router = express.Router();
-const sqlite3Verbose = sqlite3.verbose();
-
-// SQLite database connection
-const db = new sqlite3Verbose.Database("mydatabase.db");
 
 // Set foreign key constraints
 db.serialize(() => {
@@ -133,6 +129,26 @@ router.put("/:id", (req, res) => {
       });
     }
   );
+});
+
+// Update all child's nofi_time to ""
+router.post("/reset", (req, res) => {
+  db.run("UPDATE child SET nofi_time = '', new_price = 0", (err) => {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+    db.all(`SELECT * FROM child`, (err, rows) => {
+      if (err) {
+        res.status(400).json({ error: err.message });
+        return;
+      }
+      res.json({
+        message: "success",
+        data: rows,
+      });
+    });
+  });
 });
 
 // Get all child

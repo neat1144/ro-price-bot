@@ -182,4 +182,48 @@ describe("/child API", () => {
       expect(res3.body.data.length).toEqual(2);
     });
   });
+
+  // Rest all child's new_price and nofi_time
+  describe("PUT /child/reset-all", () => {
+    // Create two child
+    // Then reset all child's new_price and nofi_time
+    it("should reset all child's new_price and nofi_time", async () => {
+      // Create two child with new_price and nofi_time
+      // Number 1
+      const res = await request(app)
+        .post("/child")
+        .send({
+          ...requestBody,
+          parent_id: parentID,
+          new_price: 1000,
+          nofi_time: "2022-01-01 (23:30)",
+        });
+
+      // Number 2
+      const res2 = await request(app)
+        .post("/child")
+        .send({
+          ...requestBody,
+          parent_id: parentID,
+          new_price: 2000,
+          nofi_time: "3022-12-31 (23:30)",
+        });
+
+      // Reset all child's new_price and nofi_time
+      const res3 = await request(app).post("/child/reset");
+      expect(res3.statusCode).toEqual(200);
+
+      // Get all child
+      const res4 = await request(app).get("/child");
+
+      expect(res4.statusCode).toEqual(200);
+      expect(res4.body).toHaveProperty("message");
+      expect(res4.body).toHaveProperty("data");
+      expect(res4.body.data.length).toEqual(2);
+      expect(res4.body.data[0]).toHaveProperty("new_price");
+      expect(res4.body.data[1]).toHaveProperty("nofi_time");
+      expect(res4.body.data[0].new_price).toEqual(0);
+      expect(res4.body.data[1].nofi_time).toEqual("");
+    });
+  });
 });

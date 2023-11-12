@@ -76,8 +76,33 @@ const PriceChecker = () => {
     changeBotState(0);
   };
 
+  // Handle reset all
+  const handleResetAll = () => {
+    axios
+      .post("http://localhost:3030/child/reset")
+      .then(() => {
+        // show alert
+        alert("Reset all data!");
+
+        // log
+        console.log("Reset all data!");
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+      });
+  };
+
   return (
     <div className="button-container">
+      {/* Rest all button */}
+      <button
+        className="btn btn-warning"
+        onClick={() => handleResetAll()}
+        style={{ marginRight: "10px" }}
+      >
+        Reset
+      </button>
+      {/* Start/Stop button */}
       {botState === 1 || botState === 2 ? (
         <button className="btn btn-danger" onClick={() => handleStop()}>
           Stop

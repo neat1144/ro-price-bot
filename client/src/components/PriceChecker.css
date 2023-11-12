@@ -3,7 +3,7 @@
 .button-container {
   /* position: relative; */
   position: absolute;
-  top: 0.9%; /* Adjust the top distance as needed */
+  top: 0.75%; /* Adjust the top distance as needed */
   right: 20px; /* Adjust the right distance as needed */
 }
 
