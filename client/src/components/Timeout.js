@@ -7,7 +7,7 @@ const Timeout = () => {
   const [isTimeoutInput, setIsTimeoutInput] = useState(false);
   const [dbTimeout, setDbTimeout] = useState("");
   const [reqTimeout, setReqTimeout] = useState("");
-  const [parentCount, setParentCount] = useState("");
+  const [sumRequest, setSumRequest] = useState("");
   const [recommandTimeout, setRecommandTimeout] = useState("");
 
   // Fetch timeout
@@ -39,15 +39,15 @@ const Timeout = () => {
   };
 
   // Fetch count of parent
-  const fetchParentCount = () => {
+  const fetchSumRequest = () => {
     axios
-      .get("http://localhost:3030/parent/count")
+      .get("http://localhost:3030/parent/page-sum")
       .then((response) => {
         const { count } = response.data;
-        setParentCount(count);
+        setSumRequest(count);
       })
       .catch((error) => {
-        console.error("Error fetching parent count", error);
+        console.error("Error fetching sum of all parent's page", error);
       });
   };
 
@@ -55,13 +55,13 @@ const Timeout = () => {
   useEffect(() => {
     fetchTimeout();
     fetchReqTimeout();
-    fetchParentCount();
+    fetchSumRequest();
   }, []);
 
   useEffect(() => {
-    const recommand = (parentCount / 2) * (reqTimeout + reqTimeout + 1);
+    const recommand = (sumRequest / 2) * (reqTimeout + reqTimeout + 1);
     setRecommandTimeout(recommand);
-  }, [parentCount, reqTimeout]);
+  }, [sumRequest, reqTimeout]);
 
   const handleEdit = (newValue, field) => {
     setInputTimeout(newValue); // Update the inputTimeout state directly
@@ -114,7 +114,11 @@ const Timeout = () => {
           >
             Timeout ({dbTimeout} sec)
           </button>
-          <span> Recommand: {recommandTimeout}</span>
+          <span> Request-total: {sumRequest}</span>
+          <span>
+            {" "}
+            Recommand: <b>{recommandTimeout}(s)</b>
+          </span>
         </>
       )}
     </div>

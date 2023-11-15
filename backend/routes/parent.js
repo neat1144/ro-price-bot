@@ -104,6 +104,23 @@ router.get("/count", (req, res) => {
   });
 });
 
+// Get sum of page column from all parent
+router.get("/page-sum", (req, res) => {
+  // Query
+  const selectQuery = `SELECT SUM(page) AS count FROM parent`;
+
+  // Get from db
+  db.get(selectQuery, (err, row) => {
+    // Handle error
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+    // Handle success
+    res.json(row);
+  });
+});
+
 // UPDATE a item by id
 router.put("/:id", (req, res) => {
   // Parementer from request body
