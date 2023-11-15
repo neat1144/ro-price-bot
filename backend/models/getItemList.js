@@ -111,11 +111,29 @@ export const getItemListByRoServer = async (parent, rowStart) => {
     //        ],
     // }
 
+    // {
+    //   "storeName": "免稅議價  寄信防斷",
+    //   "SSI": 7301344850153075000,
+    //   "itemRefining": 0,
+    //   "itemID": 32219,
+    //   "itemName": "阿斯特莉亞指環",
+    //   "slot_1": "",
+    //   "slot_2": "",
+    //   "slot_3": "",
+    //   "slot_4": "",
+    //   "ItemGradeLevel": 0,
+    //   "DefaultSlotCount": "1",
+    //   "itemCNT": 1,
+    //   "itemPrice": 200000000,
+    //   "storetype": 0,
+    //   "SSI2": "7301344850153075113"
+    // },
+
     // Filter data of response
     if (responseData.dt && responseData.dt.length) {
       itemList = responseData.dt.map((item) => ({
         itemRefining: item.itemRefining,
-        itemName: item.itemName,
+        itemName: handlerItemName(item),
         itemGradeLevel: item.ItemGradeLevel,
         itemPrice: item.itemPrice,
         itemCNT: item.itemCNT,
@@ -132,32 +150,26 @@ export const getItemListByRoServer = async (parent, rowStart) => {
   // Return itemList
 };
 
-// export const requestRoServer = async (parent, rowStart) => {
-//   // Variable of parent
-//   const { keyword, svr, type } = parent;
+const handlerItemName = (item) => {
+  const { itemName, slot_1, slot_2, slot_3, slot_4 } = item;
 
-//   // Request
-//   const ro_url = "https://event.gnjoy.com.tw/Ro/RoShopSearch/forAjax_shopDeal";
-//   const headers = setHeaders();
-//   const requestBody = {
-//     div_svr: svr.toString(), // '2290'
-//     div_storetype: type.toString(), // '0'販售, '1'收購, '2'全部
-//     txb_KeyWord: keyword, // '乙太星塵'
-//     row_start: rowStart.toString(), // '1'
-//     recaptcha: "",
-//     sort_by: "itemPrice",
-//     sort_desc: "", // '', 'desc'
-//   };
+  // Check slot_1, slot_2, slot_3, slot_4 is not null, then add to itemName
+  let newItemName = itemName;
+  if (slot_1 !== "") {
+    newItemName += " " + slot_1;
+  }
+  if (slot_2 !== "") {
+    newItemName += " " + slot_2;
+  }
+  if (slot_3 !== "") {
+    newItemName += " " + slot_3;
+  }
+  if (slot_4 !== "") {
+    newItemName += " " + slot_4;
+  }
 
-//   // Send request
-//   const response = await axios
-//     .post(ro_url, requestBody, { headers })
-//     .catch((error) => {
-//       console.error("Error to get item list from RO server!", error);
-//     });
-
-//   return response;
-// };
+  return newItemName;
+}
 
 const setHeaders = () => {
   const headers = {

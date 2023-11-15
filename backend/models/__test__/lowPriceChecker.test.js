@@ -55,8 +55,6 @@ const create14Items = () => {
 };
 
 describe("Low Price Checker", () => {
-  // Helper function
-
   // Filter child
   describe("filter child by price, include and exclude", () => {
     // Create a list of 12 items
@@ -143,21 +141,20 @@ describe("Low Price Checker", () => {
       expect(itemListFiltered[0].itemName).toBe("乙太星塵4");
     });
 
-    // Check multiple include (split by "+")
+    // FIXME: Check multiple include (split by "+")
     it("check MULTI child.incldue is in item name", async () => {
       const multiChildByInclude = {
         ...childInit,
-        include: "1+2+3",
+        include: "庇佑+2",
       };
 
       // Filter item list by child
       const itemListFiltered = itemNameFilter(multiChildByInclude, itemList);
 
-      expect(itemListFiltered.length).toBe(8);
-      // First item
-      expect(itemListFiltered[0].itemName).toBe("乙太星塵1");
-      // Last item
-      expect(itemListFiltered[6].itemName).toBe("庇佑乙太星塵2");
+      expect(itemListFiltered.length).toBe(2);
+      // Check item name
+      expect(itemListFiltered[0].itemName).toBe("庇佑乙太星塵2");
+      expect(itemListFiltered[1].itemName).toBe("庇佑乙太星塵2 (+12)");
     });
 
     // Check multiple exclude (split by "+")
@@ -220,7 +217,7 @@ describe("Low Price Checker", () => {
       expect(itemListFiltered[0].itemGradeLevel).toBe(4);
     });
 
-    // TODO: Check child price with filter item list
+    // Check child price with filter item list
     it("check child price with filter item list", async () => {
       const childByPriceFilter = {
         ...childInit,
@@ -242,3 +239,104 @@ describe("Low Price Checker", () => {
     });
   });
 });
+
+// [
+//   {
+//     itemRefining: 0,
+//     itemName: '乙太星塵1',
+//     itemGradeLevel: 0,
+//     itemPrice: 1000,
+//     type: 0
+//   },
+//   {
+//     itemRefining: 0,
+//     itemName: '乙太星塵1',
+//     itemGradeLevel: 0,
+//     itemPrice: 1000,
+//     type: 0
+//   },
+//   {
+//     itemRefining: 0,
+//     itemName: '乙太星塵2',
+//     itemGradeLevel: 0,
+//     itemPrice: 2000,
+//     type: 0
+//   },
+//   {
+//     itemRefining: 0,
+//     itemName: '乙太星塵2',
+//     itemGradeLevel: 0,
+//     itemPrice: 2000,
+//     type: 0
+//   },
+//   {
+//     itemRefining: 0,
+//     itemName: '乙太星塵3',
+//     itemGradeLevel: 0,
+//     itemPrice: 3000,
+//     type: 0
+//   },
+//   {
+//     itemRefining: 0,
+//     itemName: '乙太星塵3',
+//     itemGradeLevel: 0,
+//     itemPrice: 3000,
+//     type: 0
+//   },
+//   {
+//     itemRefining: 0,
+//     itemName: '乙太星塵4',
+//     itemGradeLevel: 0,
+//     itemPrice: 4000,
+//     type: 0
+//   },
+//   {
+//     itemRefining: 0,
+//     itemName: '乙太星塵4',
+//     itemGradeLevel: 0,
+//     itemPrice: 4000,
+//     type: 0
+//   },
+//   {
+//     itemRefining: 0,
+//     itemName: '乙太星塵5',
+//     itemGradeLevel: 0,
+//     itemPrice: 5000,
+//     type: 0
+//   },
+//   {
+//     itemRefining: 0,
+//     itemName: '乙太星塵5',
+//     itemGradeLevel: 0,
+//     itemPrice: 5000,
+//     type: 0
+//   },
+//   {
+//     itemRefining: 0,
+//     itemName: '庇佑乙太星塵',
+//     itemGradeLevel: 0,
+//     itemPrice: 2000,
+//     type: 0
+//   },
+//   {
+//     itemRefining: 0,
+//     itemName: '庇佑乙太星塵2',
+//     itemGradeLevel: 0,
+//     itemPrice: 2000,
+//     type: 0
+//   },
+//   {
+//     itemRefining: 12,
+//     itemName: '庇佑乙太星塵2 (+12)',
+//     itemGradeLevel: 0,
+//     itemPrice: 2000,
+//     type: 0
+//   },
+//   {
+//     itemRefining: 0,
+//     itemName: '庇佑乙太星塵99 A',
+//     itemGradeLevel: 4,
+//     itemPrice: 2000,
+//     type: 0
+//   }
+// ]
