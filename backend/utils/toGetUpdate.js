@@ -111,12 +111,21 @@ export const getScheduleTime = async () => {
 };
 
 export const getCurrentTime = () => {
-  const now = new Date().toLocaleTimeString("en-US", {
+  let now = new Date().toLocaleTimeString("en-US", {
     hour12: false,
     hour: "numeric",
     minute: "numeric",
     // second: "numeric",
   });
+
+  // Convert 24:00, 24:15... to 00:00, 00:15...
+  const nowHour = now.split(":")[0];
+  const nowMinute = now.split(":")[1];
+  if (nowHour === "24") {
+    const newHour = "00";
+    const newMinute = nowMinute;
+    now = `${newHour}:${newMinute}`;
+  }
 
   return now;
 };
