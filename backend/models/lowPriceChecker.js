@@ -9,17 +9,20 @@ import {
   getTime,
   getReqTimeout,
 } from "../utils/toGetUpdate.js";
-import { getAllItemList } from "./getItemList.js";
+import { getItemListByRoServer } from "./getItemList.js";
+import { delay } from "../utils/delay.js";
+
+// Check botstate
+const isBotStopped = async () => {
+  const botState = await getBotState();
+  return botState === 0 || botState === 3;
+};
 
 // router.get("/", async (req, res) => {
 export const lowPriceChecker = async () => {
   // Check bot state
-  const botState = await getBotState();
-  if (botState === 0 || botState === 3) {
-    // Log
+  if (await isBotStopped()) {
     console.log("Bot is stopping... (lowPriceChecker)");
-
-    // stop this function
     return;
   }
 
@@ -46,21 +49,17 @@ export const lowPriceChecker = async () => {
   const reqTimeoutSeconds = await getReqTimeout();
 
   // index of parent
-  let index = 0;
+  let parentIndex = 0;
 
   // Loop parent to check price of child
   for (const parent of parentList) {
     // Add index
-    index++;
+    parentIndex++;
 
     // Check bot state
-    const botState = await getBotState();
-    if (botState === 0 || botState === 3) {
-      // Log
-      console.log("Bot is stopping...(lowPriceChecker-parent))");
-
-      // stop this loop immediately
-      break;
+    if (await isBotStopped()) {
+      console.log("Bot is stopping...(lowPriceChecker-loop-parentList))");
+      return;
     }
 
     // Get child list by one parent
@@ -74,51 +73,112 @@ export const lowPriceChecker = async () => {
 
     // Log
     console.log(
-      `Checking ${index}-${parent.keyword}-${parent.svr}-${
+      `Checking ${parentIndex}-${parent.keyword}-${parent.svr}-${
         parent.type
-      }...         (${getTime()})`
+      }...              (${getTime()})`
     );
 
-    // Get all item list by one parent
-    const allItemList = await getAllItemList(parent, reqTimeoutSeconds);
+    // Loop itemList of every page to update child
+    await loopAllPageToUpdateChildsByParent(
+      botIdToken,
+      parent,
+      childList,
+      reqTimeoutSeconds
+    );
 
-    // if itemList is empty, response error with 404
-    if (!allItemList.length) {
-      console.error("No item list found!");
-    }
-
-    // Loop child to check price
-    for (const child of childList) {
-      // Check bot state
-      const botState = await getBotState();
-      if (botState === 0 || botState === 3) {
-        // Log
-        console.log("Bot is stopping...(lowPriceChecker-child)");
-
-        // stop this loop immediately
-        break;
-      }
-
-      // Filter itemList by a child (include, exclude, itemRefine, and itemLevel)
-      const itemListFiltered = itemNameFilter(child, allItemList);
-
-      // Filter item list by a child (price)
-      const childFilteredByPrice = childPriceFilter(child, itemListFiltered);
-
-      // If childFiltered is not empty, send msg by chat bot
-      if (childFilteredByPrice) {
-        // Send msg by chat bot
-        const botMsg = formatMsg(parent, childFilteredByPrice);
-        console.log(botMsg);
-        await sendMsgByBot(botIdToken, botMsg);
-
-        // Update child
-        await updateChild(childFilteredByPrice);
-      }
-    }
     console.log("");
   }
   console.log("==============Waiting for next check...==============");
+};
+
+// Loop itemList for every page from RO server
+const loopAllPageToUpdateChildsByParent = async (
+  botIdToken,
+  parent,
+  childList,
+  reqTimeoutSeconds
+) => {
+  // Get page from parent
+  const { page } = parent;
+
+  // Get request timeout
+  const timeoutMilliseconds = reqTimeoutSeconds * 1000;
+
+  // Sentinal for loop (check item of every page is more than 30)
+  let isMoreThan30 = true;
+
+  // Loop page
+  for (let i = 1; i <= page; i++) {
+    // Check sentinal
+    if (!isMoreThan30) {
+      break;
+    }
+
+    // Check bot state
+    if (await isBotStopped()) {
+      console.log("Bot is stopping...(lowPriceChecker-loop-page)");
+      break;
+    }
+
+    // Get itemList of page i
+    const rowStart = (i - 1) * 30 + 1; // rowStart = 1, 31, 61, 91, ...
+    const tempItemList = await getItemListByRoServer(parent, rowStart);
+
+    // If tempItemList is error, then stop this loop and return []
+    if (tempItemList === "no-internet-error") return [];
+
+    // Log page and itemList length
+    console.log(
+      `Checking page-${i} (length:${
+        tempItemList.length
+      })                (${getTime()})`
+    );
+
+    // Update child by itemList
+    await updateChildsByParent(botIdToken, parent, childList, tempItemList);
+
+    // Check if tempItemList is less than 30
+    if (tempItemList.length < 30) {
+      isMoreThan30 = false;
+    }
+
+    // Delay
+    await delay(timeoutMilliseconds);
+  }
+};
+
+// Update childList by a parent with itemList
+const updateChildsByParent = async (
+  botIdToken,
+  parent,
+  childList,
+  itemList
+) => {
+  // Loop childList
+  for (const child of childList) {
+    // Check bot state
+    if (await isBotStopped()) {
+      console.log("Bot is stopping...(lowPriceChecker-loop-childList)");
+      break;
+    }
+
+    // Filter itemList by a child (include, exclude, itemRefine, and itemLevel)
+    const itemListFiltered = itemNameFilter(child, itemList);
+
+    // Filter item list by a child (price)
+    const childFilteredByPrice = childPriceFilter(child, itemListFiltered);
+
+    // If childFiltered is not empty, send msg by chat bot
+    if (childFilteredByPrice) {
+      // Send msg by chat bot
+      const botMsg = formatMsg(parent, childFilteredByPrice);
+      console.log(botMsg);
+      await sendMsgByBot(botIdToken, botMsg);
+
+      // Update child
+      await updateChild(childFilteredByPrice);
+    }
+  }
 };
 
 // Filter item name list by a child (include, exclude, itemRefine, and itemLevel)

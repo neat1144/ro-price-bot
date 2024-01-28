@@ -2,7 +2,7 @@ import axios, { all } from "axios";
 import { delay } from "../utils/delay.js";
 import { getTime, getBotState } from "../utils/toGetUpdate.js";
 
-// Get item list of page
+/* // Get item list of page
 export const getAllItemList = async (parent, timeoutSeconds) => {
   // Get page from parent
   const { page } = parent;
@@ -42,7 +42,6 @@ export const getAllItemList = async (parent, timeoutSeconds) => {
     // Get page i itemList
     if (allItemList.length >= 30 * (i - 1)) {
       // Log page
-      // Delay for request timeout
       console.log(`Getting page ${i}...               (${getTime()})`);
 
       // Get itemList i
@@ -64,7 +63,7 @@ export const getAllItemList = async (parent, timeoutSeconds) => {
   }
 
   return allItemList;
-};
+}; */
 
 // Get itemList of a parent from RO server
 export const getItemListByRoServer = async (parent, rowStart) => {
@@ -169,7 +168,7 @@ const handlerItemName = (item) => {
   }
 
   return newItemName;
-}
+};
 
 const setHeaders = () => {
   const headers = {
