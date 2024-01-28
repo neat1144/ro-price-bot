@@ -131,7 +131,7 @@ router.put("/:id", (req, res) => {
   );
 });
 
-// Update all child's nofi_time to ""
+// RESET ALL: Update all child's nofi_time to "" and new_price to 0
 router.post("/reset", (req, res) => {
   db.run("UPDATE child SET nofi_time = '', new_price = 0", (err) => {
     if (err) {

@@ -130,3 +130,9 @@ export const getReqTimeout = async () => {
 
   return response.data["req_timeout_sec"];
 };
+
+export const resetAllChild = async () => {
+  axios.post("http://localhost:3030/child/reset").catch((error) => {
+    console.error("Error to reset all child!", error);
+  });
+};

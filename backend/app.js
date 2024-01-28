@@ -17,6 +17,7 @@ import {
   getTimeout,
   getCurrentTime,
   getScheduleTime,
+  resetAllChild,
 } from "./utils/toGetUpdate.js";
 
 const app = express();
@@ -133,6 +134,11 @@ const scheduleChecker = async () => {
     // Check if current time is between start time and stop time, change bot state to 1
     if (now === startTime) {
       if (botState !== 2) {
+        // Reset all child's nofi_time and new_price
+        console.log("RESET all child's nofi_time and new_price!");
+        await resetAllChild();
+
+        // Change bot state to 1 (which is start bot)
         await changeBotState(1);
         console.log(`Current time: ${now}`);
         console.log("Start checker by schedule");

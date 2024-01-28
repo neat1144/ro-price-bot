@@ -76,8 +76,10 @@
 - [x] add unit test
 - [x] add new table `child` for filter keywrods
 - [x] support add form (react and node) for table `child`
-- [ ] support **filter** `itemRefining` and `ItemGradeLevel`
+- [x] support **filter** `itemRefining` and `ItemGradeLevel`
 - [x] support **filter** "exclude" and "include" keywords
+- [x] support start **reset all** when the schedule start
+- [ ] support nofi the msg when the new_price is renew
 
 ## 伺服器更改
 
