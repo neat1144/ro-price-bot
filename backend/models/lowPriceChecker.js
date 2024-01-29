@@ -20,11 +20,15 @@ const isBotStopped = async () => {
 
 // router.get("/", async (req, res) => {
 export const lowPriceChecker = async () => {
-  // Check bot state
+  // Step1: Check bot state
   if (await isBotStopped()) {
     console.log("Bot is stopping... (lowPriceChecker)");
     return;
   }
+
+  // Step2: Get some data and Log
+  const botIdToken = await getBotIdToken();
+  const reqTimeoutSeconds = await getReqTimeout();
 
   // Log
   console.log("\n========================START========================");
@@ -32,9 +36,7 @@ export const lowPriceChecker = async () => {
   console.log(`Price is checking...               (${getTime()})`);
   console.log("");
 
-  // Get bot id and token
-  const botIdToken = await getBotIdToken();
-
+  // Step3: Get parent list and Loop parent list
   // Get all parent
   const parentList = await getParentList();
 
@@ -44,14 +46,8 @@ export const lowPriceChecker = async () => {
     return;
   }
 
-  // if botState is true(1), then start check
-  // Get request timeout
-  const reqTimeoutSeconds = await getReqTimeout();
-
-  // index of parent
+  // Loop every parent to Check price of its child
   let parentIndex = 0;
-
-  // Loop parent to check price of child
   for (const parent of parentList) {
     // Add index
     parentIndex++;
@@ -62,6 +58,7 @@ export const lowPriceChecker = async () => {
       return;
     }
 
+    // Step4: Get child list by one parent
     // Get child list by one parent
     const childList = await getChildList(parent.id);
 
@@ -78,6 +75,7 @@ export const lowPriceChecker = async () => {
       }...              (${getTime()})`
     );
 
+    // Step5: Loop every page of itemList to update child
     // Loop itemList of every page to update child
     await loopAllPageToUpdateChildsByParent(
       botIdToken,
@@ -98,6 +96,7 @@ const loopAllPageToUpdateChildsByParent = async (
   childList,
   reqTimeoutSeconds
 ) => {
+  // Step1: Get how many pages need to check from parent
   // Get page from parent
   const { page } = parent;
 
@@ -107,8 +106,10 @@ const loopAllPageToUpdateChildsByParent = async (
   // Sentinal for loop (check item of every page is more than 30)
   let isMoreThan30 = true;
 
+  // Step2: Loop every page
   // Loop page
   for (let i = 1; i <= page; i++) {
+    // Step3: Check last page is more than 30
     // Check sentinal
     if (!isMoreThan30) {
       break;
@@ -120,12 +121,21 @@ const loopAllPageToUpdateChildsByParent = async (
       break;
     }
 
+    // Step4: Get itemList of page i
     // Get itemList of page i
     const rowStart = (i - 1) * 30 + 1; // rowStart = 1, 31, 61, 91, ...
     const tempItemList = await getItemListByRoServer(parent, rowStart);
 
-    // If tempItemList is error, then stop this loop and return []
-    if (tempItemList === "no-internet-error") return [];
+    // Step5: Delay by request timeout
+    // Delay
+    await delay(timeoutMilliseconds);
+
+    // Step6: If Ro Server is not response, then drop this loop
+    // If tempItemList is error, then drop this loop
+    if (tempItemList === "no-internet-error") {
+      console.error("No internet connection! (lowPriceChecker-loop-page)");
+      break;
+    }
 
     // Log page and itemList length
     console.log(
@@ -134,16 +144,15 @@ const loopAllPageToUpdateChildsByParent = async (
       })                (${getTime()})`
     );
 
+    // Step7: Update child by itemList
     // Update child by itemList
     await updateChildsByParent(botIdToken, parent, childList, tempItemList);
 
+    // Step8: Update sentinal for itemList is  more than 30
     // Check if tempItemList is less than 30
     if (tempItemList.length < 30) {
       isMoreThan30 = false;
     }
-
-    // Delay
-    await delay(timeoutMilliseconds);
   }
 };
 
@@ -154,7 +163,7 @@ const updateChildsByParent = async (
   childList,
   itemList
 ) => {
-  // Loop childList
+  // Step1: Loop childList by a parent
   for (const child of childList) {
     // Check bot state
     if (await isBotStopped()) {
@@ -162,12 +171,13 @@ const updateChildsByParent = async (
       break;
     }
 
-    // Filter itemList by a child (include, exclude, itemRefine, and itemLevel)
+    // Step2: Filter itemList by a child (include, exclude, itemRefine, and itemLevel)
     const itemListFiltered = itemNameFilter(child, itemList);
 
-    // Filter item list by a child (price)
+    // Step3: Filter item list by a child (price)
     const childFilteredByPrice = childPriceFilter(child, itemListFiltered);
 
+    // Step4: Update child and Send msg(chat bot)
     // If childFiltered is not empty, send msg by chat bot
     if (childFilteredByPrice) {
       // Send msg by chat bot
